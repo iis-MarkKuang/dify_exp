@@ -34,7 +34,6 @@ const EDITION = process.env.NEXT_PUBLIC_EDITION || globalThis.document?.body?.ge
 export const IS_CE_EDITION = EDITION === 'SELF_HOSTED'
 export const IS_CE_EDITION_REV = EDITION !== 'SELF_HOSTED'
 
-
 export const TONE_LIST = [
   {
     id: 1,
