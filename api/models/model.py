@@ -58,6 +58,9 @@ class App(db.Model):
 
     id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
     tenant_id = db.Column(StringUUID, nullable=False)
+
+    # after 20240517 change, if null, then global visible.
+    creator_account_id = db.Column(StringUUID, nullable=True)
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=False, server_default=db.text("''::character varying"))
     mode = db.Column(db.String(255), nullable=False)

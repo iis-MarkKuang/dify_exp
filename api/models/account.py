@@ -106,6 +106,11 @@ class Account(UserMixin, db.Model):
     def is_admin_or_owner(self):
         return TenantAccountRole.is_privileged_role(self._current_tenant.current_role)
 
+    # get account id to set visibility for apps
+    @property
+    def account_id(self):
+        return self.id
+
 
 class TenantStatus(str, enum.Enum):
     NORMAL = 'normal'
