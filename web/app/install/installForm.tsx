@@ -64,15 +64,15 @@ const InstallForm = () => {
 
   useEffect(() => {
     fetchSetupStatus().then((res: SetupStatusResponse) => {
-      // if (res.step === 'finished') {
-      //   window.location.href = '/signin'
-      // }
-      // else {
-      fetchInitValidateStatus().then((res: InitValidateStatusResponse) => {
-        if (res.status === 'not_started')
-          window.location.href = '/init'
-      })
-      // }
+      if (res.step === 'finished') {
+        window.location.href = '/signin'
+      }
+      else {
+        fetchInitValidateStatus().then((res: InitValidateStatusResponse) => {
+          if (res.status === 'not_started')
+            window.location.href = '/init'
+        })
+      }
       setLoading(false)
     })
   }, [])

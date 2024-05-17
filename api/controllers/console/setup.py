@@ -20,7 +20,7 @@ class SetupApi(Resource):
     def get(self):
         if current_app.config['EDITION'] == 'SELF_HOSTED':
             # setup_status = get_setup_status()
-            setup_status = get_setup_status_multi_tenants()
+            setup_status = get_setup_status()
             if setup_status:
                 return {
                     'step': 'finished',
@@ -33,13 +33,13 @@ class SetupApi(Resource):
     def post(self):
         # is set up
         # if get_setup_status():
-        if get_setup_status_multi_tenants():
+        if get_setup_status():
             raise AlreadySetupError()
 
         # is tenant created
-        # tenant_count = TenantService.get_tenant_count()
-        # if tenant_count > 0:
-        #     raise AlreadySetupError()
+        tenant_count = TenantService.get_tenant_count()
+        if tenant_count > 0:
+            raise AlreadySetupError()
     
         if not get_init_validate_status():
             raise NotInitValidateError()
@@ -90,7 +90,7 @@ def setup_required(view):
     return decorated
 
 
-def get_setup_status_multi_tenants():
+def get_setup_status():
     return False
 
 
