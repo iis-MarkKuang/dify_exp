@@ -37,9 +37,9 @@ class SetupApi(Resource):
             raise AlreadySetupError()
 
         # is tenant created
-        tenant_count = TenantService.get_tenant_count()
-        if tenant_count > 0:
-            raise AlreadySetupError()
+        # tenant_count = TenantService.get_tenant_count()
+        # if tenant_count > 0:
+        #     raise AlreadySetupError()
     
         if not get_init_validate_status():
             raise NotInitValidateError()
