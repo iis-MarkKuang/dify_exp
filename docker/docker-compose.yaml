@@ -297,7 +297,7 @@ services:
 
   # Frontend web application.
   web:
-    image: kuangyuan1991/llmops_exp_repo:1.0.0
+    image: kuangyuan1991/llmops_exp_repo:1.0.1
     restart: always
     environment:
       # The base URL of console application api server, refers to the Console base URL of WEB service if console domain is
