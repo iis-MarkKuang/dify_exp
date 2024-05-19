@@ -124,7 +124,7 @@ class AppService:
         app.mode = args['mode']
         app.icon = args['icon']
         app.icon_background = args['icon_background']
-        app.tenant_id = Account.current_tenant_id
+        app.tenant_id = account.current_tenant_id
 
         db.session.add(app)
         db.session.flush()
