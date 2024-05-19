@@ -76,7 +76,7 @@ class AppListApi(Resource):
             raise BadRequest("mode is required")
 
         app_service = AppService()
-        app = app_service.create_app(current_user.current_tenant_id, args, current_user)
+        app = app_service.create_app(args, current_user)
 
         return app, 201
 
