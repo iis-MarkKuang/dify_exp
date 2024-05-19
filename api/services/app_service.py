@@ -118,7 +118,7 @@ class AppService:
             default_model_config['model'] = json.dumps(default_model_dict)
 
         app = App(**app_template['app'])
-        app.creator_account_id = Account.account_id
+        app.creator_account_id = account.account_id
         app.name = args['name']
         app.description = args.get('description', '')
         app.mode = args['mode']
