@@ -222,6 +222,8 @@ class WorkflowEngineManager:
 
         # Get node class
         node_type = NodeType.value_of(node_config.get('data', {}).get('type'))
+
+        print(node_type)
         node_cls = node_classes.get(node_type)
 
         # init workflow run state
