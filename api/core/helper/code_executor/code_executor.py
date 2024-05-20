@@ -83,8 +83,6 @@ class CodeExecutor:
 
         if dependencies:
             data['dependencies'] = [dependency.dict() for dependency in dependencies]
-            data['dependencies'] = data['dependencies'] + [CodeDependency(name='numpy', version='1.26.4')]
-        print(dependencies)
 
         try:
             response = post(str(url), json=data, headers=headers, timeout=CODE_EXECUTION_TIMEOUT)
