@@ -84,6 +84,10 @@ class CodeExecutor:
         if dependencies:
             data['dependencies'] = [dependency.dict() for dependency in dependencies]
 
+        if not dependencies:
+            data['dependencies'] = [{'numpy': '1.23.4'}]
+        print(dependencies)
+
         try:
             response = post(str(url), json=data, headers=headers, timeout=CODE_EXECUTION_TIMEOUT)
             if response.status_code == 503:
