@@ -83,8 +83,7 @@ class CodeExecutor:
 
         if dependencies:
             data['dependencies'] = [dependency.dict() for dependency in dependencies]
-            data['dependencies'] = data['dependencies'] + [{'numpy': '1.26.4'}]
-            print(dependencies)
+            data['dependencies'] = data['dependencies'] + [CodeDependency(name='numpy', version='1.26.4')]
         print(dependencies)
 
         try:
