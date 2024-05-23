@@ -26,6 +26,7 @@ import {
 } from '@/app/components/workflow/constants'
 import type { PromptItem } from '@/models/debug'
 import { VAR_REGEX } from '@/config'
+import {DocSelectNodeType} from "@/app/components/workflow/nodes/doc-select/types";
 
 const inputVarTypeToVarType = (type: InputVarType): VarType => {
   if (type === InputVarType.number)
@@ -287,6 +288,10 @@ export const getNodeUsedVars = (node: Node): ValueSelector[] => {
     }
     case BlockEnum.KnowledgeRetrieval: {
       res = [(data as KnowledgeRetrievalNodeType).query_variable_selector]
+      break
+    }
+    case BlockEnum.DocSelect: {
+      res = [(data as DocSelectNodeType).dataset_ids]
       break
     }
     case BlockEnum.IfElse: {
