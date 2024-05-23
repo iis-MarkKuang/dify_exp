@@ -17,6 +17,7 @@ from core.workflow.nodes.end.end_node import EndNode
 from core.workflow.nodes.http_request.http_request_node import HttpRequestNode
 from core.workflow.nodes.if_else.if_else_node import IfElseNode
 from core.workflow.nodes.knowledge_retrieval.knowledge_retrieval_node import KnowledgeRetrievalNode
+from core.workflow.nodes.knowledge_retrieval.doc_select_node import DocSelectNode
 from core.workflow.nodes.llm.entities import LLMNodeData
 from core.workflow.nodes.llm.llm_node import LLMNode
 from core.workflow.nodes.question_classifier.question_classifier_node import QuestionClassifierNode
