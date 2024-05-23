@@ -36,7 +36,7 @@ class AppService:
         """
         filters = [
             App.tenant_id == tenant_id,
-            App.creator_account_id == account_id if App.creator_account_id is not None else True,
+            # App.creator_account_id == account_id if App.creator_account_id is not None else True,
             App.is_universal == False
         ]
 
