@@ -11,7 +11,7 @@ import type { DocSelectNodeType, MultipleRetrievalConfig } from './types'
 import { RETRIEVE_TYPE } from '@/types/app'
 import { DATASET_DEFAULT } from '@/config'
 import type { DataSet } from '@/models/datasets'
-import { fetchDatasets } from '@/service/datasets'
+import { fetchDocs } from '@/service/datasets'
 import useNodeCrud from '@/app/components/workflow/nodes/_base/hooks/use-node-crud'
 import useOneStepRun from '@/app/components/workflow/nodes/_base/hooks/use-one-step-run'
 import { useModelListAndDefaultModelAndCurrentProviderAndModel } from '@/app/components/header/account-setting/model-provider-page/hooks'
@@ -186,7 +186,7 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
       const inputs = inputRef.current
       const datasetIds = inputs.dataset_ids
       if (datasetIds?.length > 0) {
-        const { data: dataSetsWithDetail } = await fetchDatasets({ url: '/datasets', params: { page: 1, ids: datasetIds } })
+        const { data: dataSetsWithDetail } = await fetchDocs({ url: '/documents', params: { page: 1, ids: datasetIds } })
         setSelectedDatasets(dataSetsWithDetail)
       }
       const newInputs = produce(inputs, (draft) => {
