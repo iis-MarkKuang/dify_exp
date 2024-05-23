@@ -108,6 +108,7 @@ const translation = {
     'end': '定义一个 workflow 流程的结束和结果类型',
     'answer': '定义一个聊天对话的回复内容',
     'llm': '调用大语言模型回答问题或者对自然语言进行处理',
+    'doc-select': '允许你从文档库中查询文档',
     'knowledge-retrieval': '允许你从知识库中查询与用户问题相关的文本内容',
     'question-classifier': '定义用户问题的分类条件，LLM 能够根据分类描述定义对话的进展方式',
     'if-else': '允许你根据 if/else 条件将 workflow 拆分成两个分支',
@@ -216,6 +217,13 @@ const translation = {
         variable: '变量',
       },
       sysQueryInUser: 'user message 中必须包含 sys.query',
+    },
+    docSelect: {
+      queryVariable: '查询变量',
+      docs: '文件',
+      outputVars: {
+        files: '选中的文件'
+      },
     },
     knowledgeRetrieval: {
       queryVariable: '查询变量',
