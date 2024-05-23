@@ -207,6 +207,72 @@ class DatasetDocumentListApi(Resource):
         'batch': fields.String
     }
 
+    class DocumentGlobalListApi(Resource):
+        @setup_required
+        @login_required
+        @account_initialization_required
+        def get(self):
+            page = request.args.get('page', default=1, type=int)
+            limit = request.args.get('limit', default=20, type=int)
+            search = request.args.get('keyword', default=None, type=str)
+            sort = request.args.get('sort', default='-created_at', type=str)
+            fetch = request.args.get('fetch', default=False, type=bool)
+
+            query = Document.query.filter_by(tenant_id=current_user.current_tenant_id)
+
+            if search:
+                search = f'%{search}%'
+                query = query.filter(Document.name.like(search))
+
+            if sort.startswith('-'):
+                sort_logic = desc
+                sort = sort[1:]
+            else:
+                sort_logic = asc
+
+            if sort == 'hit_count':
+                sub_query = db.select(DocumentSegment.document_id,
+                                      db.func.sum(DocumentSegment.hit_count).label("total_hit_count")) \
+                    .group_by(DocumentSegment.document_id) \
+                    .subquery()
+
+                query = query.outerjoin(sub_query, sub_query.c.document_id == Document.id) \
+                    .order_by(sort_logic(db.func.coalesce(sub_query.c.total_hit_count, 0)))
+            elif sort == 'created_at':
+                query = query.order_by(sort_logic(Document.created_at))
+            else:
+                query = query.order_by(desc(Document.created_at))
+
+            paginated_documents = query.paginate(
+                page=page, per_page=limit, max_per_page=100, error_out=False)
+            documents = paginated_documents.items
+            if fetch:
+                for document in documents:
+                    completed_segments = DocumentSegment.query.filter(DocumentSegment.completed_at.isnot(None),
+                                                                      DocumentSegment.document_id == str(document.id),
+                                                                      DocumentSegment.status != 're_segment').count()
+                    total_segments = DocumentSegment.query.filter(DocumentSegment.document_id == str(document.id),
+                                                                  DocumentSegment.status != 're_segment').count()
+                    document.completed_segments = completed_segments
+                    document.total_segments = total_segments
+                data = marshal(documents, document_with_segments_fields)
+            else:
+                data = marshal(documents, document_fields)
+            response = {
+                'data': data,
+                'has_more': len(documents) == limit,
+                'limit': limit,
+                'total': paginated_documents.total,
+                'page': page
+            }
+
+            return response
+
+        documents_and_batch_fields = {
+            'documents': fields.List(fields.Nested(document_fields)),
+            'batch': fields.String
+        }
+
     @setup_required
     @login_required
     @account_initialization_required
@@ -925,6 +991,7 @@ class DocumentRetryApi(DocumentResource):
 
 
 api.add_resource(GetProcessRuleApi, '/datasets/process-rule')
+api.add_resource(DocumentGlobalListApi, '/datasets/documents')
 api.add_resource(DatasetDocumentListApi,
                  '/datasets/<uuid:dataset_id>/documents')
 api.add_resource(DatasetInitApi,
