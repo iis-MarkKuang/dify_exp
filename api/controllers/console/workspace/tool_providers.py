@@ -281,7 +281,8 @@ class ToolApiProviderPreviousTestApi(Resource):
         parser.add_argument('schema', type=str, required=True, nullable=False, location='json')
 
         args = parser.parse_args()
-
+        # todo rm
+        print(args)
         return ToolManageService.test_api_tool_preview(
             current_user.current_tenant_id,
             args['provider_name'] if args['provider_name'] else '',

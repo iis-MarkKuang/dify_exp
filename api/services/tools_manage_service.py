@@ -563,6 +563,8 @@ class ToolManageService:
             ApiToolProvider.name == provider_name,
         ).first()
 
+        #TODO rm
+        print(db_provider)
         if not db_provider:
             # create a fake db provider
             db_provider = ApiToolProvider(
@@ -609,7 +611,9 @@ class ToolManageService:
             result = tool.validate_credentials(credentials, parameters)
         except Exception as e:
             return { 'error': str(e) }
-        
+
+        #TODO rm
+        print(result)
         return { 'result': result or 'empty response' }
     
     @staticmethod
