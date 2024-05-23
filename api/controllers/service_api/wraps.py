@@ -55,6 +55,8 @@ def validate_app_token(view: Optional[Callable] = None, *, fetch_user_arg: Optio
 
             # TODO RM Test
             print(request.get_json())
+            print(request.args)
+            print(request.form)
 
             if fetch_user_arg:
                 if fetch_user_arg.fetch_from == WhereisUserArg.QUERY:
