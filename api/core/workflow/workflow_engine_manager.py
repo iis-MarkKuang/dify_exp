@@ -36,6 +36,7 @@ node_classes = {
     NodeType.ANSWER: AnswerNode,
     NodeType.LLM: LLMNode,
     NodeType.KNOWLEDGE_RETRIEVAL: KnowledgeRetrievalNode,
+    NodeType.DOC_SELECT: DocSelectNode,
     NodeType.IF_ELSE: IfElseNode,
     NodeType.CODE: CodeNode,
     NodeType.TEMPLATE_TRANSFORM: TemplateTransformNode,
