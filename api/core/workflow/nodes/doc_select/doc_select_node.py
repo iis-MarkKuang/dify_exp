@@ -13,7 +13,7 @@ from core.workflow.entities.base_node_data_entities import BaseNodeData
 from core.workflow.entities.node_entities import NodeRunResult, NodeType
 from core.workflow.entities.variable_pool import VariablePool
 from core.workflow.nodes.base_node import BaseNode
-from core.workflow.nodes.knowledge_retrieval.entities import DocSelectNodeData
+from core.workflow.nodes.doc_select.entities import DocSelectNodeData
 from extensions.ext_database import db
 from models.dataset import Dataset, Document, DocumentSegment
 from models.workflow import WorkflowNodeExecutionStatus
@@ -32,7 +32,7 @@ default_retrieval_model = {
 
 class DocSelectNode(BaseNode):
     _node_data_cls = DocSelectNodeData
-    node_type = NodeType.KNOWLEDGE_RETRIEVAL
+    node_type = NodeType.DOC_SELECT
 
     def _run(self, variable_pool: VariablePool) -> NodeRunResult:
         node_data: DocSelectNodeData = cast(self._node_data_cls, self.node_data)
