@@ -109,6 +109,7 @@ const formatItem = (item: any, isChatMode: boolean, filterVar: (payload: Var, se
 
     case BlockEnum.DocSelect: {
       res.vars = DOC_SELECT_OUTPUT_STRUCT
+      break
     }
 
     case BlockEnum.Code: {
