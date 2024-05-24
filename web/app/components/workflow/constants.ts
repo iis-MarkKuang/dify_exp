@@ -4,6 +4,7 @@ import StartNodeDefault from './nodes/start/default'
 import AnswerDefault from './nodes/answer/default'
 import LLMDefault from './nodes/llm/default'
 import KnowledgeRetrievalDefault from './nodes/knowledge-retrieval/default'
+import DocSelectDefault from './nodes/doc-select/default'
 import QuestionClassifierDefault from './nodes/question-classifier/default'
 import IfElseDefault from './nodes/if-else/default'
 import CodeDefault from './nodes/code/default'
@@ -24,7 +25,7 @@ type NodesExtraData = {
 }
 export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
   [BlockEnum.Start]: {
-    author: 'Microcraft',
+    author: 'Dify',
     about: '',
     availablePrevNodes: [],
     availableNextNodes: [],
@@ -33,7 +34,7 @@ export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
     checkValid: StartNodeDefault.checkValid,
   },
   [BlockEnum.End]: {
-    author: 'Microcraft',
+    author: 'Dify',
     about: '',
     availablePrevNodes: [],
     availableNextNodes: [],
@@ -42,7 +43,7 @@ export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
     checkValid: EndNodeDefault.checkValid,
   },
   [BlockEnum.Answer]: {
-    author: 'Microcraft',
+    author: 'Dify',
     about: '',
     availablePrevNodes: [],
     availableNextNodes: [],
@@ -51,7 +52,7 @@ export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
     checkValid: AnswerDefault.checkValid,
   },
   [BlockEnum.LLM]: {
-    author: 'Microcraft',
+    author: 'Dify',
     about: '',
     availablePrevNodes: [],
     availableNextNodes: [],
@@ -59,8 +60,17 @@ export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
     getAvailableNextNodes: LLMDefault.getAvailableNextNodes,
     checkValid: LLMDefault.checkValid,
   },
-  [BlockEnum.KnowledgeRetrieval]: {
+  [BlockEnum.DocSelect]: {
     author: 'Microcraft',
+    about: '',
+    availablePrevNodes: [],
+    availableNextNodes: [],
+    getAvailablePrevNodes: DocSelectDefault.getAvailablePrevNodes,
+    getAvailableNextNodes: DocSelectDefault.getAvailableNextNodes,
+    checkValid: DocSelectDefault.checkValid,
+  },
+  [BlockEnum.KnowledgeRetrieval]: {
+    author: 'Dify',
     about: '',
     availablePrevNodes: [],
     availableNextNodes: [],
@@ -69,7 +79,7 @@ export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
     checkValid: KnowledgeRetrievalDefault.checkValid,
   },
   [BlockEnum.IfElse]: {
-    author: 'Microcraft',
+    author: 'Dify',
     about: '',
     availablePrevNodes: [],
     availableNextNodes: [],
@@ -78,7 +88,7 @@ export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
     checkValid: IfElseDefault.checkValid,
   },
   [BlockEnum.Code]: {
-    author: 'Microcraft',
+    author: 'Dify',
     about: '',
     availablePrevNodes: [],
     availableNextNodes: [],
@@ -87,7 +97,7 @@ export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
     checkValid: CodeDefault.checkValid,
   },
   [BlockEnum.TemplateTransform]: {
-    author: 'Microcraft',
+    author: 'Dify',
     about: '',
     availablePrevNodes: [],
     availableNextNodes: [],
@@ -96,7 +106,7 @@ export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
     checkValid: TemplateTransformDefault.checkValid,
   },
   [BlockEnum.QuestionClassifier]: {
-    author: 'Microcraft',
+    author: 'Dify',
     about: '',
     availablePrevNodes: [],
     availableNextNodes: [],
@@ -105,7 +115,7 @@ export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
     checkValid: QuestionClassifierDefault.checkValid,
   },
   [BlockEnum.HttpRequest]: {
-    author: 'Microcraft',
+    author: 'Dify',
     about: '',
     availablePrevNodes: [],
     availableNextNodes: [],
@@ -114,7 +124,7 @@ export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
     checkValid: HttpRequestDefault.checkValid,
   },
   [BlockEnum.VariableAssigner]: {
-    author: 'Microcraft',
+    author: 'Dify',
     about: '',
     availablePrevNodes: [],
     availableNextNodes: [],
@@ -123,7 +133,7 @@ export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
     checkValid: VariableAssignerDefault.checkValid,
   },
   [BlockEnum.Tool]: {
-    author: 'Microcraft',
+    author: 'Dify',
     about: '',
     availablePrevNodes: [],
     availableNextNodes: [],
