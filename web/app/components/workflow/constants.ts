@@ -277,7 +277,7 @@ export const RETRIEVAL_OUTPUT_STRUCT = `{
 }`
 
 export const SUPPORT_OUTPUT_VARS_NODE = [
-  BlockEnum.Start, BlockEnum.LLM, BlockEnum.KnowledgeRetrieval, BlockEnum.Code, BlockEnum.TemplateTransform,
+  BlockEnum.Start, BlockEnum.LLM, BlockEnum.KnowledgeRetrieval, BlockEnum.DocSelect, BlockEnum.Code, BlockEnum.TemplateTransform,
   BlockEnum.HttpRequest, BlockEnum.Tool, BlockEnum.VariableAssigner, BlockEnum.QuestionClassifier,
 ]
 
@@ -289,6 +289,13 @@ export const LLM_OUTPUT_STRUCT: Var[] = [
 ]
 
 export const KNOWLEDGE_RETRIEVAL_OUTPUT_STRUCT: Var[] = [
+  {
+    variable: 'result',
+    type: VarType.arrayObject,
+  },
+]
+
+export const DOC_SELECT_OUTPUT_STRUCT: Var[] = [
   {
     variable: 'result',
     type: VarType.arrayObject,

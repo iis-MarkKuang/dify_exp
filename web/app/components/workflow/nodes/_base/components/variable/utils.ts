@@ -5,6 +5,7 @@ import type { EndNodeType } from '../../../end/types'
 import type { AnswerNodeType } from '../../../answer/types'
 import type { LLMNodeType } from '../../../llm/types'
 import type { KnowledgeRetrievalNodeType } from '../../../knowledge-retrieval/types'
+import type { DocSelectNodeType } from '../../../doc-select/types'
 import type { IfElseNodeType } from '../../../if-else/types'
 import type { TemplateTransformNodeType } from '../../../template-transform/types'
 import type { QuestionClassifierNodeType } from '../../../question-classifier/types'
@@ -16,13 +17,14 @@ import type { StartNodeType } from '@/app/components/workflow/nodes/start/types'
 import type { Node, NodeOutPutVar, ValueSelector, Var } from '@/app/components/workflow/types'
 import type { VariableAssignerNodeType } from '@/app/components/workflow/nodes/variable-assigner/types'
 import {
-  HTTP_REQUEST_OUTPUT_STRUCT,
-  KNOWLEDGE_RETRIEVAL_OUTPUT_STRUCT,
-  LLM_OUTPUT_STRUCT,
-  QUESTION_CLASSIFIER_OUTPUT_STRUCT,
-  SUPPORT_OUTPUT_VARS_NODE,
-  TEMPLATE_TRANSFORM_OUTPUT_STRUCT,
-  TOOL_OUTPUT_STRUCT,
+    DOC_SELECT_OUTPUT_STRUCT,
+    HTTP_REQUEST_OUTPUT_STRUCT,
+    KNOWLEDGE_RETRIEVAL_OUTPUT_STRUCT,
+    LLM_OUTPUT_STRUCT,
+    QUESTION_CLASSIFIER_OUTPUT_STRUCT,
+    SUPPORT_OUTPUT_VARS_NODE,
+    TEMPLATE_TRANSFORM_OUTPUT_STRUCT,
+    TOOL_OUTPUT_STRUCT,
 } from '@/app/components/workflow/constants'
 import type { PromptItem } from '@/models/debug'
 import { VAR_REGEX } from '@/config'
@@ -104,6 +106,10 @@ const formatItem = (item: any, isChatMode: boolean, filterVar: (payload: Var, se
     case BlockEnum.KnowledgeRetrieval: {
       res.vars = KNOWLEDGE_RETRIEVAL_OUTPUT_STRUCT
       break
+    }
+
+    case BlockEnum.DocSelect: {
+      res.vars = DOC_SELECT_OUTPUT_STRUCT
     }
 
     case BlockEnum.Code: {
@@ -403,6 +409,12 @@ export const updateNodeVars = (oldNode: Node, oldVarSelector: ValueSelector, new
           payload.query_variable_selector = newVarSelector
         break
       }
+      case BlockEnum.DocSelect: {
+        const payload = data as DocSelectNodeType
+        if (payload.dataset_ids.join('.') === oldVarSelector.join('.'))
+          payload.dataset_ids = newVarSelector
+        break
+      }
       case BlockEnum.IfElse: {
         const payload = data as IfElseNodeType
         if (payload.conditions) {
@@ -539,6 +551,11 @@ export const getNodeOutputVars = (node: Node, isChatMode: boolean): ValueSelecto
 
     case BlockEnum.KnowledgeRetrieval: {
       varsToValueSelectorList(KNOWLEDGE_RETRIEVAL_OUTPUT_STRUCT, [id], res)
+      break
+    }
+
+    case BlockEnum.DocSelect: {
+      varsToValueSelectorList(DOC_SELECT_OUTPUT_STRUCT, [id], res)
       break
     }
 

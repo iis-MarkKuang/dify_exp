@@ -468,6 +468,8 @@ export const useNodesInteractions = () => {
       const lastOutgoer = outgoers[outgoers.length - 1]
       if (prevNode.data.type === BlockEnum.KnowledgeRetrieval)
         targetHandle = prevNodeId
+      if (prevNode.data.type === BlockEnum.DocSelect)
+        targetHandle = prevNodeId
       newNode.data._connectedTargetHandleIds = [targetHandle]
       newNode.data._connectedSourceHandleIds = []
       newNode.position = {
@@ -594,6 +596,8 @@ export const useNodesInteractions = () => {
       const prevNode = nodes.find(node => node.id === prevNodeId)!
       const nextNode = nodes.find(node => node.id === nextNodeId)!
       if (prevNode.data.type === BlockEnum.KnowledgeRetrieval)
+        targetHandle = prevNodeId
+      if (prevNode.data.type === BlockEnum.DocSelect)
         targetHandle = prevNodeId
       newNode.data._connectedTargetHandleIds = [targetHandle]
       newNode.data._connectedSourceHandleIds = [sourceHandle]

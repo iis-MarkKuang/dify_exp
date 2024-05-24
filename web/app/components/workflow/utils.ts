@@ -199,6 +199,7 @@ export const getLayoutByDagre = (originNodes: Node[], originEdges: Edge[]) => {
 export const canRunBySingle = (nodeType: BlockEnum) => {
   return nodeType === BlockEnum.LLM
     || nodeType === BlockEnum.KnowledgeRetrieval
+    || nodeType === BlockEnum.DocSelect
     || nodeType === BlockEnum.Code
     || nodeType === BlockEnum.TemplateTransform
     || nodeType === BlockEnum.QuestionClassifier
