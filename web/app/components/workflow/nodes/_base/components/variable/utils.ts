@@ -28,7 +28,6 @@ import {
 } from '@/app/components/workflow/constants'
 import type { PromptItem } from '@/models/debug'
 import { VAR_REGEX } from '@/config'
-import {DocSelectNodeType} from "@/app/components/workflow/nodes/doc-select/types";
 
 const inputVarTypeToVarType = (type: InputVarType): VarType => {
   if (type === InputVarType.number)
@@ -297,7 +296,7 @@ export const getNodeUsedVars = (node: Node): ValueSelector[] => {
       break
     }
     case BlockEnum.DocSelect: {
-      res = [(data as DocSelectNodeType).dataset_ids]
+      res = [(data as DocSelectNodeType).query_variable_selector]
       break
     }
     case BlockEnum.IfElse: {
@@ -411,8 +410,8 @@ export const updateNodeVars = (oldNode: Node, oldVarSelector: ValueSelector, new
       }
       case BlockEnum.DocSelect: {
         const payload = data as DocSelectNodeType
-        if (payload.dataset_ids.join('.') === oldVarSelector.join('.'))
-          payload.dataset_ids = newVarSelector
+        if (payload.query_variable_selector.join('.') === oldVarSelector.join('.'))
+          payload.query_variable_selector = newVarSelector
         break
       }
       case BlockEnum.IfElse: {

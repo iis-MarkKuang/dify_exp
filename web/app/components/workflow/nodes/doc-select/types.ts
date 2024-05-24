@@ -15,5 +15,6 @@ export type SingleRetrievalConfig = {
 }
 
 export type DocSelectNodeType = CommonNodeType & {
+  query_variable_selector: ValueSelector
   dataset_ids: string[]
 }
