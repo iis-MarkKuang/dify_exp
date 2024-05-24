@@ -14,7 +14,7 @@ import { InputVarType, type NodePanelProps } from '@/app/components/workflow/typ
 import BeforeRunForm from '@/app/components/workflow/nodes/_base/components/before-run-form'
 import ResultPanel from '@/app/components/workflow/run/result-panel'
 
-const i18nPrefix = 'workflow.nodes.doc-select'
+const i18nPrefix = 'workflow.nodes.docSelect'
 
 const Panel: FC<NodePanelProps<DocSelectNodeType>> = ({
   id,
