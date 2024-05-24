@@ -61,7 +61,7 @@ const Panel: FC<NodePanelProps<DocSelectNodeType>> = ({
         </Field>
 
         <Field
-          title={t(`${i18nPrefix}.docSelect`)}
+          title={t(`${i18nPrefix}.doc`)}
           operations={
             <div className='flex items-center space-x-1'>
               <RetrievalConfig
