@@ -16,8 +16,8 @@ const Node: FC<NodeProps<DocSelectNodeType>> = ({
       updateTime.current = updateTime.current + 1
       const currUpdateTime = updateTime.current
 
-      if (data.dataset_ids?.length > 0) {
-        const { data: dataSetsWithDetail } = await fetchDatasets({ url: '/datasets', params: { page: 1, ids: data.dataset_ids } })
+      if (data.doc_ids?.length > 0) {
+        const { data: dataSetsWithDetail } = await fetchDatasets({ url: '/datasets', params: { page: 1, ids: data.doc_ids } })
         //  avoid old data overwrite new data
         if (currUpdateTime < updateTime.current)
           return
@@ -27,7 +27,7 @@ const Node: FC<NodeProps<DocSelectNodeType>> = ({
         setSelectedDatasets([])
       }
     })()
-  }, [data.dataset_ids])
+  }, [data.doc_ids])
 
   if (!selectedDatasets.length)
     return null

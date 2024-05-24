@@ -8,8 +8,7 @@ const i18nPrefix = 'workflow'
 
 const nodeDefault: NodeDefault<DocSelectNodeType> = {
   defaultValue: {
-    query_variable_selector: [],
-    dataset_ids: [],
+    doc_ids: [],
     retrieval_mode: RETRIEVE_TYPE.oneWay,
   },
   getAvailablePrevNodes(isChatMode: boolean) {
@@ -24,8 +23,8 @@ const nodeDefault: NodeDefault<DocSelectNodeType> = {
   },
   checkValid(payload: DocSelectNodeType, t: any) {
     let errorMessages = ''
-    // if (!errorMessages && (!payload.dataset_ids || payload.dataset_ids.length === 0))
-    //   errorMessages = t(`${i18nPrefix}.errorMsg.fieldRequired`, { field: t(`${i18nPrefix}.nodes.docSelect.docs`) })
+    if (!errorMessages && (!payload.doc_ids || payload.doc_ids.length === 0))
+      errorMessages = t(`${i18nPrefix}.errorMsg.fieldRequired`, { field: t(`${i18nPrefix}.nodes.docSelect.docs`) })
 
     return {
       isValid: !errorMessages,

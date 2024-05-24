@@ -47,40 +47,15 @@ const Panel: FC<NodePanelProps<DocSelectNodeType>> = ({
     <div className='mt-2'>
       <div className='px-4 pb-4 space-y-4'>
         {/* {JSON.stringify(inputs, null, 2)} */}
-        <Field
-          title={t(`${i18nPrefix}.queryVariable`)}
-        >
-          <VarReferencePicker
-            nodeId={id}
-            readonly={readOnly}
-            isShowNodeName
-            value={inputs.query_variable_selector}
-            onChange={handleQueryVarChange}
-            filterVar={filterVar}
-          />
-        </Field>
 
         <Field
           title={t(`${i18nPrefix}.docs`)}
           operations={
             <div className='flex items-center space-x-1'>
-              <RetrievalConfig
-                payload={{
-                  retrieval_mode: inputs.retrieval_mode,
-                  multiple_retrieval_config: inputs.multiple_retrieval_config,
-                  single_retrieval_config: inputs.single_retrieval_config,
-                }}
-                onRetrievalModeChange={handleRetrievalModeChange}
-                onMultipleRetrievalConfigChange={handleMultipleRetrievalConfigChange}
-                singleRetrievalModelConfig={inputs.single_retrieval_config?.model}
-                onSingleRetrievalModelChange={handleModelChanged as any}
-                onSingleRetrievalModelParamsChange={handleCompletionParamsChange}
-                readonly={readOnly}
-              />
               {!readOnly && (<div className='w-px h-3 bg-gray-200'></div>)}
               {!readOnly && (
                 <AddDoc
-                  selectedIds={inputs.dataset_ids}
+                  selectedIds={inputs.doc_ids}
                   onChange={handleOnDatasetsChange}
                 />
               )}
