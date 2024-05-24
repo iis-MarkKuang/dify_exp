@@ -3,7 +3,7 @@ import { useBoolean } from 'ahooks'
 import type { FC } from 'react'
 import React, { useCallback } from 'react'
 import AddButton from '@/app/components/base/button/add-button'
-import SelectDataset from '@/app/components/app/configuration/dataset-config/select-dataset'
+import SelectDoc from '@/app/components/app/configuration/dataset-config/select-doc'
 import type { DataSet } from '@/models/datasets'
 
 type Props = {
@@ -28,7 +28,7 @@ const AddDataset: FC<Props> = ({
     <div>
       <AddButton onClick={showModal} />
       {isShowModal && (
-        <SelectDataset
+        <SelectDoc
           isShow={isShowModal}
           onClose={hideModal}
           selectedIds={selectedIds}
