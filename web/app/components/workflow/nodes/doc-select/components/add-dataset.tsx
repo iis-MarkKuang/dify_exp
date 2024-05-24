@@ -11,7 +11,7 @@ type Props = {
   onChange: (dataSets: DataSet[]) => void
 }
 
-const AddDataset: FC<Props> = ({
+const AddDoc: FC<Props> = ({
   selectedIds,
   onChange,
 }) => {
@@ -38,4 +38,4 @@ const AddDataset: FC<Props> = ({
     </div>
   )
 }
-export default React.memo(AddDataset)
+export default React.memo(AddDoc)

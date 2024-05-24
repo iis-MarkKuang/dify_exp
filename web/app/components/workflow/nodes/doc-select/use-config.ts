@@ -101,11 +101,6 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
   // set defaults models
   useEffect(() => {
     const inputs = inputRef.current
-    if (inputs.retrieval_mode === RETRIEVE_TYPE.multiWay && inputs.multiple_retrieval_config?.reranking_model?.provider)
-      return
-
-    if (inputs.retrieval_mode === RETRIEVE_TYPE.oneWay && inputs.single_retrieval_config?.model?.provider)
-      return
 
     const newInput = produce(inputs, (draft) => {
       if (currentProvider?.provider && currentModel?.model) {
