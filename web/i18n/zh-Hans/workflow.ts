@@ -96,6 +96,7 @@ const translation = {
     'answer': '直接回复',
     'llm': 'LLM',
     'knowledge-retrieval': '知识检索',
+    'doc-select': '文档搜索',
     'question-classifier': '问题分类器',
     'if-else': '条件分支',
     'code': '代码执行',
