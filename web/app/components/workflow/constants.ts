@@ -172,6 +172,15 @@ export const NODES_INITIAL_DATA = {
     variables: [],
     ...LLMDefault.defaultValue,
   },
+  [BlockEnum.DocSelect]: {
+    type: BlockEnum.DocSelect,
+    title: '',
+    desc: '',
+    query_variable_selector: [],
+    dataset_ids: [],
+    retrieval_mode: 'single',
+    ...DocSelectDefault.defaultValue,
+  },
   [BlockEnum.KnowledgeRetrieval]: {
     type: BlockEnum.KnowledgeRetrieval,
     title: '',
