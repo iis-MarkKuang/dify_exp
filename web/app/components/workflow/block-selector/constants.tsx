@@ -21,6 +21,11 @@ export const BLOCKS: Block[] = [
   },
   {
     classification: BlockClassificationEnum.Default,
+    type: BlockEnum.DocSelect,
+    title: 'Document Select',
+  },
+  {
+    classification: BlockClassificationEnum.Default,
     type: BlockEnum.End,
     title: 'End',
   },
