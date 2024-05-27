@@ -3,7 +3,6 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import useConfig from './use-config'
 import AddDoc from './components/add-dataset'
-import DatasetList from './components/dataset-list'
 import type { DocSelectNodeType } from './types'
 import Field from '@/app/components/workflow/nodes/_base/components/field'
 import Split from '@/app/components/workflow/nodes/_base/components/split'
@@ -11,7 +10,6 @@ import OutputVars, { VarItem } from '@/app/components/workflow/nodes/_base/compo
 import { InputVarType, type NodePanelProps } from '@/app/components/workflow/types'
 import BeforeRunForm from '@/app/components/workflow/nodes/_base/components/before-run-form'
 import ResultPanel from '@/app/components/workflow/run/result-panel'
-import DocumentList from "@/app/components/datasets/documents/list";
 
 const i18nPrefix = 'workflow.nodes.docSelect'
 

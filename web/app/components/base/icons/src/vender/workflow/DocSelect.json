@@ -15,7 +15,7 @@
 				"type": "element",
 				"name": "g",
 				"attributes": {
-					"id": "icons/knowledge-retrieval"
+					"id": "icons/doc-select"
 				},
 				"children": [
 					{
