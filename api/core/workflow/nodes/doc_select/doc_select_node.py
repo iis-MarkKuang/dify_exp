@@ -37,25 +37,13 @@ class DocSelectNode(BaseNode):
     def _run(self, variable_pool: VariablePool) -> NodeRunResult:
         node_data: DocSelectNodeData = cast(self._node_data_cls, self.node_data)
 
-        # extract variables
-        query = variable_pool.get_variable_value(variable_selector=node_data.query_variable_selector)
-        variables = {
-            'query': query
-        }
-        if not query:
-            return NodeRunResult(
-                status=WorkflowNodeExecutionStatus.FAILED,
-                inputs=variables,
-                error="Query is required."
-            )
         # retrieve knowledge
         try:
-            results = self._fetch_dataset_retriever(
-                node_data=node_data, query=query
-            )
+            results = node_data.doc_ids
             outputs = {
                 'result': results
             }
+            print(results)
             return NodeRunResult(
                 status=WorkflowNodeExecutionStatus.SUCCEEDED,
                 inputs=variables,
@@ -71,139 +59,12 @@ class DocSelectNode(BaseNode):
                 error=str(e)
             )
 
-    def _fetch_dataset_retriever(self, node_data: DocSelectNodeData, query: str) -> list[
-        dict[str, Any]]:
-        """
-        A dataset tool is a tool that can be used to retrieve information from a dataset
-        :param node_data: node data
-        :param query: query
-        """
-        tools = []
-        available_datasets = []
-        dataset_ids = node_data.dataset_ids
-        for dataset_id in dataset_ids:
-            # get dataset from dataset id
-            dataset = db.session.query(Dataset).filter(
-                Dataset.tenant_id == self.tenant_id,
-                Dataset.id == dataset_id
-            ).first()
-
-            # pass if dataset is not available
-            if not dataset:
-                continue
-
-            # pass if dataset is not available
-            if (dataset and dataset.available_document_count == 0
-                    and dataset.available_document_count == 0):
-                continue
-
-            available_datasets.append(dataset)
-        all_documents = []
-        dataset_retrieval = DatasetRetrieval()
-        if node_data.retrieval_mode == DatasetRetrieveConfigEntity.RetrieveStrategy.SINGLE.value:
-            # fetch model config
-            model_instance, model_config = self._fetch_model_config(node_data)
-            # check model is support tool calling
-            model_type_instance = model_config.provider_model_bundle.model_type_instance
-            model_type_instance = cast(LargeLanguageModel, model_type_instance)
-            # get model schema
-            model_schema = model_type_instance.get_model_schema(
-                model=model_config.model,
-                credentials=model_config.credentials
-            )
-
-            if model_schema:
-                planning_strategy = PlanningStrategy.REACT_ROUTER
-                features = model_schema.features
-                if features:
-                    if ModelFeature.TOOL_CALL in features \
-                            or ModelFeature.MULTI_TOOL_CALL in features:
-                        planning_strategy = PlanningStrategy.ROUTER
-                all_documents = dataset_retrieval.single_retrieve(
-                    available_datasets=available_datasets,
-                    tenant_id=self.tenant_id,
-                    user_id=self.user_id,
-                    app_id=self.app_id,
-                    user_from=self.user_from.value,
-                    query=query,
-                    model_config=model_config,
-                    model_instance=model_instance,
-                    planning_strategy=planning_strategy
-                )
-        elif node_data.retrieval_mode == DatasetRetrieveConfigEntity.RetrieveStrategy.MULTIPLE.value:
-            all_documents = dataset_retrieval.multiple_retrieve(self.app_id, self.tenant_id, self.user_id,
-                                                                self.user_from.value,
-                                                                available_datasets, query,
-                                                                node_data.multiple_retrieval_config.top_k,
-                                                                node_data.multiple_retrieval_config.score_threshold,
-                                                                node_data.multiple_retrieval_config.reranking_model.provider,
-                                                                node_data.multiple_retrieval_config.reranking_model.model)
-
-        context_list = []
-        if all_documents:
-            document_score_list = {}
-            for item in all_documents:
-                if 'score' in item.metadata and item.metadata['score']:
-                    document_score_list[item.metadata['doc_id']] = item.metadata['score']
-
-            index_node_ids = [document.metadata['doc_id'] for document in all_documents]
-            segments = DocumentSegment.query.filter(
-                DocumentSegment.dataset_id.in_(dataset_ids),
-                DocumentSegment.completed_at.isnot(None),
-                DocumentSegment.status == 'completed',
-                DocumentSegment.enabled == True,
-                DocumentSegment.index_node_id.in_(index_node_ids)
-            ).all()
-            if segments:
-                index_node_id_to_position = {id: position for position, id in enumerate(index_node_ids)}
-                sorted_segments = sorted(segments,
-                                         key=lambda segment: index_node_id_to_position.get(segment.index_node_id,
-                                                                                           float('inf')))
-
-                for segment in sorted_segments:
-                    dataset = Dataset.query.filter_by(
-                        id=segment.dataset_id
-                    ).first()
-                    document = Document.query.filter(Document.id == segment.document_id,
-                                                     Document.enabled == True,
-                                                     Document.archived == False,
-                                                     ).first()
-                    resource_number = 1
-                    if dataset and document:
-
-                        source = {
-                            'metadata': {
-                                '_source': 'knowledge',
-                                'position': resource_number,
-                                'dataset_id': dataset.id,
-                                'dataset_name': dataset.name,
-                                'document_id': document.id,
-                                'document_name': document.name,
-                                'document_data_source_type': document.data_source_type,
-                                'segment_id': segment.id,
-                                'retriever_from': 'workflow',
-                                'score': document_score_list.get(segment.index_node_id, None),
-                                'segment_hit_count': segment.hit_count,
-                                'segment_word_count': segment.word_count,
-                                'segment_position': segment.position,
-                                'segment_index_node_hash': segment.index_node_hash,
-                            },
-                            'title': document.name
-                        }
-                        if segment.answer:
-                            source['content'] = f'question:{segment.content} \nanswer:{segment.answer}'
-                        else:
-                            source['content'] = segment.content
-                        context_list.append(source)
-                        resource_number += 1
-        return context_list
 
     @classmethod
     def _extract_variable_selector_to_variable_mapping(cls, node_data: BaseNodeData) -> dict[str, list[str]]:
         node_data = node_data
         node_data = cast(cls._node_data_cls, node_data)
         variable_mapping = {}
-        variable_mapping['query'] = node_data.query_variable_selector
         return variable_mapping
 
     def _fetch_model_config(self, node_data: DocSelectNodeData) -> tuple[

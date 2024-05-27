@@ -45,4 +45,3 @@ class DocSelectNodeData(BaseNodeData):
     """
     type: str = 'knowledge-retrieval'
     doc_ids: list[str]
-    single_retrieval_config: Optional[SingleRetrievalConfig]
