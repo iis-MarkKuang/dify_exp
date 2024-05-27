@@ -176,9 +176,7 @@ export const NODES_INITIAL_DATA = {
     type: BlockEnum.DocSelect,
     title: '',
     desc: '',
-    query_variable_selector: [],
-    dataset_ids: [],
-    retrieval_mode: 'single',
+    doc_ids: [],
     ...DocSelectDefault.defaultValue,
   },
   [BlockEnum.KnowledgeRetrieval]: {

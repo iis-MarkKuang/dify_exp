@@ -36,7 +36,6 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
     doSetInputs(newInputs)
   }, [doSetInputs])
 
-  console.log(inputs);
   const inputRef = useRef(inputs)
   useEffect(() => {
     inputRef.current = inputs
