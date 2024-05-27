@@ -117,19 +117,6 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
         }
       }
 
-      const multipleRetrievalConfig = draft.multiple_retrieval_config
-      draft.multiple_retrieval_config = {
-        top_k: multipleRetrievalConfig?.top_k || DATASET_DEFAULT.top_k,
-        score_threshold: multipleRetrievalConfig?.score_threshold,
-        reranking_model: payload.retrieval_mode === RETRIEVE_TYPE.oneWay
-          ? undefined
-          : (!multipleRetrievalConfig?.reranking_model?.provider
-            ? {
-              provider: rerankDefaultModel?.provider?.provider || '',
-              model: rerankDefaultModel?.model || '',
-            }
-            : multipleRetrievalConfig?.reranking_model),
-      }
     })
     setInputs(newInput)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -167,13 +154,6 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
     setInputs(newInputs)
   }, [currentModel?.model, currentModel?.model_properties?.mode, currentProvider?.provider, inputs, rerankDefaultModel?.model, rerankDefaultModel?.provider?.provider, setInputs])
 
-  const handleMultipleRetrievalConfigChange = useCallback((newConfig: MultipleRetrievalConfig) => {
-    const newInputs = produce(inputs, (draft) => {
-      draft.multiple_retrieval_config = newConfig
-    })
-    setInputs(newInputs)
-  }, [inputs, setInputs])
-
   // datasets
   const [selectedDatasets, setSelectedDatasets] = useState<Document[]>([])
   useEffect(() => {
@@ -185,7 +165,7 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
         setSelectedDatasets(dataSetsWithDetail)
       }
       const newInputs = produce(inputs, (draft) => {
-        draft.dataset_ids = datasetIds
+        draft.doc_ids = datasetIds
       })
       setInputs(newInputs)
     })()
@@ -208,7 +188,7 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
 
   const handleOnDatasetsChange = useCallback((newDatasets: Document[]) => {
     const newInputs = produce(inputs, (draft) => {
-      draft.dataset_ids = newDatasets.map(d => d.id)
+      draft.doc_ids = newDatasets.map(d => d.id)
     })
     setInputs(newInputs)
     setSelectedDatasets(newDatasets)
