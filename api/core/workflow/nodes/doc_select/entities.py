@@ -44,8 +44,5 @@ class DocSelectNodeData(BaseNodeData):
     Knowledge retrieval Node Data.
     """
     type: str = 'knowledge-retrieval'
-    query_variable_selector: list[str]
-    dataset_ids: list[str]
-    retrieval_mode: Literal['single', 'multiple']
-    multiple_retrieval_config: Optional[MultipleRetrievalConfig]
+    doc_ids: list[str]
     single_retrieval_config: Optional[SingleRetrievalConfig]
