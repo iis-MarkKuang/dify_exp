@@ -32,7 +32,7 @@ const DatasetItem: FC<Props> = ({
     setFalse: hideSettingsModal,
   }] = useBoolean(false)
 
-  const handleSave = useCallback((newDataset: DataSet) => {
+  const handleSave = useCallback((newDataset: Document) => {
     onChange(newDataset)
     hideSettingsModal()
   }, [hideSettingsModal, onChange])

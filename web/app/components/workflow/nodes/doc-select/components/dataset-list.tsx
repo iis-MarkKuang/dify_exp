@@ -28,7 +28,7 @@ const DocumentsV2List: FC<Props> = ({
   }, [list, onChange])
 
   const handleChange = useCallback((index: number) => {
-    return (value: DataSet) => {
+    return (value: Document) => {
       const newList = produce(list, (draft) => {
         draft[index] = value
       })
