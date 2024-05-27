@@ -297,7 +297,7 @@ export const getNodeUsedVars = (node: Node): ValueSelector[] => {
       break
     }
     case BlockEnum.DocSelect: {
-      res = [(data as DocSelectNodeType).query_variable_selector]
+      res = [(data as DocSelectNodeType).doc_ids]
       break
     }
     case BlockEnum.IfElse: {
