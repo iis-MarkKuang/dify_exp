@@ -76,31 +76,37 @@ const Panel: FC<NodePanelProps<DocSelectNodeType>> = ({
               type='Array[Object]'
               description={t(`${i18nPrefix}.outputVars.output`)}
               subItems={[
+                // {
+                //   name: 'content',
+                //   type: 'string',
+                //   description: t(`${i18nPrefix}.outputVars.content`),
+                // },
+                // // url, title, link like bing search reference result: link, link page title, link page icon
+                // {
+                //   name: 'title',
+                //   type: 'string',
+                //   description: t(`${i18nPrefix}.outputVars.title`),
+                // },
+                // {
+                //   name: 'url',
+                //   type: 'string',
+                //   description: t(`${i18nPrefix}.outputVars.url`),
+                // },
+                // {
+                //   name: 'icon',
+                //   type: 'string',
+                //   description: t(`${i18nPrefix}.outputVars.icon`),
+                // },
+                // {
+                //   name: 'metadata',
+                //   type: 'object',
+                //   description: t(`${i18nPrefix}.outputVars.metadata`),
+                // },
+                //
                 {
-                  name: 'content',
-                  type: 'string',
-                  description: t(`${i18nPrefix}.outputVars.content`),
-                },
-                // url, title, link like bing search reference result: link, link page title, link page icon
-                {
-                  name: 'title',
-                  type: 'string',
-                  description: t(`${i18nPrefix}.outputVars.title`),
-                },
-                {
-                  name: 'url',
-                  type: 'string',
-                  description: t(`${i18nPrefix}.outputVars.url`),
-                },
-                {
-                  name: 'icon',
-                  type: 'string',
-                  description: t(`${i18nPrefix}.outputVars.icon`),
-                },
-                {
-                  name: 'metadata',
+                  name: 'files',
                   type: 'object',
-                  description: t(`${i18nPrefix}.outputVars.metadata`),
+                  description: t(`${i18nPrefix}.outputVars.files`),
                 },
               ]}
             />
@@ -111,18 +117,18 @@ const Panel: FC<NodePanelProps<DocSelectNodeType>> = ({
           <BeforeRunForm
             nodeName={inputs.title}
             onHide={hideSingleRun}
-            forms={[
-              {
-                inputs: [{
-                  label: t(`${i18nPrefix}.queryVariable`)!,
-                  variable: 'query',
-                  type: InputVarType.paragraph,
-                  required: true,
-                }],
-                values: { query },
-                onChange: keyValue => setQuery((keyValue as any).query),
-              },
-            ]}
+            // forms={[
+            //   {
+            //     inputs: [{
+            //       label: t(`${i18nPrefix}.queryVariable`)!,
+            //       variable: 'query',
+            //       type: InputVarType.paragraph,
+            //       required: true,
+            //     }],
+            //     values: { query },
+            //     onChange: keyValue => setQuery((keyValue as any).query),
+            //   },
+            // ]}
             runningStatus={runningStatus}
             onRun={handleRun}
             onStop={handleStop}
