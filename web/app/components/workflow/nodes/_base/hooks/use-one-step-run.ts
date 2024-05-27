@@ -38,7 +38,7 @@ const { checkValid: checkVariableAssignerValid } = VariableAssigner
 const checkValidFns: Record<BlockEnum, Function> = {
   [BlockEnum.LLM]: checkLLMValid,
   [BlockEnum.KnowledgeRetrieval]: checkKnowledgeRetrievalValid,
-  [BlockEnum.DocSelect]: checkDocSelectValid(),
+  [BlockEnum.DocSelect]: checkDocSelectValid,
   [BlockEnum.IfElse]: checkIfElseValid,
   [BlockEnum.Code]: checkCodeValid,
   [BlockEnum.TemplateTransform]: checkTemplateTransformValid,
