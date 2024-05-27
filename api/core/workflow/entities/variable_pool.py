@@ -60,6 +60,7 @@ class VariablePool:
         :param target_value_type: target value type
         :return:
         """
+        print("val selector")
         print(variable_selector)
         if len(variable_selector) < 2:
             raise ValueError('Invalid value selector')
