@@ -39,11 +39,29 @@ class DocSelectNode(BaseNode):
         print(node_data)
         # retrieve knowledge
         try:
-            results = node_data.doc_ids
+            doc_data = []
+            for doc_id in node_data.doc_ids:
+                doc = Document.query.filter_by(
+                    id=doc_id
+                ).first()
+                if doc:
+                    file_info = json.loads(doc.data_source_info)
+                    file_id = file_info['upload_file_id']
+                    file = UploadFile.query.filter_by(
+                        id=file_id
+                    )
+                    doc_data.append({
+                        'id': doc.id,
+                        'name': doc.name,
+                        'key': file.key if file else ''
+                    })
+            results = doc_data
+
+            print(results)
+
             outputs = {
                 'result': results
             }
-            print(results)
             return NodeRunResult(
                 status=WorkflowNodeExecutionStatus.SUCCEEDED,
                 inputs=node_data,
