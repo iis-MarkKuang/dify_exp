@@ -22,8 +22,8 @@ const nodeDefault: NodeDefault<DocSelectNodeType> = {
   checkValid(payload: DocSelectNodeType, t: any) {
     let errorMessages = ''
       // todo cancel workaround of check payload logics.
-    // if (!errorMessages && (!payload.doc_ids || payload.doc_ids.length === 0))
-    //   errorMessages = t(`${i18nPrefix}.errorMsg.fieldRequired`, { field: t(`${i18nPrefix}.nodes.docSelect.docs`) })
+    if (!errorMessages && (!payload.doc_ids || payload.doc_ids.length === 0))
+      errorMessages = t(`${i18nPrefix}.errorMsg.fieldRequired`, { field: t(`${i18nPrefix}.nodes.docSelect.docs`) })
 
     return {
       isValid: !errorMessages,
