@@ -230,7 +230,6 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
     handleQueryVarChange,
     filterVar,
     handleRetrievalModeChange,
-    handleMultipleRetrievalConfigChange,
     handleModelChanged,
     handleCompletionParamsChange,
     selectedDatasets,
