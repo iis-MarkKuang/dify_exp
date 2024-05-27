@@ -7,7 +7,7 @@ import {
   useIsChatMode, useNodesReadOnly,
   useWorkflow,
 } from '../../hooks'
-import type { DocSelectNodeType, MultipleRetrievalConfig } from './types'
+import type { DocSelectNodeType } from './types'
 import { RETRIEVE_TYPE } from '@/types/app'
 import { DATASET_DEFAULT } from '@/config'
 import type {Document} from '@/models/datasets'
