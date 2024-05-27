@@ -36,7 +36,7 @@ class DocSelectNode(BaseNode):
 
     def _run(self, variable_pool: VariablePool) -> NodeRunResult:
         node_data: DocSelectNodeData = cast(self._node_data_cls, self.node_data)
-
+        print(node_data)
         # retrieve knowledge
         try:
             results = node_data.doc_ids
@@ -46,7 +46,7 @@ class DocSelectNode(BaseNode):
             print(results)
             return NodeRunResult(
                 status=WorkflowNodeExecutionStatus.SUCCEEDED,
-                inputs=variables,
+                inputs=node_data,
                 process_data=None,
                 outputs=outputs
             )
@@ -55,7 +55,7 @@ class DocSelectNode(BaseNode):
 
             return NodeRunResult(
                 status=WorkflowNodeExecutionStatus.FAILED,
-                inputs=variables,
+                inputs=node_data,
                 error=str(e)
             )
 
