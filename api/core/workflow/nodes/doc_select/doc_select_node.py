@@ -52,7 +52,9 @@ class DocSelectNode(BaseNode):
                     file_id = file_info['upload_file_id']
                     file = UploadFile.query.filter_by(
                         id=file_id
-                    )
+                    ).first()
+                    if not file:
+                        continue
                     doc_data.append({
                         'id': doc.id,
                         'name': doc.name,
