@@ -410,9 +410,9 @@ export const updateNodeVars = (oldNode: Node, oldVarSelector: ValueSelector, new
         break
       }
       case BlockEnum.DocSelect: {
-        const payload = data as DocSelectNodeType
-        if (payload.query_variable_selector.join('.') === oldVarSelector.join('.'))
-          payload.query_variable_selector = newVarSelector
+        // const payload = data as DocSelectNodeType
+        // if (payload.query_variable_selector.join('.') === oldVarSelector.join('.'))
+        //   payload.query_variable_selector = newVarSelector
         break
       }
       case BlockEnum.IfElse: {
