@@ -105,6 +105,7 @@ class FileService:
         upload_file = UploadFile(
             tenant_id=current_user.current_tenant_id,
             storage_type=config['STORAGE_TYPE'],
+            file_uuid=file_uuid,
             key=file_key,
             name=text_name + '.txt',
             size=len(text),

@@ -1104,6 +1104,7 @@ class UploadFile(db.Model):
 
     id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
     tenant_id = db.Column(StringUUID, nullable=False)
+    file_uuid = db.Column(StringUUID, nullable=True)
     storage_type = db.Column(db.String(255), nullable=False)
     key = db.Column(db.String(255), nullable=False)
     name = db.Column(db.String(255), nullable=False)
