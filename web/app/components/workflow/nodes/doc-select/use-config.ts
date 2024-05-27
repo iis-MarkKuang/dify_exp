@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import produce from 'immer'
 import { isEqual } from 'lodash-es'
-import type { ValueSelector, Var } from '../../types'
+import type { Var } from '../../types'
 import { BlockEnum, VarType } from '../../types'
 import {
   useIsChatMode, useNodesReadOnly,
@@ -40,13 +40,6 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
   useEffect(() => {
     inputRef.current = inputs
   }, [inputs])
-
-  const handleQueryVarChange = useCallback((newVar: ValueSelector | string) => {
-    const newInputs = produce(inputs, (draft) => {
-      draft.query_variable_selector = newVar as ValueSelector
-    })
-    setInputs(newInputs)
-  }, [inputs, setInputs])
 
   const {
     currentProvider,
@@ -175,18 +168,6 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
   }, [])
 
 
-
-  useEffect(() => {
-    let query_variable_selector: ValueSelector = inputs.query_variable_selector
-    if (isChatMode && inputs.query_variable_selector.length === 0 && startNodeId)
-      query_variable_selector = [startNodeId, 'sys.query']
-
-    setInputs({
-      ...inputs,
-      query_variable_selector,
-    })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const handleOnDatasetsChange = useCallback((newDatasets: Document[]) => {
     const newInputs = produce(inputs, (draft) => {
