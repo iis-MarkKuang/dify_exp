@@ -62,6 +62,7 @@ class VariablePool:
         """
         print("val selector")
         print(variable_selector)
+        print(self.user_inputs)
         if len(variable_selector) < 2:
             raise ValueError('Invalid value selector')
 
