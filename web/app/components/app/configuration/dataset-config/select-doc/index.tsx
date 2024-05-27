@@ -127,12 +127,20 @@ const SelectDoc: FC<ISelectDocProps> = ({
                   toggleSelect(item)
                 }}
               >
-
-                <div className={cn('shrink-0 flex text-xs text-gray-500 overflow-hidden whitespace-nowrap', 'opacity-50')}>
+                <div className='mr-1 flex items-center'>
+                  <div className={cn('mr-2', 'opacity-50')}>
+                    <TypeIcon type="upload_file" size='md'/>
+                  </div>
+                  <div
+                    className={cn('max-w-[200px] text-[13px] font-medium text-gray-800 overflow-hidden text-ellipsis whitespace-nowrap', 'opacity-50 !max-w-[120px]')}>{item.name}</div>
+                </div>
+                <div
+                  className={cn('shrink-0 flex text-xs text-gray-500 overflow-hidden whitespace-nowrap', 'opacity-50')}>
                   {/*<span className='max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap'>{formatNumber(item.word_count)}</span>*/}
                   {/*{t('appDebug.feature.dataSet.words')}*/}
                   <span className='px-0.5'>·</span>
-                  <span className='max-w-[100px] min-w-[8px] overflow-hidden text-ellipsis whitespace-nowrap'>{formatNumber(item.document_count)} </span>
+                  <span
+                    className='max-w-[100px] min-w-[8px] overflow-hidden text-ellipsis whitespace-nowrap'>{formatNumber(item.document_count)} </span>
                   {t('appDebug.feature.dataSet.textBlocks')}
                 </div>
               </div>
@@ -147,7 +155,8 @@ const SelectDoc: FC<ISelectDocProps> = ({
           </div>
           <div className='flex space-x-2'>
             <Button className='!w-24 !h-9' onClick={onClose}>{t('common.operation.cancel')}</Button>
-            <Button className='!w-24 !h-9' type='primary' onClick={handleSelect} disabled={hasNoData}>{t('common.operation.add')}</Button>
+            <Button className='!w-24 !h-9' type='primary' onClick={handleSelect}
+                    disabled={hasNoData}>{t('common.operation.add')}</Button>
           </div>
         </div>
       )}
