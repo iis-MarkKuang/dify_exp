@@ -158,7 +158,9 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
   const [selectedDatasets, setSelectedDatasets] = useState<Document[]>([])
   useEffect(() => {
     (async () => {
-      const inputs = inputRef.current
+      const inputs = inputRef.current;
+      console.log(inputRef);
+      console.log(inputs);
       const datasetIds = inputs.doc_ids
       if (datasetIds?.length > 0) {
         const { data: dataSetsWithDetail } = await fetchDocs({ url: '/datasets/documents', params: { page: 1, ids: datasetIds } })
