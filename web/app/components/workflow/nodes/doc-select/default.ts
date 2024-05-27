@@ -25,6 +25,7 @@ const nodeDefault: NodeDefault<DocSelectNodeType> = {
     if (!errorMessages && (!payload.doc_ids || payload.doc_ids.length === 0))
       errorMessages = t(`${i18nPrefix}.errorMsg.fieldRequired`, { field: t(`${i18nPrefix}.nodes.docSelect.docs`) })
 
+    console.log(errorMessages);
     return {
       isValid: !errorMessages,
       errorMessage: errorMessages,
