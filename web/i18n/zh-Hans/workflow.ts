@@ -223,6 +223,7 @@ const translation = {
       queryVariable: '查询变量',
       docs: '文件',
       outputVars: {
+        names: '文件名',
         files: '选中的文件'
       },
     },

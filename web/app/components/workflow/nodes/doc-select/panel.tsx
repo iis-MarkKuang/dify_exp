@@ -98,12 +98,11 @@ const Panel: FC<NodePanelProps<DocSelectNodeType>> = ({
                 //   type: 'string',
                 //   description: t(`${i18nPrefix}.outputVars.icon`),
                 // },
-                // {
-                //   name: 'metadata',
-                //   type: 'object',
-                //   description: t(`${i18nPrefix}.outputVars.metadata`),
-                // },
-                //
+                {
+                  name: 'names',
+                  type: 'object',
+                  description: t(`${i18nPrefix}.outputVars.names`),
+                },
                 {
                   name: 'files',
                   type: 'object',
