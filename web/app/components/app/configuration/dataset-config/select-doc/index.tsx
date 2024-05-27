@@ -9,7 +9,7 @@ import produce from 'immer'
 import TypeIcon from '../type-icon'
 import s from './style.module.css'
 import Modal from '@/app/components/base/modal'
-import type { DataSet } from '@/models/datasets'
+import type {DataSet, Document} from '@/models/datasets'
 import Button from '@/app/components/base/button'
 import { fetchDatasets } from '@/service/datasets'
 import Loading from '@/app/components/base/loading'
@@ -29,9 +29,9 @@ const SelectDoc: FC<ISelectDocProps> = ({
   onSelect,
 }) => {
   const { t } = useTranslation()
-  const [selected, setSelected] = React.useState<DataSet[]>(selectedIds.map(id => ({ id }) as any))
+  const [selected, setSelected] = React.useState<Document[]>(selectedIds.map(id => ({ id }) as any))
   const [loaded, setLoaded] = React.useState(false)
-  const [documents, setDocuments] = React.useState<DataSet[] | null>(null)
+  const [documents, setDocuments] = React.useState<Document[] | null>(null)
   const hasNoData = !documents || documents?.length === 0
   const canSelectMulti = true
 

@@ -4,10 +4,10 @@ import React, { useCallback } from 'react'
 import produce from 'immer'
 import { useTranslation } from 'react-i18next'
 import Item from './dataset-item'
-import type { DataSet } from '@/models/datasets'
+import type {DataSet, Document} from '@/models/datasets'
 type Props = {
-  list: DataSet[]
-  onChange: (list: DataSet[]) => void
+  list: Document[]
+  onChange: (list: Document[]) => void
   readonly?: boolean
 }
 
