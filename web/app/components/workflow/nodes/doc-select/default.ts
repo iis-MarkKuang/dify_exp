@@ -3,13 +3,11 @@ import type { NodeDefault } from '../../types'
 import type { DocSelectNodeType } from './types'
 import { ALL_CHAT_AVAILABLE_BLOCKS, ALL_COMPLETION_AVAILABLE_BLOCKS } from '@/app/components/workflow/constants'
 
-import { RETRIEVE_TYPE } from '@/types/app'
 const i18nPrefix = 'workflow'
 
 const nodeDefault: NodeDefault<DocSelectNodeType> = {
   defaultValue: {
-    doc_ids: [],
-    retrieval_mode: RETRIEVE_TYPE.oneWay,
+    doc_ids: []
   },
   getAvailablePrevNodes(isChatMode: boolean) {
     const nodes = isChatMode
