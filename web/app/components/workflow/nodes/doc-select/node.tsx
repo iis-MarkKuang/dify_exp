@@ -4,12 +4,12 @@ import type { DocSelectNodeType } from './types'
 import { Folder } from '@/app/components/base/icons/src/vender/solid/files'
 import type { NodeProps } from '@/app/components/workflow/types'
 import { fetchDatasets } from '@/service/datasets'
-import type { DataSet } from '@/models/datasets'
+import type {DataSet, Document} from '@/models/datasets'
 
 const Node: FC<NodeProps<DocSelectNodeType>> = ({
   data,
 }) => {
-  const [selectedDatasets, setSelectedDatasets] = useState<DataSet[]>([])
+  const [selectedDatasets, setSelectedDatasets] = useState<Document[]>([])
   const updateTime = useRef(0)
   useEffect(() => {
     (async () => {

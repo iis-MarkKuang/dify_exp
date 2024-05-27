@@ -2,7 +2,7 @@
 import type { FC } from 'react'
 import React, { useCallback } from 'react'
 import { useBoolean } from 'ahooks'
-import type { DataSet } from '@/models/datasets'
+import type {DataSet, Document} from '@/models/datasets'
 import { DataSourceType } from '@/models/datasets'
 import { Settings01, Trash03 } from '@/app/components/base/icons/src/vender/line/general'
 import FileIcon from '@/app/components/base/file-icon'
@@ -12,9 +12,9 @@ import Drawer from '@/app/components/base/drawer'
 import useBreakpoints, { MediaType } from '@/hooks/use-breakpoints'
 
 type Props = {
-  payload: DataSet
+  payload: Document
   onRemove: () => void
-  onChange: (dataSet: DataSet) => void
+  onChange: (dataSet: Document) => void
   readonly?: boolean
 }
 
