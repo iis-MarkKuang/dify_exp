@@ -21,7 +21,7 @@ const nodeDefault: NodeDefault<DocSelectNodeType> = {
   },
   checkValid(payload: DocSelectNodeType, t: any) {
     let errorMessages = ''
-    if (!errorMessages && (!payload.doc_ids || payload.doc_ids.length === 0))
+    if (!errorMessages && (!payload || !payload.doc_ids || payload.doc_ids.length === 0))
       errorMessages = t(`${i18nPrefix}.errorMsg.fieldRequired`, { field: t(`${i18nPrefix}.nodes.docSelect.docs`) })
 
     return {
