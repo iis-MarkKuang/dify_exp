@@ -16,6 +16,7 @@ from core.workflow.nodes.base_node import BaseNode
 from core.workflow.nodes.doc_select.entities import DocSelectNodeData
 from extensions.ext_database import db
 from models.dataset import Dataset, Document, DocumentSegment
+from models.model import UploadFile
 from models.workflow import WorkflowNodeExecutionStatus
 
 import json
