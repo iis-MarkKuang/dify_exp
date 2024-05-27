@@ -373,7 +373,8 @@ export type Document = {
   id: string
   data_source_type: string
   name: string
-  doc_type: DocType
+  doc_type: DocType,
+  key: string
 }
 
 export type HitTestingRecordsResponse = {

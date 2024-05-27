@@ -108,6 +108,11 @@ const Panel: FC<NodePanelProps<DocSelectNodeType>> = ({
                   type: 'object',
                   description: t(`${i18nPrefix}.outputVars.files`),
                 },
+                {
+                  name: 'keys',
+                  type: 'object',
+                  description: t(`${i18nPrefix}.outputVars.keys`),
+                },
               ]}
             />
 
