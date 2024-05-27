@@ -210,7 +210,6 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
   return {
     readOnly,
     inputs,
-    handleQueryVarChange,
     filterVar,
     handleRetrievalModeChange,
     handleModelChanged,
