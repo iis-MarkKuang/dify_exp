@@ -23,6 +23,8 @@ const nodeDefault: NodeDefault<KnowledgeRetrievalNodeType> = {
     return nodes
   },
   checkValid(payload: KnowledgeRetrievalNodeType, t: any) {
+    console.log(payload);
+
     let errorMessages = ''
     if (!errorMessages && (!payload.query_variable_selector || payload.query_variable_selector.length === 0))
       errorMessages = t(`${i18nPrefix}.errorMsg.fieldRequired`, { field: t(`${i18nPrefix}.nodes.knowledgeRetrieval.queryVariable`) })
