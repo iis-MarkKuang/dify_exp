@@ -11,6 +11,7 @@ import OutputVars, { VarItem } from '@/app/components/workflow/nodes/_base/compo
 import { InputVarType, type NodePanelProps } from '@/app/components/workflow/types'
 import BeforeRunForm from '@/app/components/workflow/nodes/_base/components/before-run-form'
 import ResultPanel from '@/app/components/workflow/run/result-panel'
+import DocumentList from "@/app/components/datasets/documents/list";
 
 const i18nPrefix = 'workflow.nodes.docSelect'
 
@@ -60,7 +61,7 @@ const Panel: FC<NodePanelProps<DocSelectNodeType>> = ({
             </div>
           }
         >
-          <DatasetList
+          <DocumentsV2List
             list={selectedDatasets}
             onChange={handleOnDatasetsChange}
             readonly={readOnly}

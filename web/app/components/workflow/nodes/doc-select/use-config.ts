@@ -10,7 +10,7 @@ import {
 import type { DocSelectNodeType, MultipleRetrievalConfig } from './types'
 import { RETRIEVE_TYPE } from '@/types/app'
 import { DATASET_DEFAULT } from '@/config'
-import type { DataSet } from '@/models/datasets'
+import type {Document} from '@/models/datasets'
 import { fetchDocs } from '@/service/datasets'
 import useNodeCrud from '@/app/components/workflow/nodes/_base/hooks/use-node-crud'
 import useOneStepRun from '@/app/components/workflow/nodes/_base/hooks/use-one-step-run'
@@ -175,13 +175,13 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
   }, [inputs, setInputs])
 
   // datasets
-  const [selectedDatasets, setSelectedDatasets] = useState<DataSet[]>([])
+  const [selectedDatasets, setSelectedDatasets] = useState<Document[]>([])
   useEffect(() => {
     (async () => {
       const inputs = inputRef.current
       const datasetIds = inputs.doc_ids
       if (datasetIds?.length > 0) {
-        const { data: dataSetsWithDetail } = await fetchDocs({ url: '/documents', params: { page: 1, ids: datasetIds } })
+        const { data: dataSetsWithDetail } = await fetchDocs({ url: '/datasets/documents', params: { page: 1, ids: datasetIds } })
         setSelectedDatasets(dataSetsWithDetail)
       }
       const newInputs = produce(inputs, (draft) => {
@@ -191,6 +191,8 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
     })()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+
 
   useEffect(() => {
     let query_variable_selector: ValueSelector = inputs.query_variable_selector
@@ -204,7 +206,7 @@ const useConfig = (id: string, payload: DocSelectNodeType) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleOnDatasetsChange = useCallback((newDatasets: DataSet[]) => {
+  const handleOnDatasetsChange = useCallback((newDatasets: Document[]) => {
     const newInputs = produce(inputs, (draft) => {
       draft.dataset_ids = newDatasets.map(d => d.id)
     })

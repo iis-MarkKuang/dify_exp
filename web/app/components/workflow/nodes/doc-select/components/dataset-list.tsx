@@ -11,7 +11,7 @@ type Props = {
   readonly?: boolean
 }
 
-const DatasetList: FC<Props> = ({
+const DocumentsV2List: FC<Props> = ({
   list,
   onChange,
   readonly,
@@ -59,4 +59,4 @@ const DatasetList: FC<Props> = ({
     </div>
   )
 }
-export default React.memo(DatasetList)
+export default React.memo(DocumentsV2List)
