@@ -20,10 +20,7 @@ const nodeDefault: NodeDefault<DocSelectNodeType> = {
     return nodes
   },
   checkValid(payload: DocSelectNodeType, t: any) {
-    console.log(payload);
     let errorMessages = ''
-    // if (!errorMessages && (!payload.doc_ids || payload.doc_ids.length === 0))
-    //   errorMessages = t(`${i18nPrefix}.errorMsg.fieldRequired`, { field: t(`${i18nPrefix}.nodes.docSelect.docs`) })
 
     return {
       isValid: !errorMessages,
