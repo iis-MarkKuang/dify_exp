@@ -102,6 +102,9 @@ const translation = {
       add: '添加标注',
       edit: '编辑标注',
     },
+    doc: {
+      selectTitle: '选择文档',
+    },
     dataSet: {
       title: '上下文',
       noData: '您可以导入知识库作为上下文',

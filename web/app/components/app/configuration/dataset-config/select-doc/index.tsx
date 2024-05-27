@@ -95,7 +95,7 @@ const SelectDoc: FC<ISelectDocProps> = ({
       onClose={onClose}
       className='w-[400px]'
       wrapperClassName='!z-[101]'
-      title={t('appDebug.feature.dataSet.selectTitle')}
+      title={t('appDebug.feature.doc.selectTitle')}
     >
       {!loaded && (
         <div className='flex h-[200px]'>
@@ -103,6 +103,7 @@ const SelectDoc: FC<ISelectDocProps> = ({
         </div>
       )}
 
+      {/*TODO Change to doc create*/}
       {(loaded && hasNoData) && (
         <div className='flex items-center justify-center mt-6 rounded-lg space-x-1  h-[128px] text-[13px] border'
           style={{
@@ -123,24 +124,13 @@ const SelectDoc: FC<ISelectDocProps> = ({
                 key={item.id}
                 className={cn(s.item, selected.some(i => i.id === item.id) && s.selected, 'flex justify-between items-center h-10 px-2 rounded-lg bg-white border border-gray-200  cursor-pointer', !item.embedding_available && s.disabled)}
                 onClick={() => {
-                  if (!item.embedding_available)
-                    return
                   toggleSelect(item)
                 }}
               >
-                <div className='mr-1 flex items-center'>
-                  <div className={cn('mr-2', !item.embedding_available && 'opacity-50')}>
-                    <TypeIcon type="upload_file" size='md' />
-                  </div>
-                  <div className={cn('max-w-[200px] text-[13px] font-medium text-gray-800 overflow-hidden text-ellipsis whitespace-nowrap', !item.embedding_available && 'opacity-50 !max-w-[120px]')}>{item.name}</div>
-                  {!item.embedding_available && (
-                    <span className='ml-1 shrink-0 px-1 border boder-gray-200 rounded-md text-gray-500 text-xs font-normal leading-[18px]'>{t('dataset.unavailable')}</span>
-                  )}
-                </div>
 
-                <div className={cn('shrink-0 flex text-xs text-gray-500 overflow-hidden whitespace-nowrap', !item.embedding_available && 'opacity-50')}>
-                  <span className='max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap'>{formatNumber(item.word_count)}</span>
-                  {t('appDebug.feature.dataSet.words')}
+                <div className={cn('shrink-0 flex text-xs text-gray-500 overflow-hidden whitespace-nowrap', 'opacity-50')}>
+                  {/*<span className='max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap'>{formatNumber(item.word_count)}</span>*/}
+                  {/*{t('appDebug.feature.dataSet.words')}*/}
                   <span className='px-0.5'>·</span>
                   <span className='max-w-[100px] min-w-[8px] overflow-hidden text-ellipsis whitespace-nowrap'>{formatNumber(item.document_count)} </span>
                   {t('appDebug.feature.dataSet.textBlocks')}
