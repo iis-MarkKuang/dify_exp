@@ -18,6 +18,8 @@ from extensions.ext_database import db
 from models.dataset import Dataset, Document, DocumentSegment
 from models.workflow import WorkflowNodeExecutionStatus
 
+import json
+
 default_retrieval_model = {
     'search_method': 'semantic_search',
     'reranking_enable': False,
