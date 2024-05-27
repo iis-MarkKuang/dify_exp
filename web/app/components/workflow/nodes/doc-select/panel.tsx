@@ -46,7 +46,7 @@ const Panel: FC<NodePanelProps<DocSelectNodeType>> = ({
         {/* {JSON.stringify(inputs, null, 2)} */}
 
         <Field
-          title={t(`${i18nPrefix}.docs`)}
+          title={t(`${i18nPrefix}.docs1`)}
           operations={
             <div className='flex items-center space-x-1'>
               {!readOnly && (<div className='w-px h-3 bg-gray-200'></div>)}
