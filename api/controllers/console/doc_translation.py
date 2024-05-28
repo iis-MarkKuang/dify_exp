@@ -6,7 +6,9 @@ from controllers.console import api
 
 class DocumentTranslationApi(Resource):
     def post(self):
-        print(request)
+        print(request.body)
+        print(request.form)
+        print(request.headers)
         parser = reqparse.RequestParser()
         parser.add_argument('file', type=FileStorage, location='files')
         args = parser.parse_args()
