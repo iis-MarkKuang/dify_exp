@@ -1,14 +1,12 @@
-import sys
 from flask_restful import Resource, fields, marshal_with, reqparse
-from core.file.file_obj import FileVar
-
+from werkzeug.datastructures import FileStorage
 from controllers.console import api
 
 
 class DocumentTranslationApi(Resource):
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('file', type=FileVar, location='form')
+        parser.add_argument('file', type=FileStorage, location='files')
         args = parser.parse_args()
         pdf_file = args['file']
         print('Got file')
