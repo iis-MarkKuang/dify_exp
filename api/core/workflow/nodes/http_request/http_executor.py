@@ -199,7 +199,8 @@ class HttpExecutor:
 
             if node_data.body.type in ['form-data', 'x-www-form-urlencoded']:
                 body = self._to_dict("body", body_data, 1)
-
+                print('body before parsing')
+                print(body)
                 if node_data.body.type == 'form-data':
                     self.files = {
                         k: ('', v) for k, v in body.items()
