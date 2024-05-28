@@ -52,8 +52,8 @@ class DocSelectNode(BaseNode):
                     ).first()
                     if not file:
                         continue
-                    file_id = doc.key.split('/')[-1].split('.')[0]
-                    ext = doc.key.split('/')[-1].split('.')[1]
+                    file_id = file.key.split('/')[-1].split('.')[0]
+                    ext = file.key.split('/')[-1].split('.')[1]
                     mimetype = response.meta.get('mime_type', 'application/pdf')
 
                     doc_data.append(FileVar(
