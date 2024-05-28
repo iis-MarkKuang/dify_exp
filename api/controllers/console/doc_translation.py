@@ -9,9 +9,8 @@ class DocumentTranslationApi(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('file', type=FileVar, location='form')
         args = parser.parse_args()
-        print(args)
         pdf_file = args['file']
-        print(pdf_file)
+        print(type(pdf_file))
 
 
 api.add_resource(DocumentTranslationApi, '/document/translate')
