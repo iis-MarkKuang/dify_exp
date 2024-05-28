@@ -208,6 +208,7 @@ class HttpExecutor:
                     self.boundary = f'----WebKitFormBoundary{random_str(16)}'
 
                     self.headers['Content-Type'] = f'multipart/form-data; boundary={self.boundary}'
+                    self.body = body_data
                 else:
                     self.body = urlencode(body)
             elif node_data.body.type in ['json', 'raw-text']:
