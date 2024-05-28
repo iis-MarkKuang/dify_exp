@@ -12,6 +12,6 @@ class DocumentTranslationApi(Resource):
         args = parser.parse_args()
         pdf_file = args['file']
         print('Got file')
-        print(sys.getsizeof(pdf_file))
+        print(pdf_file)
 
 api.add_resource(DocumentTranslationApi, '/document/translate')
