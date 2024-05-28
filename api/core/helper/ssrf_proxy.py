@@ -29,13 +29,12 @@ httpx_proxies = {
 def get(url, *args, **kwargs):
     return _get(url=url, *args, proxies=httpx_proxies, **kwargs)
 
-def post(url, files, *args, **kwargs):
+def post(url, files, data, *args, **kwargs):
     print('doing post request')
     print(type(files['file']))
-    print(kwargs)
-    print(args)
+    print(data)
     try:
-        res = _post(url=url, files=files, *args, proxies=httpx_proxies, **kwargs)
+        res = _post(url=url, form=data, files=files, *args, proxies=httpx_proxies, **kwargs)
         return res
     except Exception:
         print(traceback.format_exc())
