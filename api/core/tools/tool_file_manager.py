@@ -128,11 +128,18 @@ class ToolFileManager:
         ).first()
 
         if not tool_file:
-            return None
+            upload_file: UploadFile = db.session.query(UploadFile).filter(
+                UploadFile.id == id,
+            ).first()
 
-        blob = storage.load_once(tool_file.file_key)
-
-        return blob, tool_file.mimetype
+            if not upload_file:
+                return None
+            else:
+                blob = storage.load_once(upload_file.key)
+                return blob, upload_file.mimetype
+        else:
+            blob = storage.load_once(tool_file.file_key)
+            return blob, tool_file.mimetype
 
     @staticmethod
     def get_file_binary_by_message_file_id(id: str) -> Union[tuple[bytes, str], None]:
