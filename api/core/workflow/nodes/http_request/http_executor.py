@@ -204,7 +204,7 @@ class HttpExecutor:
 
                     print('pre parsing files in request')
                     print(type(body['file']))
-                    print(type(eval(body['file'])))
+                    print(type(str_to_class(body['file'])))
                     # self.files = {
                     #     k: ('', v) for k, v in body.items()
                     # }
