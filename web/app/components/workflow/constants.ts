@@ -295,8 +295,8 @@ export const KNOWLEDGE_RETRIEVAL_OUTPUT_STRUCT: Var[] = [
 
 export const DOC_SELECT_OUTPUT_STRUCT: Var[] = [
   {
-    variable: 'result',
-    type: VarType.arrayObject,
+    variable: 'files',
+    type: VarType.arrayFile,
   },
 ]
 
