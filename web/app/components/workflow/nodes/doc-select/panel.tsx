@@ -73,9 +73,9 @@ const Panel: FC<NodePanelProps<DocSelectNodeType>> = ({
         <OutputVars>
           <>
             <VarItem
-              name='files'
-              type='Array[File]'
-              description={t(`${i18nPrefix}.outputVars.files`)}
+              name='file_ids'
+              type='Array[String]'
+              description={t(`${i18nPrefix}.outputVars.file_ids`)}
             />
           </>
         </OutputVars>

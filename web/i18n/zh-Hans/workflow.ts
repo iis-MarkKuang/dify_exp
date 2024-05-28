@@ -225,7 +225,8 @@ const translation = {
       outputVars: {
         names: '文件名',
         files: '选中的文件',
-        keys: '文件路径'
+        keys: '文件路径',
+        file_ids: '文件id列表',
       },
     },
     knowledgeRetrieval: {
