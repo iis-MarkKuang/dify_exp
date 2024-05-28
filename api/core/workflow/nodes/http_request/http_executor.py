@@ -257,13 +257,14 @@ class HttpExecutor:
 
         return executor_response
 
-    def _do_http_request(self, headers: dict[str, Any]) -> httpx.Response:
+    def _do_http_request(self, headers: dict[str, Any], body: Body) -> httpx.Response:
         """
             do http request depending on api bundle
         """
         kwargs = {
             'url': self.server_url,
             'headers': headers,
+            'body': body,
             'params': self.params,
             'timeout': (self.timeout.connect, self.timeout.read, self.timeout.write),
             'follow_redirects': True
@@ -284,8 +285,10 @@ class HttpExecutor:
         # assemble headers
         headers = self._assembling_headers()
 
+        print(self.body)
+        print(type(self.body))
         # do http request
-        response = self._do_http_request(headers)
+        response = self._do_http_request(headers, self.body)
 
         # validate response
         return self._validate_and_parse_response(response)
