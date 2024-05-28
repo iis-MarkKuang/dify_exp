@@ -73,49 +73,10 @@ const Panel: FC<NodePanelProps<DocSelectNodeType>> = ({
         <OutputVars>
           <>
             <VarItem
-              name='result'
-              type='Array[Object]'
-              description={t(`${i18nPrefix}.outputVars.output`)}
-              subItems={[
-                // {
-                //   name: 'content',
-                //   type: 'string',
-                //   description: t(`${i18nPrefix}.outputVars.content`),
-                // },
-                // // url, title, link like bing search reference result: link, link page title, link page icon
-                // {
-                //   name: 'title',
-                //   type: 'string',
-                //   description: t(`${i18nPrefix}.outputVars.title`),
-                // },
-                // {
-                //   name: 'url',
-                //   type: 'string',
-                //   description: t(`${i18nPrefix}.outputVars.url`),
-                // },
-                // {
-                //   name: 'icon',
-                //   type: 'string',
-                //   description: t(`${i18nPrefix}.outputVars.icon`),
-                // },
-                {
-                  name: 'names',
-                  type: 'object',
-                  description: t(`${i18nPrefix}.outputVars.names`),
-                },
-                {
-                  name: 'files',
-                  type: 'object',
-                  description: t(`${i18nPrefix}.outputVars.files`),
-                },
-                {
-                  name: 'keys',
-                  type: 'object',
-                  description: t(`${i18nPrefix}.outputVars.keys`),
-                },
-              ]}
+              name='files'
+              type='Array[File]'
+              description={t(`${i18nPrefix}.outputVars.files.title`)}
             />
-
           </>
         </OutputVars>
         {isShowSingleRun && (

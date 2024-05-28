@@ -9,7 +9,7 @@ import type {Document} from '@/models/datasets'
 const Node: FC<NodeProps<DocSelectNodeType>> = ({
   data,
 }) => {
-  const [selectedDatasets, setSelectedDatasets] = useState<Document[]>([])
+  const [selectedDocuments, setselectedDocuments] = useState<Document[]>([])
   const updateTime = useRef(0)
   useEffect(() => {
     (async () => {
@@ -21,21 +21,21 @@ const Node: FC<NodeProps<DocSelectNodeType>> = ({
         //  avoid old data overwrite new data
         if (currUpdateTime < updateTime.current)
           return
-        setSelectedDatasets(dataSetsWithDetail)
+        setselectedDocuments(dataSetsWithDetail)
       }
       else {
-        setSelectedDatasets([])
+        setselectedDocuments([])
       }
     })()
   }, [data.doc_ids])
 
-  if (!selectedDatasets.length)
+  if (!selectedDocuments.length)
     return null
 
   return (
     <div className='mb-1 px-3 py-1'>
       <div className='space-y-0.5'>
-        {selectedDatasets.map(({ id, name, key }) => (
+        {selectedDocuments.map(({ id, name, key }) => (
           <div key={id}
                className='flex items-center h-[26px] bg-gray-100 rounded-md  px-1 text-xs font-normal text-gray-700'>
             <div className='mr-1 shrink-0 p-1 bg-[#F5F8FF] rounded-md border-[0.5px] border-[#E0EAFF]'>

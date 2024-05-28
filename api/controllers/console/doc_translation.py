@@ -11,7 +11,6 @@ class DocumentTranslationApi(Resource):
         pdf_file = args['file']
         print('got file')
         print(pdf_file)
-        print(pdf_file.tell())
 
 
 api.add_resource(DocumentTranslationApi, '/document/translate')
