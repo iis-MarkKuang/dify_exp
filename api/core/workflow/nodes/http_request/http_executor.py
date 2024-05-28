@@ -9,6 +9,7 @@ import httpx
 import requests
 
 import core.helper.ssrf_proxy as ssrf_proxy
+from core.tools.tool_file_manager import ToolFileManager
 from core.workflow.entities.variable_entities import VariableSelector
 from core.workflow.entities.variable_pool import ValueType, VariablePool
 from core.workflow.nodes.http_request.entities import HttpRequestNodeData
@@ -200,8 +201,11 @@ class HttpExecutor:
             if node_data.body.type in ['form-data', 'x-www-form-urlencoded']:
                 body = self._to_dict("body", body_data, 1)
                 if node_data.body.type == 'form-data':
+                    # self.files = {
+                    #     k: ('', v) for k, v in body.items()
+                    # }
                     self.files = {
-                        k: ('', v) for k, v in body.items()
+                        k: ToolFileManager.load_once(v.id) for k,v in body.items()
                     }
                     print('pre parsing files in request')
                     print(body.items())
