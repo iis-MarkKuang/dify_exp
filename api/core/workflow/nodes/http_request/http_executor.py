@@ -207,9 +207,9 @@ class HttpExecutor:
                     # self.files = {
                     #     k: ('', v) for k, v in body.items()
                     # }
-                    self.files = {
+                    self.files = [{
                         'file': ToolFileManager.get_file_binary(body['file'][2:-2])
-                    }
+                    }]
 
                     random_str = lambda n: ''.join([chr(randint(97, 122)) for _ in range(n)])
                     self.boundary = f'----WebKitFormBoundary{random_str(16)}'

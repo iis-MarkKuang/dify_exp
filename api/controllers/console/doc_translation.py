@@ -11,6 +11,7 @@ class DocumentTranslationApi(Resource):
         parser.add_argument('file', type=FileVar, location='form')
         args = parser.parse_args()
         pdf_file = args['file']
+        print('Got file')
         print(sys.getsizeof(pdf_file))
 
 api.add_resource(DocumentTranslationApi, '/document/translate')
