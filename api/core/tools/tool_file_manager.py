@@ -137,7 +137,7 @@ class ToolFileManager:
                 return None
             else:
                 blob = storage.load_once(upload_file.key)
-                return blob, upload_file.mimetype
+                return blob, upload_file.mime_type
         else:
             blob = storage.load_once(tool_file.file_key)
             return blob, tool_file.mimetype
