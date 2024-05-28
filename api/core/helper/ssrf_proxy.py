@@ -31,6 +31,7 @@ def get(url, *args, **kwargs):
 
 def post(url, files, *args, **kwargs):
     print('doing post request')
+    print(type(files))
     try:
         res = _post(url=url, files=files, *args, proxies=httpx_proxies, **kwargs)
         return res
