@@ -54,7 +54,7 @@ class DocSelectNode(BaseNode):
                         continue
                     file_id = file.key.split('/')[-1].split('.')[0]
                     ext = file.key.split('/')[-1].split('.')[1]
-                    mimetype = response.meta.get('mime_type', 'application/pdf')
+                    mimetype = 'application/pdf'
 
                     doc_data.append(FileVar(
                         tenant_id=doc.tenant_id,
