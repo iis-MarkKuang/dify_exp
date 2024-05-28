@@ -43,5 +43,5 @@ class DocSelectNodeData(BaseNodeData):
     """
     Knowledge retrieval Node Data.
     """
-    type: str = 'knowledge-retrieval'
+    type: str = 'doc-select'
     doc_ids: list[str]

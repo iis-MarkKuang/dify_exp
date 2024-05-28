@@ -302,13 +302,12 @@ class WorkflowEngineManager:
             # sign output files
             node_run_result.outputs = self.handle_special_values(node_run_result.outputs)
         except Exception as e:
-            raise e
-            # raise WorkflowNodeRunFailedError(
-            #     node_id=node_instance.node_id,
-            #     node_type=node_instance.node_type,
-            #     node_title=node_instance.node_data.title,
-                # error=str(e)
-            # )
+            raise WorkflowNodeRunFailedError(
+                node_id=node_instance.node_id,
+                node_type=node_instance.node_type,
+                node_title=node_instance.node_data.title,
+                error=str(e)
+            )
 
         return node_instance, node_run_result
 
