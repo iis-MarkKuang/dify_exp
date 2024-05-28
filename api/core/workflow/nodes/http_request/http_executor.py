@@ -257,7 +257,7 @@ class HttpExecutor:
 
         return executor_response
 
-    def _do_http_request(self, headers: dict[str, Any], body: Body) -> httpx.Response:
+    def _do_http_request(self, headers: dict[str, Any], body: Any) -> httpx.Response:
         """
             do http request depending on api bundle
         """
