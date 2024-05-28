@@ -3,6 +3,7 @@ Proxy requests to avoid SSRF
 """
 
 import os
+import traceback
 
 from httpx import get as _get
 from httpx import head as _head
@@ -30,7 +31,11 @@ def get(url, *args, **kwargs):
 
 def post(url, *args, **kwargs):
     print('doing post request')
-    return _post(url=url, *args, proxies=httpx_proxies, **kwargs)
+    try:
+        res = _post(url=url, * args, proxies=httpx_proxies, ** kwargs)
+        return res
+    except Exception:
+        print(traceback.format_exc())
 
 def put(url, *args, **kwargs):
     return _put(url=url, *args, proxies=httpx_proxies, **kwargs)

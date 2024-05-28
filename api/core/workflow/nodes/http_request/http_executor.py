@@ -281,8 +281,6 @@ class HttpExecutor:
             response = getattr(ssrf_proxy, self.method)(data=self.body, files=self.files, **kwargs)
         else:
             raise ValueError(f'Invalid http method {self.method}')
-        print('request complete')
-        print(response)
         return response
 
     def invoke(self) -> HttpExecutorResponse:
