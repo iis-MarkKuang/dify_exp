@@ -217,8 +217,11 @@ class DocumentGlobalListApi(Resource):
         search = request.args.get('keyword', default=None, type=str)
         sort = request.args.get('sort', default='-created_at', type=str)
         fetch = request.args.get('fetch', default=False, type=bool)
-
+        ids = request.args.get('ids', default=None, type=str)
         query = Document.query.filter_by(tenant_id=current_user.current_tenant_id)
+
+        if ids:
+            print('ids query:' + ids)
 
         if search:
             search = f'%{search}%'
