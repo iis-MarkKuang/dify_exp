@@ -55,11 +55,7 @@ class DocSelectNode(BaseNode):
                     ).first()
                     if not file:
                         continue
-                    doc_data.append({
-                        'id': doc.id,
-                        'name': doc.name,
-                        'key': file.key if file else ''
-                    })
+                    doc_data.append(file)
             results = doc_data
 
             print(results)
