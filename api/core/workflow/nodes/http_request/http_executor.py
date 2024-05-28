@@ -203,12 +203,12 @@ class HttpExecutor:
                 if node_data.body.type == 'form-data':
 
                     print('pre parsing files in request')
-                    print(body['file'])
+                    print(type(body['file']))
                     # self.files = {
                     #     k: ('', v) for k, v in body.items()
                     # }
                     self.files = {
-                        k: ToolFileManager.get_file_binary(v.id) for k,v in body.items()
+                        'file': ToolFileManager.get_file_binary(body['file'].id)
                     }
 
                     random_str = lambda n: ''.join([chr(randint(97, 122)) for _ in range(n)])
