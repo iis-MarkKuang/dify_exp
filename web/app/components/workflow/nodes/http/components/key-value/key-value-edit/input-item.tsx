@@ -40,7 +40,7 @@ const InputItem: FC<Props> = ({
     onlyLeafNodeVar: false,
     filterVar: (varPayload: Var) => {
       // TODO extract a new input-item for strictly string and number
-      return [VarType.string, VarType.number, VarType.arrayFile].includes(varPayload.type)
+      return [VarType.string, VarType.number, VarType.arrayFile, VarType.arrayString].includes(varPayload.type)
     },
   })
 
