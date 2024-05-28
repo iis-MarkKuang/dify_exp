@@ -10,7 +10,7 @@ class DocumentTranslationApi(Resource):
     def post(self):
         print(request.files)
         parser = reqparse.RequestParser()
-        parser.add_argument('file', type=FileVar, location='files')
+        parser.add_argument('file', type=FileVar, location='data')
         args = parser.parse_args()
         print(args)
         pdf_file = args['file']
