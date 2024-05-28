@@ -208,7 +208,7 @@ class HttpExecutor:
                     #     k: ('', v) for k, v in body.items()
                     # }
                     self.files = {
-                        'file': ToolFileManager.get_file_binary(body['file'][0])
+                        'file': ToolFileManager.get_file_binary(body['file'][2:-2])
                     }
 
                     random_str = lambda n: ''.join([chr(randint(97, 122)) for _ in range(n)])
