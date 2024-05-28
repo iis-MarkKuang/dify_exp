@@ -1,5 +1,3 @@
-import logging
-
 from flask_restful import Resource, fields, marshal_with, reqparse
 from werkzeug.datastructures import FileStorage
 from controllers.console import api
@@ -16,4 +14,4 @@ class DocumentTranslationApi(Resource):
         print(pdf_file.tell())
 
 
-api.add_resource(DocumentTranslationApi, '/api/document/translate')
+api.add_resource(DocumentTranslationApi, '/document/translate')
