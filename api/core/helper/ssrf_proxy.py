@@ -29,10 +29,10 @@ httpx_proxies = {
 def get(url, *args, **kwargs):
     return _get(url=url, *args, proxies=httpx_proxies, **kwargs)
 
-def post(url, *args, **kwargs):
+def post(url, files, *args, **kwargs):
     print('doing post request')
     try:
-        res = _post(url=url, * args, proxies=httpx_proxies, ** kwargs)
+        res = _post(url=url, files=files, *args, proxies=httpx_proxies, **kwargs)
         return res
     except Exception:
         print(traceback.format_exc())
