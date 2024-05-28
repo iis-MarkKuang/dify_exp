@@ -328,6 +328,9 @@ class HttpExecutor:
             boundary = self.boundary
             raw_request += f'--{boundary}'
             for k, v in self.files.items():
+                print('processing raw request')
+                print(v)
+                print(type(v))
                 raw_request += f'\nContent-Disposition: form-data; name="{k}"\n\n'
                 raw_request += f'{v[1] if type(v) is str else v.decode()[1]}\n'
                 raw_request += f'--{boundary}'
