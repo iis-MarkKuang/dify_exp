@@ -1,20 +1,17 @@
-from typing import Any, cast
+from typing import cast
 
-from core.app.app_config.entities import DatasetRetrieveConfigEntity
 from core.app.entities.app_invoke_entities import ModelConfigWithCredentialsEntity
-from core.entities.agent_entities import PlanningStrategy
+from core.file.file_obj import FileTransferMethod, FileType, FileVar
 from core.entities.model_entities import ModelStatus
 from core.errors.error import ModelCurrentlyNotSupportError, ProviderTokenNotInitError, QuotaExceededError
 from core.model_manager import ModelInstance, ModelManager
 from core.model_runtime.entities.model_entities import ModelFeature, ModelType
 from core.model_runtime.model_providers.__base.large_language_model import LargeLanguageModel
-from core.rag.retrieval.dataset_retrieval import DatasetRetrieval
 from core.workflow.entities.base_node_data_entities import BaseNodeData
 from core.workflow.entities.node_entities import NodeRunResult, NodeType
 from core.workflow.entities.variable_pool import VariablePool
 from core.workflow.nodes.base_node import BaseNode
 from core.workflow.nodes.doc_select.entities import DocSelectNodeData
-from extensions.ext_database import db
 from models.dataset import Dataset, Document, DocumentSegment
 from models.model import UploadFile
 from models.workflow import WorkflowNodeExecutionStatus
@@ -55,9 +52,20 @@ class DocSelectNode(BaseNode):
                     ).first()
                     if not file:
                         continue
-                    doc_data.append(file)
-            results = doc_data
+                    file_id = doc.key.split('/')[-1].split('.')[0]
+                    ext = doc.key.split('/')[-1].split('.')[1]
+                    mimetype = response.meta.get('mime_type', 'application/pdf')
 
+                    doc_data.append(FileVar(
+                        tenant_id=doc.tenant_id,
+                        type=FileType.PDF,
+                        transfer_method=FileTransferMethod.LOCAL_FILE,
+                        related_id=file_id,
+                        filename=doc.name,
+                        extension=ext,
+                        mime_type=mimetype,
+                    ))
+            results = doc_data
             print(results)
 
             outputs = {
