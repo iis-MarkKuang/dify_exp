@@ -265,7 +265,6 @@ class HttpExecutor:
         kwargs = {
             'url': self.server_url,
             'headers': headers,
-            'body': body,
             'params': self.params,
             'timeout': (self.timeout.connect, self.timeout.read, self.timeout.write),
             'follow_redirects': True
