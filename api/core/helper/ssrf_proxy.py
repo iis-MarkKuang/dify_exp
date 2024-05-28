@@ -3,6 +3,7 @@ Proxy requests to avoid SSRF
 """
 
 import os
+import json
 import traceback
 
 from httpx import get as _get
