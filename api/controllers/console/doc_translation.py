@@ -13,13 +13,5 @@ class DocumentTranslationApi(Resource):
         print(pdf_file)
         print(pdf_file.tell())
 
-    def get(self):
-        """
-        For connection health check
-        """
-        return {
-            "result": "pong"
-        }
-
 
 api.add_resource(DocumentTranslationApi, '/document/translate')
