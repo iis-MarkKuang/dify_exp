@@ -30,7 +30,6 @@ def get(url, *args, **kwargs):
 
 def post(url, *args, **kwargs):
     print('making post request')
-    print(**kwargs)
     return _post(url=url, *args, proxies=httpx_proxies, **kwargs)
 
 def put(url, *args, **kwargs):

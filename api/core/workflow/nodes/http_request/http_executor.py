@@ -274,6 +274,8 @@ class HttpExecutor:
         if self.method in ('get', 'head', 'options'):
             response = getattr(ssrf_proxy, self.method)(**kwargs)
         elif self.method in ('post', 'put', 'delete', 'patch'):
+            print(self.body)
+            print(self.files)
             response = getattr(ssrf_proxy, self.method)(data=self.body, files=self.files, **kwargs)
         else:
             raise ValueError(f'Invalid http method {self.method}')
