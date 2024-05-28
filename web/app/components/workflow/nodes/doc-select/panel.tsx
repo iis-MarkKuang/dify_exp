@@ -75,7 +75,7 @@ const Panel: FC<NodePanelProps<DocSelectNodeType>> = ({
             <VarItem
               name='files'
               type='Array[File]'
-              description={t(`${i18nPrefix}.outputVars.files.title`)}
+              description={t(`${i18nPrefix}.outputVars.files`)}
             />
           </>
         </OutputVars>
@@ -83,18 +83,6 @@ const Panel: FC<NodePanelProps<DocSelectNodeType>> = ({
           <BeforeRunForm
             nodeName={inputs.title}
             onHide={hideSingleRun}
-            // forms={[
-            //   {
-            //     inputs: [{
-            //       label: t(`${i18nPrefix}.queryVariable`)!,
-            //       variable: 'query',
-            //       type: InputVarType.paragraph,
-            //       required: true,
-            //     }],
-            //     values: { query },
-            //     onChange: keyValue => setQuery((keyValue as any).query),
-            //   },
-            // ]}
             runningStatus={runningStatus}
             onRun={handleRun}
             onStop={handleStop}
