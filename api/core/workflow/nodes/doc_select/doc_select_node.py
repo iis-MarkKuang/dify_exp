@@ -39,7 +39,7 @@ class DocSelectNode(BaseNode):
         print(node_data)
         # retrieve knowledge
         try:
-            doc_data = []
+            file_ids = []
             for doc_id in node_data.doc_ids:
                 doc = Document.query.filter_by(
                     id=doc_id
@@ -52,23 +52,11 @@ class DocSelectNode(BaseNode):
                     ).first()
                     if not file:
                         continue
-                    file_id = file.key.split('/')[-1].split('.')[0]
-                    ext = file.key.split('/')[-1].split('.')[1]
-                    mimetype = 'application/pdf'
 
-                    doc_data.append(FileVar(
-                        id=file.id,
-                        tenant_id=doc.tenant_id,
-                        type=FileType.PDF,
-                        transfer_method=FileTransferMethod.LOCAL_FILE,
-                        related_id=file_id,
-                        filename=doc.name,
-                        extension=ext,
-                        mime_type=mimetype,
-                    ))
+                    file_ids.append(file.id)
 
             outputs = {
-                'files': doc_data
+                'file_ids': file_ids
             }
             return NodeRunResult(
                 status=WorkflowNodeExecutionStatus.SUCCEEDED,

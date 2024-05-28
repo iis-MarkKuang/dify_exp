@@ -203,9 +203,7 @@ class HttpExecutor:
                 body = self._to_dict("body", body_data, 1)
                 if node_data.body.type == 'form-data':
 
-                    print('pre parsing files in request')
-                    print(type(body['file']))
-                    print(type(str_to_class(body['file'])))
+                    print(body['file'])
                     # self.files = {
                     #     k: ('', v) for k, v in body.items()
                     # }
