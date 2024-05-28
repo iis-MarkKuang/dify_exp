@@ -123,7 +123,6 @@ class ToolFileManager:
 
         :return: the binary of the file, mime type
         """
-        print("id is: " + id)
         tool_file: ToolFile = db.session.query(ToolFile).filter(
             ToolFile.id == id,
         ).first()
