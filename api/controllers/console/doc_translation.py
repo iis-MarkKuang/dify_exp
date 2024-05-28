@@ -1,3 +1,4 @@
+import sys
 from flask_restful import Resource, fields, marshal_with, reqparse
 from werkzeug.datastructures import FileStorage
 from controllers.console import api
@@ -10,6 +11,6 @@ class DocumentTranslationApi(Resource):
         args = parser.parse_args()
         pdf_file = args['file']
         print('Got file')
-        print(pdf_file)
+        print(sys.getsizeof(pdf_file))
 
 api.add_resource(DocumentTranslationApi, '/document/translate')
