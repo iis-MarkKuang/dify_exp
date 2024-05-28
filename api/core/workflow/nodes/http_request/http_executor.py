@@ -205,7 +205,7 @@ class HttpExecutor:
                     #     k: ('', v) for k, v in body.items()
                     # }
                     self.files = {
-                        k: ToolFileManager.load_once(v.id) for k,v in body.items()
+                        k: ToolFileManager.get_file_binary(v.id) for k,v in body.items()
                     }
                     print('pre parsing files in request')
                     print(body.items())
