@@ -55,12 +55,12 @@ const DatasetItem: FC<Props> = ({
       </div>
       {!readonly && (
         <div className='hidden group-hover/dataset-item:flex shrink-0 ml-2  items-center space-x-1'>
-          <div
-            className='flex items-center justify-center w-6 h-6 hover:bg-black/5 rounded-md cursor-pointer'
-            onClick={showSettingsModal}
-          >
-            <Settings01 className='w-4 h-4 text-gray-500' />
-          </div>
+          {/*<div*/}
+          {/*  className='flex items-center justify-center w-6 h-6 hover:bg-black/5 rounded-md cursor-pointer'*/}
+          {/*  onClick={showSettingsModal}*/}
+          {/*>*/}
+          {/*  <Settings01 className='w-4 h-4 text-gray-500' />*/}
+          {/*</div>*/}
           <div
             className='flex items-center justify-center w-6 h-6 hover:bg-black/5 rounded-md cursor-pointer'
             onClick={onRemove}
