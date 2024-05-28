@@ -208,7 +208,7 @@ class HttpExecutor:
                     self.boundary = f'----WebKitFormBoundary{random_str(16)}'
 
                     self.headers['Content-Type'] = f'multipart/form-data; boundary={self.boundary}'
-                    self.body = body_data
+                    self.body = body
                 else:
                     self.body = urlencode(body)
             elif node_data.body.type in ['json', 'raw-text']:
@@ -258,13 +258,14 @@ class HttpExecutor:
 
         return executor_response
 
-    def _do_http_request(self, headers: dict[str, Any]) -> httpx.Response:
+    def _do_http_request(self, headers: dict[str, Any], body: Any) -> httpx.Response:
         """
             do http request depending on api bundle
         """
         kwargs = {
             'url': self.server_url,
             'headers': headers,
+            'body': body,
             'params': self.params,
             'timeout': (self.timeout.connect, self.timeout.read, self.timeout.write),
             'follow_redirects': True
@@ -284,10 +285,8 @@ class HttpExecutor:
         """
         # assemble headers
         headers = self._assembling_headers()
-        print('files: ')
-        print(self.files)
         # do http request
-        response = self._do_http_request(headers)
+        response = self._do_http_request(headers, self.body)
 
         # validate response
         return self._validate_and_parse_response(response)
