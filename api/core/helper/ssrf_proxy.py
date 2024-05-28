@@ -32,7 +32,7 @@ def get(url, *args, **kwargs):
 def post(url, files, data, *args, **kwargs):
     print('doing post request')
     print(type(files['file']))
-    print(data)
+    data['request'] = json.dumps({"sourceLang": "English","targetLang": "Chinese"})
     try:
         res = _post(url=url, data=data, files=files, *args, proxies=httpx_proxies, **kwargs)
         return res
