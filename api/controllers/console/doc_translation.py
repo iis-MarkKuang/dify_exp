@@ -12,5 +12,6 @@ class DocumentTranslationApi(Resource):
         pdf_file = args['file']
         print('Got file')
         print(sys.getsizeof(pdf_file))
+        pdf_file.save('/home/ykuang/a.pdf')
 
 api.add_resource(DocumentTranslationApi, '/document/translate')
