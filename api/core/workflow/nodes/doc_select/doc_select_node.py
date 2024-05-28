@@ -57,6 +57,7 @@ class DocSelectNode(BaseNode):
                     mimetype = 'application/pdf'
 
                     doc_data.append(FileVar(
+                        id=file.id,
                         tenant_id=doc.tenant_id,
                         type=FileType.PDF,
                         transfer_method=FileTransferMethod.LOCAL_FILE,
