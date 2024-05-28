@@ -8,6 +8,7 @@ from controllers.console import api
 
 class DocumentTranslationApi(Resource):
     def post(self):
+        print(dict(request.form)['data']['file'])
         print(request.form)
         print(request.data)
         parser = reqparse.RequestParser()
