@@ -34,7 +34,7 @@ def post(url, files, data, *args, **kwargs):
     print(type(files['file']))
     print(data)
     try:
-        res = _post(url=url, form=data, files=files, *args, proxies=httpx_proxies, **kwargs)
+        res = _post(url=url, data=data, files=files, *args, proxies=httpx_proxies, **kwargs)
         return res
     except Exception:
         print(traceback.format_exc())

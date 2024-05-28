@@ -202,7 +202,7 @@ class HttpExecutor:
             if node_data.body.type in ['form-data', 'x-www-form-urlencoded']:
                 body = self._to_dict("body", body_data, 1)
                 if node_data.body.type == 'form-data':
-
+                    self.body = body
                     print(body['file'])
                     self.files = {
                         'file': ToolFileManager.get_file_binary(body['file'][2:-2])[0]
@@ -210,7 +210,6 @@ class HttpExecutor:
 
                     random_str = lambda n: ''.join([chr(randint(97, 122)) for _ in range(n)])
                     self.boundary = f'----WebKitFormBoundary{random_str(16)}'
-
                     self.headers['Content-Type'] = f'multipart/form-data; boundary={self.boundary}'
                 else:
                     self.body = urlencode(body)
