@@ -284,7 +284,7 @@ class HttpExecutor:
         """
         # assemble headers
         headers = self._assembling_headers()
-
+        print('files: ')
         print(self.files)
         # do http request
         response = self._do_http_request(headers)
