@@ -14,7 +14,7 @@ from httpx import get
 
 from extensions.ext_database import db
 from extensions.ext_storage import storage
-from models.model import MessageFile
+from models.model import MessageFile, UploadFile
 from models.tools import ToolFile
 
 logger = logging.getLogger(__name__)
