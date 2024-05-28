@@ -65,11 +65,9 @@ class DocSelectNode(BaseNode):
                         extension=ext,
                         mime_type=mimetype,
                     ))
-            results = doc_data
-            print(results)
 
             outputs = {
-                'result': results
+                'files': doc_data
             }
             return NodeRunResult(
                 status=WorkflowNodeExecutionStatus.SUCCEEDED,
