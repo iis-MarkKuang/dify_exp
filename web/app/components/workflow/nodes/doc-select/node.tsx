@@ -3,7 +3,7 @@ import React from 'react'
 import type { DocSelectNodeType } from './types'
 import { Folder } from '@/app/components/base/icons/src/vender/solid/files'
 import type { NodeProps } from '@/app/components/workflow/types'
-import {fetchDatasets, fetchDocs} from '@/service/datasets'
+import {fetchDocs} from '@/service/datasets'
 import type {Document} from '@/models/datasets'
 
 const Node: FC<NodeProps<DocSelectNodeType>> = ({
