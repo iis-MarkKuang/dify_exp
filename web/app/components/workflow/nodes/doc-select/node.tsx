@@ -17,6 +17,8 @@ const Node: FC<NodeProps<DocSelectNodeType>> = ({
       const currUpdateTime = updateTime.current
 
       if (data.doc_ids?.length > 0) {
+        // TODO remove
+        console.log(data.doc_ids);
         const { data: documentsWithDetail } = await fetchDatasets({ url: '/datasets/documents', params: { page: 1, ids: data.doc_ids } })
         //  avoid old data overwrite new data
         if (currUpdateTime < updateTime.current)
