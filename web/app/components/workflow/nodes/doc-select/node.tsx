@@ -3,7 +3,7 @@ import React from 'react'
 import type { DocSelectNodeType } from './types'
 import { Folder } from '@/app/components/base/icons/src/vender/solid/files'
 import type { NodeProps } from '@/app/components/workflow/types'
-import { fetchDatasets } from '@/service/datasets'
+import {fetchDatasets, fetchDocs} from '@/service/datasets'
 import type {Document} from '@/models/datasets'
 
 const Node: FC<NodeProps<DocSelectNodeType>> = ({
@@ -19,7 +19,7 @@ const Node: FC<NodeProps<DocSelectNodeType>> = ({
       if (data.doc_ids?.length > 0) {
         // TODO remove
         console.log(data.doc_ids);
-        const { data: documentsWithDetail } = await fetchDatasets({ url: '/datasets/documents', params: { page: 1, ids: data.doc_ids } })
+        const { data: documentsWithDetail } = await fetchDocs({ url: '/datasets/documents', params: { page: 1, ids: data.doc_ids } })
         //  avoid old data overwrite new data
         if (currUpdateTime < updateTime.current)
           return
