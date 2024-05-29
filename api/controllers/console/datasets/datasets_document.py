@@ -221,7 +221,8 @@ class DocumentGlobalListApi(Resource):
         query = Document.query.filter_by(tenant_id=current_user.current_tenant_id)
 
         if ids:
-            print('ids query:' + ids)
+            ids_list = ids.split(',')
+            query = query.filter(Document.id.in_(tuple(ids_list)))
 
         if search:
             search = f'%{search}%'
