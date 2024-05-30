@@ -22,6 +22,7 @@ from core.workflow.nodes.if_else.if_else_node import IfElseNode
 from core.workflow.nodes.iteration.entities import IterationState
 from core.workflow.nodes.iteration.iteration_node import IterationNode
 from core.workflow.nodes.knowledge_retrieval.knowledge_retrieval_node import KnowledgeRetrievalNode
+from core.workflow.nodes.doc_select.doc_select_node import DocSelectNode
 from core.workflow.nodes.llm.entities import LLMNodeData
 from core.workflow.nodes.llm.llm_node import LLMNode
 from core.workflow.nodes.parameter_extractor.parameter_extractor_node import ParameterExtractorNode
@@ -42,6 +43,7 @@ node_classes = {
     NodeType.ANSWER: AnswerNode,
     NodeType.LLM: LLMNode,
     NodeType.KNOWLEDGE_RETRIEVAL: KnowledgeRetrievalNode,
+    NodeType.DOC_SELECT: DocSelectNode,
     NodeType.IF_ELSE: IfElseNode,
     NodeType.CODE: CodeNode,
     NodeType.TEMPLATE_TRANSFORM: TemplateTransformNode,
@@ -364,6 +366,8 @@ class WorkflowEngineManager:
 
         # Get node class
         node_type = NodeType.value_of(node_config.get('data', {}).get('type'))
+
+        print(node_type)
         node_cls = node_classes.get(node_type)
 
         # init workflow run state

@@ -14,7 +14,7 @@ from httpx import get
 
 from extensions.ext_database import db
 from extensions.ext_storage import storage
-from models.model import MessageFile
+from models.model import MessageFile, UploadFile
 from models.tools import ToolFile
 
 logger = logging.getLogger(__name__)
@@ -123,16 +123,24 @@ class ToolFileManager:
 
         :return: the binary of the file, mime type
         """
+        print("id :" + id)
         tool_file: ToolFile = db.session.query(ToolFile).filter(
             ToolFile.id == id,
         ).first()
 
         if not tool_file:
-            return None
+            upload_file: UploadFile = db.session.query(UploadFile).filter(
+                UploadFile.id == id,
+            ).first()
 
-        blob = storage.load_once(tool_file.file_key)
-
-        return blob, tool_file.mimetype
+            if not upload_file:
+                return None
+            else:
+                blob = storage.load_once(upload_file.key)
+                return blob, upload_file.mime_type
+        else:
+            blob = storage.load_once(tool_file.file_key)
+            return blob, tool_file.mimetype
 
     @staticmethod
     def get_file_binary_by_message_file_id(id: str) -> Union[tuple[bytes, str], None]:

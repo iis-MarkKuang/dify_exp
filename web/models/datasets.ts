@@ -53,6 +53,14 @@ export type DataSetListResponse = {
   total: number
 }
 
+export type DocsResponse = {
+  data: DataSet[]
+  has_more: boolean
+  limit: number
+  page: number
+  total: number
+}
+
 export type QA = {
   question: string
   answer: string
@@ -365,7 +373,8 @@ export type Document = {
   id: string
   data_source_type: string
   name: string
-  doc_type: DocType
+  doc_type: DocType,
+  key: string
 }
 
 export type HitTestingRecordsResponse = {

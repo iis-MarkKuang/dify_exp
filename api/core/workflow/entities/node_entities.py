@@ -14,7 +14,9 @@ class NodeType(Enum):
     END = 'end'
     ANSWER = 'answer'
     LLM = 'llm'
+    DOC_SELECT = 'doc-select'
     KNOWLEDGE_RETRIEVAL = 'knowledge-retrieval'
+
     IF_ELSE = 'if-else'
     CODE = 'code'
     TEMPLATE_TRANSFORM = 'template-transform'

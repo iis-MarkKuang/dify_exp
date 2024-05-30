@@ -13,6 +13,7 @@ from models.model import UploadFile
 
 class FileType(enum.Enum):
     IMAGE = 'image'
+    PDF = 'pdf'
 
     @staticmethod
     def value_of(value):

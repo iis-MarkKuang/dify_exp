@@ -7,7 +7,7 @@ import useSWR from 'swr'
 import Link from 'next/link'
 import Toast from '../components/base/toast'
 import style from './page.module.css'
-import { IS_CE_EDITION, apiPrefix } from '@/config'
+import { apiPrefix, IS_CE_EDITION_REV } from '@/config'
 import Button from '@/app/components/base/button'
 import { login, oauth } from '@/service/common'
 import { getPurifyHref } from '@/utils'
@@ -150,7 +150,7 @@ const NormalForm = () => {
 
       <div className="w-full mx-auto mt-8">
         <div className="bg-white ">
-          {!IS_CE_EDITION && (
+          {!IS_CE_EDITION_REV && (
             <div className="flex flex-col gap-3 mt-6">
               <div className='w-full'>
                 <a href={getPurifyHref(`${apiPrefix}/oauth/login/github`)}>
@@ -194,7 +194,7 @@ const NormalForm = () => {
           )}
 
           {
-            IS_CE_EDITION && <>
+            IS_CE_EDITION_REV && <>
               {/* <div className="relative mt-6">
                 <div className="absolute inset-0 flex items-center" aria-hidden="true">
                   <div className="w-full border-t border-gray-300" />
@@ -296,7 +296,7 @@ const NormalForm = () => {
             >{t('login.pp')}</Link>
           </div>
 
-          {IS_CE_EDITION && <div className="w-hull text-center block mt-2 text-xs text-gray-600">
+          {IS_CE_EDITION_REV && <div className="w-hull text-center block mt-2 text-xs text-gray-600">
             {t('login.goToInit')}
             &nbsp;
             <Link

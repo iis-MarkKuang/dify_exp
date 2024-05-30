@@ -48,6 +48,7 @@ class HttpRequestNode(BaseNode):
         }
 
     def _run(self, variable_pool: VariablePool) -> NodeRunResult:
+        print(self.node_data)
         node_data: HttpRequestNodeData = cast(self._node_data_cls, self.node_data)
 
         # init http executor

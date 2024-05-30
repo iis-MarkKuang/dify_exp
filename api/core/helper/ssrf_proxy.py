@@ -3,6 +3,8 @@ Proxy requests to avoid SSRF
 """
 
 import os
+import json
+import traceback
 
 from httpx import get as _get
 from httpx import head as _head
@@ -28,8 +30,15 @@ httpx_proxies = {
 def get(url, *args, **kwargs):
     return _get(url=url, *args, proxies=httpx_proxies, **kwargs)
 
-def post(url, *args, **kwargs):
-    return _post(url=url, *args, proxies=httpx_proxies, **kwargs)
+def post(url, files, data, *args, **kwargs):
+    print('doing post request')
+    print(type(files['file']))
+    data['request'] = json.dumps({"sourceLang": "English","targetLang": "Chinese"})
+    try:
+        res = _post(url=url, data=data, files=files, *args, proxies=httpx_proxies, **kwargs)
+        return res
+    except Exception:
+        print(traceback.format_exc())
 
 def put(url, *args, **kwargs):
     return _put(url=url, *args, proxies=httpx_proxies, **kwargs)

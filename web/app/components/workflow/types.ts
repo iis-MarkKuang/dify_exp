@@ -14,6 +14,7 @@ export enum BlockEnum {
   End = 'end',
   Answer = 'answer',
   LLM = 'llm',
+  DocSelect = 'doc-select',
   KnowledgeRetrieval = 'knowledge-retrieval',
   QuestionClassifier = 'question-classifier',
   IfElse = 'if-else',

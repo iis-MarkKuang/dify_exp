@@ -39,7 +39,8 @@ const InputItem: FC<Props> = ({
   const { availableVars, availableNodesWithParent } = useAvailableVarList(nodeId, {
     onlyLeafNodeVar: false,
     filterVar: (varPayload: Var) => {
-      return [VarType.string, VarType.number].includes(varPayload.type)
+      // TODO extract a new input-item for strictly string and number
+      return [VarType.string, VarType.number, VarType.arrayFile, VarType.arrayString].includes(varPayload.type)
     },
   })
 

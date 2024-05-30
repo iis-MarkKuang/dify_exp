@@ -5,6 +5,7 @@ import type {
   CreateDocumentReq,
   DataSet,
   DataSetListResponse,
+  DocsResponse,
   DocumentDetailResponse,
   DocumentListResponse,
   ErrorDocsResponse,
@@ -66,6 +67,15 @@ export const fetchDatasetRelatedApps: Fetcher<RelatedAppResponse, string> = (dat
 export const fetchDatasets: Fetcher<DataSetListResponse, { url: string; params: { page: number; ids?: string[]; limit?: number } }> = ({ url, params }) => {
   const urlParams = qs.stringify(params, { indices: false })
   return get<DataSetListResponse>(`${url}?${urlParams}`)
+}
+
+
+export const fetchDocs: Fetcher<DocsResponse, { url: string; params: { page: number; ids?: string[]; limit?: number } }> = ({ url, params }) => {
+  if (params['ids']) {
+      params['ids'] = params['ids'].join();
+  }
+  const urlParams = qs.stringify(params, { indices: false })
+  return get<DocsResponse>(`${url}?${urlParams}`)
 }
 
 export const createEmptyDataset: Fetcher<DataSet, { name: string }> = ({ name }) => {

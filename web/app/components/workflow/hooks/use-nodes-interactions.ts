@@ -597,6 +597,11 @@ export const useNodesInteractions = () => {
       const outgoers = getOutgoers(prevNode, nodes, edges).sort((a, b) => a.position.y - b.position.y)
       const lastOutgoer = outgoers[outgoers.length - 1]
 
+      // TODO Remove?
+      if (prevNode.data.type === BlockEnum.KnowledgeRetrieval)
+        targetHandle = prevNodeId
+      if (prevNode.data.type === BlockEnum.DocSelect)
+        targetHandle = prevNodeId
       newNode.data._connectedTargetHandleIds = [targetHandle]
       newNode.data._connectedSourceHandleIds = []
       newNode.position = {
@@ -773,6 +778,11 @@ export const useNodesInteractions = () => {
       const prevNode = nodes.find(node => node.id === prevNodeId)!
       const nextNode = nodes.find(node => node.id === nextNodeId)!
 
+      // TODO Remove?
+      if (prevNode.data.type === BlockEnum.KnowledgeRetrieval)
+        targetHandle = prevNodeId
+      if (prevNode.data.type === BlockEnum.DocSelect)
+        targetHandle = prevNodeId
       newNode.data._connectedTargetHandleIds = [targetHandle]
       newNode.data._connectedSourceHandleIds = [sourceHandle]
       newNode.position = {

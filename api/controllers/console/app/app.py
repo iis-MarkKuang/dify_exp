@@ -47,7 +47,7 @@ class AppListApi(Resource):
 
         # get app list
         app_service = AppService()
-        app_pagination = app_service.get_paginate_apps(current_user.current_tenant_id, args)
+        app_pagination = app_service.get_paginate_apps(current_user.current_tenant_id, current_user.account_id, args)
         if not app_pagination:
             return {'data': [], 'total': 0, 'page': 1, 'limit': 20, 'has_more': False}
 
@@ -76,7 +76,7 @@ class AppListApi(Resource):
             raise BadRequest("mode is required")
 
         app_service = AppService()
-        app = app_service.create_app(current_user.current_tenant_id, args, current_user)
+        app = app_service.create_app(args, current_user)
 
         return app, 201
 

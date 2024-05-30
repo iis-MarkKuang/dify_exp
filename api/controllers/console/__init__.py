@@ -6,7 +6,7 @@ bp = Blueprint('console', __name__, url_prefix='/console/api')
 api = ExternalApi(bp)
 
 # Import other controllers
-from . import admin, apikey, extension, feature, ping, setup, version
+from . import admin, apikey, extension, feature, ping, setup, version, doc_translation
 
 # Import app controllers
 from .app import (

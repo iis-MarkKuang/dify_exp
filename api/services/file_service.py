@@ -79,6 +79,7 @@ class FileService:
             size=file_size,
             extension=extension,
             mime_type=file.mimetype,
+            file_uuid=file_uuid,
             created_by_role=('account' if isinstance(user, Account) else 'end_user'),
             created_by=user.id,
             created_at=datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None),
@@ -105,6 +106,7 @@ class FileService:
         upload_file = UploadFile(
             tenant_id=current_user.current_tenant_id,
             storage_type=config['STORAGE_TYPE'],
+            file_uuid=file_uuid,
             key=file_key,
             name=text_name + '.txt',
             size=len(text),

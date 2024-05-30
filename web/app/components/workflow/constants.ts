@@ -4,6 +4,7 @@ import StartNodeDefault from './nodes/start/default'
 import AnswerDefault from './nodes/answer/default'
 import LLMDefault from './nodes/llm/default'
 import KnowledgeRetrievalDefault from './nodes/knowledge-retrieval/default'
+import DocSelectDefault from './nodes/doc-select/default'
 import QuestionClassifierDefault from './nodes/question-classifier/default'
 import IfElseDefault from './nodes/if-else/default'
 import CodeDefault from './nodes/code/default'
@@ -60,6 +61,15 @@ export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
     getAvailablePrevNodes: LLMDefault.getAvailablePrevNodes,
     getAvailableNextNodes: LLMDefault.getAvailableNextNodes,
     checkValid: LLMDefault.checkValid,
+  },
+  [BlockEnum.DocSelect]: {
+    author: 'Microcraft',
+    about: '',
+    availablePrevNodes: [],
+    availableNextNodes: [],
+    getAvailablePrevNodes: DocSelectDefault.getAvailablePrevNodes,
+    getAvailableNextNodes: DocSelectDefault.getAvailableNextNodes,
+    checkValid: DocSelectDefault.checkValid,
   },
   [BlockEnum.KnowledgeRetrieval]: {
     author: 'Dify',
@@ -191,6 +201,13 @@ export const NODES_INITIAL_DATA = {
     variables: [],
     ...LLMDefault.defaultValue,
   },
+  [BlockEnum.DocSelect]: {
+    type: BlockEnum.DocSelect,
+    title: '',
+    desc: '',
+    doc_ids: [],
+    ...DocSelectDefault.defaultValue,
+  },
   [BlockEnum.KnowledgeRetrieval]: {
     type: BlockEnum.KnowledgeRetrieval,
     title: '',
@@ -316,7 +333,7 @@ export const RETRIEVAL_OUTPUT_STRUCT = `{
 }`
 
 export const SUPPORT_OUTPUT_VARS_NODE = [
-  BlockEnum.Start, BlockEnum.LLM, BlockEnum.KnowledgeRetrieval, BlockEnum.Code, BlockEnum.TemplateTransform,
+  BlockEnum.Start, BlockEnum.LLM, BlockEnum.KnowledgeRetrieval, BlockEnum.DocSelect, BlockEnum.Code, BlockEnum.TemplateTransform,
   BlockEnum.HttpRequest, BlockEnum.Tool, BlockEnum.VariableAssigner, BlockEnum.VariableAggregator, BlockEnum.QuestionClassifier,
   BlockEnum.ParameterExtractor, BlockEnum.Iteration,
 ]
@@ -332,6 +349,13 @@ export const KNOWLEDGE_RETRIEVAL_OUTPUT_STRUCT: Var[] = [
   {
     variable: 'result',
     type: VarType.arrayObject,
+  },
+]
+
+export const DOC_SELECT_OUTPUT_STRUCT: Var[] = [
+  {
+    variable: 'file_ids',
+    type: VarType.arrayString,
   },
 ]
 

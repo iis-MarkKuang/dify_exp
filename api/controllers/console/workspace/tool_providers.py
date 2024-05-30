@@ -316,7 +316,7 @@ class ToolWorkflowProviderCreateApi(Resource):
     def post(self):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
-        
+
         user_id = current_user.id
         tenant_id = current_user.current_tenant_id
 
@@ -352,7 +352,7 @@ class ToolWorkflowProviderUpdateApi(Resource):
     def post(self):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
-        
+
         user_id = current_user.id
         tenant_id = current_user.current_tenant_id
 
@@ -365,12 +365,12 @@ class ToolWorkflowProviderUpdateApi(Resource):
         reqparser.add_argument('parameters', type=list[dict], required=True, nullable=False, location='json')
         reqparser.add_argument('privacy_policy', type=str, required=False, nullable=True, location='json', default='')
         reqparser.add_argument('labels', type=list[str], required=False, nullable=True, location='json')
-        
+
         args = reqparser.parse_args()
 
         if not args['workflow_tool_id']:
             raise ValueError('incorrect workflow_tool_id')
-        
+
         return WorkflowToolManageService.update_workflow_tool(
             user_id,
             tenant_id,
@@ -391,7 +391,7 @@ class ToolWorkflowProviderDeleteApi(Resource):
     def post(self):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
-        
+
         user_id = current_user.id
         tenant_id = current_user.current_tenant_id
 
@@ -405,7 +405,7 @@ class ToolWorkflowProviderDeleteApi(Resource):
             tenant_id,
             args['workflow_tool_id'],
         )
-        
+
 class ToolWorkflowProviderGetApi(Resource):
     @setup_required
     @login_required
@@ -436,7 +436,7 @@ class ToolWorkflowProviderGetApi(Resource):
             raise ValueError('incorrect workflow_tool_id or workflow_app_id')
 
         return jsonable_encoder(tool)
-    
+
 class ToolWorkflowProviderListToolApi(Resource):
     @setup_required
     @login_required
@@ -481,7 +481,7 @@ class ToolApiListApi(Resource):
             user_id,
             tenant_id,
         )])
-    
+
 class ToolWorkflowListApi(Resource):
     @setup_required
     @login_required
@@ -494,7 +494,7 @@ class ToolWorkflowListApi(Resource):
             user_id,
             tenant_id,
         )])
-    
+
 class ToolLabelsApi(Resource):
     @setup_required
     @login_required

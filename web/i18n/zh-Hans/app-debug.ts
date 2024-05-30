@@ -102,6 +102,9 @@ const translation = {
       add: '添加标注',
       edit: '编辑标注',
     },
+    doc: {
+      selectTitle: '选择文档',
+    },
     dataSet: {
       title: '上下文',
       noData: '您可以导入知识库作为上下文',
@@ -201,7 +204,7 @@ const translation = {
   },
   automatic: {
     title: '自动编排',
-    description: '描述您的场景，Dify 将为您编排一个应用。',
+    description: '描述您的场景，Microcraft 将为您编排一个应用。',
     intendedAudience: '目标用户是谁？',
     intendedAudiencePlaceHolder: '例如：学生',
     solveProblem: '希望 AI 为他们解决什么问题？',

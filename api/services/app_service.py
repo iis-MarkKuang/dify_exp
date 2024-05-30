@@ -26,15 +26,17 @@ from services.workflow_service import WorkflowService
 
 
 class AppService:
-    def get_paginate_apps(self, tenant_id: str, args: dict) -> Pagination | None:
+    def get_paginate_apps(self, tenant_id: str, account_id: str, args: dict) -> Pagination | None:
         """
         Get app list with pagination
         :param tenant_id: tenant id
+        :param account_id: account id
         :param args: request args
         :return:
         """
         filters = [
             App.tenant_id == tenant_id,
+            # App.creator_account_id == account_id if App.creator_account_id is not None else True,
             App.is_universal == False
         ]
 
@@ -68,7 +70,7 @@ class AppService:
 
         return app_models
 
-    def create_app(self, tenant_id: str, args: dict, account: Account) -> App:
+    def create_app(self, args: dict, account: Account) -> App:
         """
         Create app
         :param tenant_id: tenant id
@@ -116,12 +118,13 @@ class AppService:
             default_model_config['model'] = json.dumps(default_model_dict)
 
         app = App(**app_template['app'])
+        app.creator_account_id = account.account_id
         app.name = args['name']
         app.description = args.get('description', '')
         app.mode = args['mode']
         app.icon = args['icon']
         app.icon_background = args['icon_background']
-        app.tenant_id = tenant_id
+        app.tenant_id = account.current_tenant_id
 
         db.session.add(app)
         db.session.flush()

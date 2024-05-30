@@ -19,6 +19,7 @@ class SetupApi(Resource):
 
     def get(self):
         if current_app.config['EDITION'] == 'SELF_HOSTED':
+            # setup_status = get_setup_status()
             setup_status = get_setup_status()
             if setup_status:
                 return {
@@ -31,6 +32,7 @@ class SetupApi(Resource):
     @only_edition_self_hosted
     def post(self):
         # is set up
+        # if get_setup_status():
         if get_setup_status():
             raise AlreadySetupError()
 
@@ -86,6 +88,10 @@ def setup_required(view):
         return view(*args, **kwargs)
 
     return decorated
+
+
+def get_setup_status():
+    return False
 
 
 def get_setup_status():

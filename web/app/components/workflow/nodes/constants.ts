@@ -10,6 +10,8 @@ import LLMNode from './llm/node'
 import LLMPanel from './llm/panel'
 import KnowledgeRetrievalNode from './knowledge-retrieval/node'
 import KnowledgeRetrievalPanel from './knowledge-retrieval/panel'
+import DocSelectNode from './doc-select/node'
+import DocSelectPanel from './doc-select/panel'
 import QuestionClassifierNode from './question-classifier/node'
 import QuestionClassifierPanel from './question-classifier/panel'
 import IfElseNode from './if-else/node'
@@ -35,6 +37,7 @@ export const NodeComponentMap: Record<string, ComponentType<any>> = {
   [BlockEnum.Answer]: AnswerNode,
   [BlockEnum.LLM]: LLMNode,
   [BlockEnum.KnowledgeRetrieval]: KnowledgeRetrievalNode,
+  [BlockEnum.DocSelect]: DocSelectNode,
   [BlockEnum.QuestionClassifier]: QuestionClassifierNode,
   [BlockEnum.IfElse]: IfElseNode,
   [BlockEnum.Code]: CodeNode,
@@ -53,6 +56,7 @@ export const PanelComponentMap: Record<string, ComponentType<any>> = {
   [BlockEnum.Answer]: AnswerPanel,
   [BlockEnum.LLM]: LLMPanel,
   [BlockEnum.KnowledgeRetrieval]: KnowledgeRetrievalPanel,
+  [BlockEnum.DocSelect]: DocSelectPanel,
   [BlockEnum.QuestionClassifier]: QuestionClassifierPanel,
   [BlockEnum.IfElse]: IfElsePanel,
   [BlockEnum.Code]: CodePanel,

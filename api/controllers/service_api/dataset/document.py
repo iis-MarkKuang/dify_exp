@@ -353,6 +353,41 @@ class DocumentListApi(DatasetApiResource):
 
         return response
 
+class DocumentGlobalListApi(DatasetApiResource):
+    def get(self, tenant_id):
+        tenant_id = str(tenant_id)
+        page = request.args.get('page', default=1, type=int)
+        limit = request.args.get('limit', default=20, type=int)
+        search = request.args.get('keyword', default=None, type=str)
+        dataset = db.session.query(Dataset).filter(
+            Dataset.tenant_id == tenant_id
+        ).first()
+        if not dataset:
+            raise NotFound('Dataset not found.')
+
+        query = Document.query.filter_by(
+            tenant_id=tenant_id)
+
+        if search:
+            search = f'%{search}%'
+            query = query.filter(Document.name.like(search))
+
+        query = query.order_by(desc(Document.created_at))
+
+        paginated_documents = query.paginate(
+            page=page, per_page=limit, max_per_page=100, error_out=False)
+        documents = paginated_documents.items
+
+        response = {
+            'data': marshal(documents, document_fields),
+            'has_more': len(documents) == limit,
+            'limit': limit,
+            'total': paginated_documents.total,
+            'page': page
+        }
+
+        return response
+
 
 class DocumentIndexingStatusApi(DatasetApiResource):
     def get(self, tenant_id, dataset_id, batch):
@@ -395,3 +430,4 @@ api.add_resource(DocumentUpdateByFileApi, '/datasets/<uuid:dataset_id>/documents
 api.add_resource(DocumentDeleteApi, '/datasets/<uuid:dataset_id>/documents/<uuid:document_id>')
 api.add_resource(DocumentListApi, '/datasets/<uuid:dataset_id>/documents')
 api.add_resource(DocumentIndexingStatusApi, '/datasets/<uuid:dataset_id>/documents/<string:batch>/indexing-status')
+api.add_resource(DocumentGlobalListApi, '/datasets/documents')

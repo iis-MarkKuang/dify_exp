@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 from copy import deepcopy
 from random import randint
 from typing import Any, Optional, Union
@@ -9,6 +10,7 @@ import httpx
 import requests
 
 import core.helper.ssrf_proxy as ssrf_proxy
+from core.tools.tool_file_manager import ToolFileManager
 from core.workflow.entities.variable_entities import VariableSelector
 from core.workflow.entities.variable_pool import ValueType, VariablePool
 from core.workflow.nodes.http_request.entities import HttpRequestNodeData
@@ -201,14 +203,15 @@ class HttpExecutor:
 
             if node_data.body.type in ['form-data', 'x-www-form-urlencoded']:
                 body = self._to_dict("body", body_data, 1)
-
                 if node_data.body.type == 'form-data':
+                    self.body = body
+                    print(body['file'])
                     self.files = {
-                        k: ('', v) for k, v in body.items()
+                        'file': ToolFileManager.get_file_binary(body['file'][2:-2])[0]
                     }
+
                     random_str = lambda n: ''.join([chr(randint(97, 122)) for _ in range(n)])
                     self.boundary = f'----WebKitFormBoundary{random_str(16)}'
-
                     self.headers['Content-Type'] = f'multipart/form-data; boundary={self.boundary}'
                 else:
                     self.body = urlencode(body)
@@ -243,6 +246,7 @@ class HttpExecutor:
         """
             validate the response
         """
+        print('validating response')
         if isinstance(response, httpx.Response | requests.Response):
             executor_response = HttpExecutorResponse(response)
         else:
@@ -257,9 +261,10 @@ class HttpExecutor:
                 raise ValueError(
                     f'Text size is too large, max size is {READABLE_MAX_TEXT_SIZE}, but current size is {executor_response.readable_size}.')
 
+        print(executor_response)
         return executor_response
 
-    def _do_http_request(self, headers: dict[str, Any]) -> httpx.Response:
+    def _do_http_request(self, headers: dict[str, Any], body: Any) -> httpx.Response:
         """
             do http request depending on api bundle
         """
@@ -285,9 +290,8 @@ class HttpExecutor:
         """
         # assemble headers
         headers = self._assembling_headers()
-
         # do http request
-        response = self._do_http_request(headers)
+        response = self._do_http_request(headers, self.body)
 
         # validate response
         return self._validate_and_parse_response(response)
@@ -325,7 +329,7 @@ class HttpExecutor:
             raw_request += f'--{boundary}'
             for k, v in self.files.items():
                 raw_request += f'\nContent-Disposition: form-data; name="{k}"\n\n'
-                raw_request += f'{v[1]}\n'
+                raw_request += f'{v[1].decode() if type(v[1]) is bytes else v[1]}\n'
                 raw_request += f'--{boundary}'
             raw_request += '--'
         else:
