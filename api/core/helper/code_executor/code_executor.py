@@ -89,7 +89,6 @@ class CodeExecutor:
 
         if dependencies:
             data['dependencies'] = [dependency.dict() for dependency in dependencies]
-        print(dependencies)
 
         try:
             response = post(str(url), json=data, headers=headers, timeout=CODE_EXECUTION_TIMEOUT)
