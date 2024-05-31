@@ -158,4 +158,4 @@ sdks/python-client/dify_client.egg-info
 pyrightconfig.json
 
 # yarn stuff
-yarn.lock
+web/yarn.lock
