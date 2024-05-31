@@ -467,9 +467,9 @@ services:
       - ./nginx/proxy.conf:/etc/nginx/proxy.conf
       - ./nginx/conf.d:/etc/nginx/conf.d
       #- ./nginx/ssl:/etc/ssl
-    depends_on:
-      - api
-      - web
+#    depends_on:
+#      - api
+#      - web
     ports:
       - "80:80"
       #- "443:443"
