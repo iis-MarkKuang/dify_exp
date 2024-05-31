@@ -639,9 +639,6 @@ class DocumentIndexingStatusApi(DocumentResource):
         dataset_id = str(dataset_id)
         document_id = str(document_id)
         document = self.get_document(dataset_id, document_id)
-        print("document is:")
-        print(document)
-        print(document.error)
 
         completed_segments = DocumentSegment.query \
             .filter(DocumentSegment.completed_at.isnot(None),
@@ -657,8 +654,7 @@ class DocumentIndexingStatusApi(DocumentResource):
         document.total_segments = total_segments
         if document.is_paused:
             document.indexing_status = 'paused'
-        res = marshal(document, document_status_fields)
-        return res
+        return marshal(document, document_status_fields)
 
 
 class DocumentDetailApi(DocumentResource):
