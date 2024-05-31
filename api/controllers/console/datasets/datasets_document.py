@@ -601,7 +601,9 @@ class DocumentIndexingStatusApi(DocumentResource):
         document.total_segments = total_segments
         if document.is_paused:
             document.indexing_status = 'paused'
-        return marshal(document, document_status_fields)
+        res = marshal(document, document_status_fields)
+        print(res)
+        return res
 
 
 class DocumentDetailApi(DocumentResource):
