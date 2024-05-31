@@ -207,6 +207,63 @@ class DatasetDocumentListApi(Resource):
         'batch': fields.String
     }
 
+    @setup_required
+    @login_required
+    @account_initialization_required
+    @marshal_with(documents_and_batch_fields)
+    @cloud_edition_billing_resource_check('vector_space')
+    def post(self, dataset_id):
+        dataset_id = str(dataset_id)
+
+        dataset = DatasetService.get_dataset(dataset_id)
+
+        if not dataset:
+            raise NotFound('Dataset not found.')
+
+        # The role of the current user in the ta table must be admin or owner
+        if not current_user.is_admin_or_owner:
+            raise Forbidden()
+
+        try:
+            DatasetService.check_dataset_permission(dataset, current_user)
+        except services.errors.account.NoPermissionError as e:
+            raise Forbidden(str(e))
+
+        parser = reqparse.RequestParser()
+        parser.add_argument('indexing_technique', type=str, choices=Dataset.INDEXING_TECHNIQUE_LIST, nullable=False,
+                            location='json')
+        parser.add_argument('data_source', type=dict, required=False, location='json')
+        parser.add_argument('process_rule', type=dict, required=False, location='json')
+        parser.add_argument('duplicate', type=bool, default=True, nullable=False, location='json')
+        parser.add_argument('original_document_id', type=str, required=False, location='json')
+        parser.add_argument('doc_form', type=str, default='text_model', required=False, nullable=False, location='json')
+        parser.add_argument('doc_language', type=str, default='English', required=False, nullable=False,
+                            location='json')
+        parser.add_argument('retrieval_model', type=dict, required=False, nullable=False,
+                            location='json')
+        args = parser.parse_args()
+
+        if not dataset.indexing_technique and not args['indexing_technique']:
+            raise ValueError('indexing_technique is required.')
+
+        # validate args
+        DocumentService.document_create_args_validate(args)
+
+        try:
+            documents, batch = DocumentService.save_document_with_dataset_id(dataset, args, current_user)
+        except ProviderTokenNotInitError as ex:
+            raise ProviderNotInitializeError(ex.description)
+        except QuotaExceededError:
+            raise ProviderQuotaExceededError()
+        except ModelCurrentlyNotSupportError:
+            raise ProviderModelCurrentlyNotSupportError()
+
+        return {
+            'documents': documents,
+            'batch': batch
+        }
+
+
 class DocumentGlobalListApi(Resource):
     @setup_required
     @login_required
