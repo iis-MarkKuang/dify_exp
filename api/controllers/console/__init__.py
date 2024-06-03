@@ -10,7 +10,7 @@ def get_custom_resp_converter():
             response = (None, 200)
         return Response(
             response=json.dumps(response),
-            status=response['status'] if response['status'] else 200,
+            status=response['status'] if (response is not None and 'status' in response) else 200,
             mimetype="application/json"
         )
     return _make_response
