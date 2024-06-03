@@ -214,10 +214,11 @@ def init_metrics(app):
     from controllers.console import metrics as console_metrics
     console_metrics.init_app(app)
 
+
 # create app
 app = create_app()
 init_metrics(app)
-
+metrics = PrometheusMetrics(app)
 
 celery = app.extensions["celery"]
 
