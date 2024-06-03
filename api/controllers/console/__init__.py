@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint
 
 from libs.external_api import ExternalApi
