@@ -19,10 +19,6 @@ class InstalledAppsListApi(Resource):
     @login_required
     @account_initialization_required
     @marshal_with(installed_app_list_fields)
-    @metrics.summary('requests_by_status', 'Request latencies by status',
-                     labels={'status': lambda r: r.status_code})
-    @metrics.histogram('requests_by_status_and_path', 'Request latencies by status and path',
-                       labels={'status': lambda r: r.status_code, 'path': lambda: request.path})
     def get(self):
         current_tenant_id = current_user.current_tenant_id
         installed_apps = db.session.query(InstalledApp).filter(
