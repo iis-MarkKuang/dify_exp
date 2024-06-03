@@ -234,6 +234,7 @@ def after_request(response):
     return response
 
 
+@console_metrics.counter('microcraft_healthcheck', 'Microcraft health check')
 @app.route('/health')
 def health():
     return Response(json.dumps({
