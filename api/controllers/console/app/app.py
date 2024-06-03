@@ -30,10 +30,10 @@ class AppListApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
-    @metrics.summary('dify_apps_list_requests_by_status', 'Dify apps list Request latencies by status',
-                     labels={'status': lambda r: r.status_code})
-    @metrics.histogram('dify_apps_list_requests_by_status_and_path', 'Dify apps list Request latencies by status and path',
-                       labels={'status': lambda r: r.status_code, 'path': lambda: request.path})
+    # @metrics.summary('dify_apps_list_requests_by_status', 'Dify apps list Request latencies by status',
+    #                  labels={'status': lambda r: r.status_code})
+    # @metrics.histogram('dify_apps_list_requests_by_status_and_path', 'Dify apps list Request latencies by status and path',
+    #                    labels={'status': lambda r: r.status_code, 'path': lambda: request.path})
     def get(self):
         """Get app list"""
         def uuid_list(value):
