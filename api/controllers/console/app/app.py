@@ -31,10 +31,10 @@ class AppListApi(Resource):
         labels={'path': lambda: request.path}
     )
 
+    @by_path_counter
     @setup_required
     @login_required
     @account_initialization_required
-    @by_path_counter
     # @metrics.summary('dify_apps_list_requests_by_status', 'Dify apps list Request latencies by status',
     #                  labels={'status': lambda r: r.status_code})
     # @metrics.histogram('dify_apps_list_requests_by_status_and_path', 'Dify apps list Request latencies by status and path',
