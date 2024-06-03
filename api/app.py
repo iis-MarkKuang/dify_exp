@@ -209,11 +209,10 @@ def register_blueprints(app):
     app.register_blueprint(inner_api_bp)
 
 
+from controllers.console import metrics as console_metrics
 # TODO, add other metrics
 def init_metrics(app):
-    from controllers.console import metrics as console_metrics
     console_metrics.init_app(app)
-    console_metrics.register_endpoint('/metrics')
 
 
 # create app
@@ -242,6 +241,11 @@ def health():
         'version': app.config['CURRENT_VERSION']
     }), status=200, content_type="application/json")
 
+
+@app.route('/metrics')
+def metrics():
+    response_data, content_type = metrics.generate_metrics()
+    return response_data
 
 @app.route('/threads')
 def threads():
