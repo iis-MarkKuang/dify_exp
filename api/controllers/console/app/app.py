@@ -26,12 +26,17 @@ ALLOW_CREATE_APP_MODES = ['chat', 'agent-chat', 'advanced-chat', 'workflow', 'co
 
 
 class AppListApi(Resource):
+    by_path_counter = metrics.counter(
+        'by_path_counter', 'Request count by request paths',
+        labels={'path': lambda: request.path}
+    )
 
     @setup_required
     @login_required
     @account_initialization_required
-    @metrics.summary('dify_apps_list_requests_by_status', 'Dify apps list Request latencies by status',
-                     labels={'status': lambda r: r.status_code})
+    @by_path_counter
+    # @metrics.summary('dify_apps_list_requests_by_status', 'Dify apps list Request latencies by status',
+    #                  labels={'status': lambda r: r.status_code})
     # @metrics.histogram('dify_apps_list_requests_by_status_and_path', 'Dify apps list Request latencies by status and path',
     #                    labels={'status': lambda r: r.status_code, 'path': lambda: request.path})
     def get(self):
