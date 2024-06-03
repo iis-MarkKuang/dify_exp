@@ -1,5 +1,5 @@
 import json
-from flask import Blueprint
+from flask import Blueprint, Response
 
 from libs.external_api import ExternalApi
 from prometheus_flask_exporter import RESTfulPrometheusMetrics
@@ -7,11 +7,14 @@ from prometheus_flask_exporter import RESTfulPrometheusMetrics
 def get_custom_resp_converter():
     def _make_response(response):
         print('OWN RESP')
-        print(response)
+        print(json.dumps(response))
         if response is None:
             response = (None, 200)
-        return (json.loads(json.dumps(response)), 200)
-
+        return Response(
+            response=json.dumps(response),
+            status=200,
+            mimetype="application/json"
+        )
     return _make_response
 
 bp = Blueprint('console', __name__, url_prefix='/console/api')
