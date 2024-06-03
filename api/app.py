@@ -211,11 +211,12 @@ def register_blueprints(app):
 
 # create app
 app = create_app()
+init_metrics(app)
 
-# set up metrics for app
-metrics = PrometheusMetrics(app)
-# static information as metric
-metrics.info('app_info', 'Application info', version=microcraft_version)
+# TODO, add other metrics
+def init_metrics(app):
+    from controllers.console import metrics as console_metrics
+    console_metrics.init_app(app)
 
 celery = app.extensions["celery"]
 
