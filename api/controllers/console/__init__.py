@@ -3,7 +3,7 @@ from flask import Blueprint
 from libs.external_api import ExternalApi
 from prometheus_flask_exporter import RESTfulPrometheusMetrics
 
-def _create_response_converter():
+def _create_response_converter(api):
     def _make_response(response):
         print(response)
         if response is None:
