@@ -6,13 +6,11 @@ from prometheus_flask_exporter import RESTfulPrometheusMetrics
 
 def get_custom_resp_converter():
     def _make_response(response):
-        print('OWN RESP')
-        print(json.dumps(response))
         if response is None:
             response = (None, 200)
         return Response(
             response=json.dumps(response),
-            status=200,
+            status=response['status'] ? response['status'] : 200,
             mimetype="application/json"
         )
     return _make_response
