@@ -31,7 +31,7 @@ class AppListApi(Resource):
         labels={'path': lambda: request.path}
     )
 
-    @by_path_counter
+    # @by_path_counter
     @setup_required
     @login_required
     @account_initialization_required
