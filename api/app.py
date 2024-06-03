@@ -209,14 +209,15 @@ def register_blueprints(app):
     app.register_blueprint(inner_api_bp)
 
 
-# create app
-app = create_app()
-init_metrics(app)
-
 # TODO, add other metrics
 def init_metrics(app):
     from controllers.console import metrics as console_metrics
     console_metrics.init_app(app)
+
+# create app
+app = create_app()
+init_metrics(app)
+
 
 celery = app.extensions["celery"]
 
