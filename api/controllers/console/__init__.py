@@ -10,13 +10,13 @@ def _create_response_converter(api):
         print(api)
         if response is None:
             response = (None, 200)
-        return response
+        return api._make_response(response)
 
     return _make_response
 
 bp = Blueprint('console', __name__, url_prefix='/console/api')
 api = ExternalApi(bp)
-metrics = RESTfulPrometheusMetrics(app=None, api=api, response_converter=_create_response_converter)
+metrics = RESTfulPrometheusMetrics(app=None, api=api, response_converter=_create_response_converter(api))
 
 
 # Import other controllers
