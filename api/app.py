@@ -244,7 +244,7 @@ def health():
 
 @app.route('/metrics')
 def metrics():
-    response_data, content_type = metrics.generate_metrics()
+    response_data, content_type = console_metrics.generate_metrics()
     return response_data
 
 @app.route('/threads')
