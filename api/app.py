@@ -20,9 +20,11 @@ from logging.handlers import RotatingFileHandler
 from flask import Flask, Response, request
 from flask_cors import CORS
 from werkzeug.exceptions import Unauthorized
+from prometheus_flask_exporter import PrometheusMetrics
 
 from commands import register_commands
 from config import Config
+from version import version as microcraft_version
 
 # DO NOT REMOVE BELOW
 from events import event_handlers
@@ -76,6 +78,7 @@ config_type = os.getenv('EDITION', default='SELF_HOSTED')  # ce edition first
 
 
 def create_app() -> Flask:
+
     app = DifyApp(__name__)
     app.config.from_object(Config())
 
@@ -208,6 +211,12 @@ def register_blueprints(app):
 
 # create app
 app = create_app()
+
+# set up metrics for app
+metrics = PrometheusMetrics(app)
+# static information as metric
+metrics.info('app_info', 'Application info', version=microcraft_version)
+
 celery = app.extensions["celery"]
 
 if app.config['TESTING']:

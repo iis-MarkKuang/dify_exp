@@ -5,7 +5,7 @@ from flask_restful import Resource, inputs, marshal_with, reqparse
 from sqlalchemy import and_
 from werkzeug.exceptions import BadRequest, Forbidden, NotFound
 
-from controllers.console import api
+from controllers.console import api, metrics
 from controllers.console.explore.wraps import InstalledAppResource
 from controllers.console.wraps import account_initialization_required, cloud_edition_billing_resource_check
 from extensions.ext_database import db
@@ -19,7 +19,10 @@ class InstalledAppsListApi(Resource):
     @login_required
     @account_initialization_required
     @marshal_with(installed_app_list_fields)
-    def get(self):
+    @metrics.summary('requests_by_status', 'Request latencies by status',
+                     labels={'status': lambda r: r.status_code})
+    @metrics.histogram('requests_by_status_and_path', 'Request latencies by status and path',
+                       labels={'status': lambda r: r.status_code, 'path': lambda: request.path})    def get(self):
         current_tenant_id = current_user.current_tenant_id
         installed_apps = db.session.query(InstalledApp).filter(
             InstalledApp.tenant_id == current_tenant_id
