@@ -5,6 +5,9 @@ from prometheus_flask_exporter import RESTfulPrometheusMetrics
 
 def _create_response_converter(api):
     def _make_response(response):
+        print(response)
+        print(*response)
+        print(api)
         if response is None:
             response = (None, 200)
         return response
