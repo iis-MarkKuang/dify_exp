@@ -5,7 +5,7 @@ from flask_login import current_user
 from flask_restful import Resource, inputs, marshal, marshal_with, reqparse
 from werkzeug.exceptions import BadRequest, Forbidden, abort
 
-from app import metrics
+from controllers.console import metrics
 from controllers.console import api
 from controllers.console.app.wraps import get_app_model
 from controllers.console.setup import setup_required
