@@ -213,12 +213,12 @@ def register_blueprints(app):
 def init_metrics(app):
     from controllers.console import metrics as console_metrics
     console_metrics.init_app(app)
+    console_metrics.register_endpoint('/metrics')
 
 
 # create app
 app = create_app()
 init_metrics(app)
-metrics = PrometheusMetrics(app)
 
 celery = app.extensions["celery"]
 
