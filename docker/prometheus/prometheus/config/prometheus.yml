@@ -1,0 +1,24 @@
+global:
+  scrape_interval:     30s # 每30s采集一次数据
+  evaluation_interval: 30s # 每30s做一次告警检测
+
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: ['20.255.63.62:9093']
+
+
+rule_files:
+  - "rules.yml"
+
+
+scrape_configs:
+  # 配置microcraft
+  - job_name: microcraft
+    static_configs:
+      - targets: ['20.234.55.107:5001']
+        labels:
+          instance: microcraft
+
+
