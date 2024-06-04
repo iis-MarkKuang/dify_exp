@@ -3,7 +3,7 @@ groups:
   rules:
   - alert: 实例存活 报警
     expr: up == 0
-    for: 30s
+    for: 90s
     labels:
       severity: emergency
       level: critical 
