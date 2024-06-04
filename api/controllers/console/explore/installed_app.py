@@ -5,7 +5,7 @@ from flask_restful import Resource, inputs, marshal_with, reqparse
 from sqlalchemy import and_
 from werkzeug.exceptions import BadRequest, Forbidden, NotFound
 
-from controllers.console import api
+from controllers.console import api, metrics
 from controllers.console.explore.wraps import InstalledAppResource
 from controllers.console.wraps import account_initialization_required, cloud_edition_billing_resource_check
 from extensions.ext_database import db

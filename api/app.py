@@ -20,9 +20,11 @@ from logging.handlers import RotatingFileHandler
 from flask import Flask, Response, request
 from flask_cors import CORS
 from werkzeug.exceptions import Unauthorized
+from prometheus_flask_exporter import PrometheusMetrics
 
 from commands import register_commands
 from config import Config
+from version import version as microcraft_version
 
 # DO NOT REMOVE BELOW
 from events import event_handlers
@@ -76,6 +78,7 @@ config_type = os.getenv('EDITION', default='SELF_HOSTED')  # ce edition first
 
 
 def create_app() -> Flask:
+
     app = DifyApp(__name__)
     app.config.from_object(Config())
 
@@ -206,8 +209,16 @@ def register_blueprints(app):
     app.register_blueprint(inner_api_bp)
 
 
+from controllers.console import metrics as console_metrics
+# TODO, add other metrics
+def init_metrics(app):
+    console_metrics.init_app(app)
+
+
 # create app
 app = create_app()
+init_metrics(app)
+
 celery = app.extensions["celery"]
 
 if app.config['TESTING']:
@@ -223,6 +234,7 @@ def after_request(response):
     return response
 
 
+@console_metrics.counter('microcraft_healthcheck', 'Microcraft health check')
 @app.route('/health')
 def health():
     return Response(json.dumps({
@@ -230,6 +242,11 @@ def health():
         'version': app.config['CURRENT_VERSION']
     }), status=200, content_type="application/json")
 
+
+@app.route('/metrics')
+def metrics():
+    response_data, content_type = console_metrics.generate_metrics()
+    return response_data
 
 @app.route('/threads')
 def threads():

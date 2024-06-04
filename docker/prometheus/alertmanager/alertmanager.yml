@@ -1,0 +1,14 @@
+global:
+  resolve_timeout: 5m  
+route:   
+  group_by: ['instance']   
+  group_wait: 30s  
+  group_interval: 60s  
+  repeat_interval: 5m  
+  receiver: 'web.hook.prometheusalert'  
+receivers:
+- name: 'web.hook.prometheusalert'
+  webhook_configs:
+  # note, change this to actual server ip and port and feishu webhook
+  - url: 'http://20.255.63.62:9094/prometheusalert?type=fs&tpl=prometheus-fs&fsurl=https://open.feishu.cn/open-apis/bot/v2/hook/bed74669-f2c7-4c20-bd1b-cbbad7d02446'
+
