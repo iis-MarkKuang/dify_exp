@@ -1,11 +1,12 @@
 global:
-  scrape_interval:     30s # 每30s采集一次数据
-  evaluation_interval: 30s # 每30s做一次告警检测
+  scrape_interval:     30s # scrape per 30s
+  evaluation_interval: 30s # alert eval per 30s
 
 
 alerting:
   alertmanagers:
   - static_configs:
+    # note change this to actual server ip and port when deploying
     - targets: ['20.255.63.62:9093']
 
 
@@ -14,9 +15,10 @@ rule_files:
 
 
 scrape_configs:
-  # 配置microcraft
+  # microcraft
   - job_name: microcraft
     static_configs:
+      # Note change this to actual microcraft backend ip:port when deploying
       - targets: ['20.234.55.107:5001']
         labels:
           instance: microcraft
