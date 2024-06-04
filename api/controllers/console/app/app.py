@@ -5,6 +5,7 @@ from flask_login import current_user
 from flask_restful import Resource, inputs, marshal, marshal_with, reqparse
 from werkzeug.exceptions import BadRequest, Forbidden, abort
 
+from controllers.console import metrics
 from controllers.console import api
 from controllers.console.app.wraps import get_app_model
 from controllers.console.setup import setup_required
@@ -25,10 +26,21 @@ ALLOW_CREATE_APP_MODES = ['chat', 'agent-chat', 'advanced-chat', 'workflow', 'co
 
 
 class AppListApi(Resource):
+    by_path_counter = metrics.counter(
+        'by_path_counter', 'Request count by request paths',
+        labels={'path': lambda: request.path}
+    )
 
+    # @by_path_counter
     @setup_required
     @login_required
     @account_initialization_required
+    @metrics.gauge('in_progress', 'Long running requests in progress')
+    # @metrics.counter('app_list_counter', 'Counter for apps list request')
+    @metrics.summary('dify_apps_list_requests_by_status', 'Dify apps list Request latencies by status',
+                     labels={'status': lambda r: r.status_code})
+    # @metrics.histogram('dify_apps_list_requests_by_status_and_path', 'Dify apps list Request latencies by status and path',
+    #                    labels={'status': lambda r: r.status_code, 'path': lambda: request.path})
     def get(self):
         """Get app list"""
         def uuid_list(value):

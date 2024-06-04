@@ -1,0 +1,13 @@
+groups:
+- name: 实例存活报警
+  rules:
+  - alert: 实例存活 报警
+    expr: up == 0
+    for: 30s
+    labels:
+      severity: emergency
+      level: critical 
+    annotations:
+      description: 'MicroCraft服务 {{ $labels.instance }}不可用，请尽快查看并修复'
+
+
