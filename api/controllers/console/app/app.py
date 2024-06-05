@@ -298,6 +298,7 @@ class AppApiStatus(Resource):
         return app_model
 
 
+api.add_resource(AppMetricsTestApi, "/apps/metrics_test")
 api.add_resource(AppListApi, "/apps")
 api.add_resource(AppImportApi, "/apps/import")
 api.add_resource(AppApi, "/apps/<uuid:app_id>")
