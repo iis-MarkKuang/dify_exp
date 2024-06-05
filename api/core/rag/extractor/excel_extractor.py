@@ -1,4 +1,5 @@
 """Abstract interface for document loader implementations."""
+
 from typing import Optional
 
 import pandas as pd
@@ -16,22 +17,17 @@ class ExcelExtractor(BaseExtractor):
         file_path: Path to the file to load.
     """
 
-    def __init__(
-            self,
-            file_path: str,
-            encoding: Optional[str] = None,
-            autodetect_encoding: bool = False
-    ):
+    def __init__(self, file_path: str, encoding: Optional[str] = None, autodetect_encoding: bool = False):
         """Initialize with file path."""
         self._file_path = file_path
         self._encoding = encoding
         self._autodetect_encoding = autodetect_encoding
 
     def extract(self) -> list[Document]:
-        """ parse excel file"""
-        if self._file_path.endswith('.xls'):
+        """parse excel file"""
+        if self._file_path.endswith(".xls"):
             return self._extract4xls()
-        elif self._file_path.endswith('.xlsx'):
+        elif self._file_path.endswith(".xlsx"):
             return self._extract4xlsx()
 
     def _extract4xls(self) -> list[Document]:
@@ -49,9 +45,9 @@ class ExcelExtractor(BaseExtractor):
                 item_arr = []
                 for index, cell in enumerate(row):
                     txt_value = str(cell.value)
-                    item_arr.append(f'{row_header[index].value}:{txt_value}')
+                    item_arr.append(f"{row_header[index].value}:{txt_value}")
                 item_str = "\n".join(item_arr)
-                document = Document(page_content=item_str, metadata={'source': self._file_path})
+                document = Document(page_content=item_str, metadata={"source": self._file_path})
                 documents.append(document)
         return documents
 
@@ -64,12 +60,12 @@ class ExcelExtractor(BaseExtractor):
             df = pd.read_excel(xls, sheet_name=sheet_name)
 
             # filter out rows with all NaN values
-            df.dropna(how='all', inplace=True)
+            df.dropna(how="all", inplace=True)
 
             # transform each row into a Document
             for _, row in df.iterrows():
-                item = ';'.join(f'{k}:{v}' for k, v in row.items() if pd.notna(v))
-                document = Document(page_content=item, metadata={'source': self._file_path})
+                item = ";".join(f"{k}:{v}" for k, v in row.items() if pd.notna(v))
+                document = Document(page_content=item, metadata={"source": self._file_path})
                 data.append(document)
         return data
 
@@ -83,6 +79,6 @@ class ExcelExtractor(BaseExtractor):
         """
         # Iterates through the cells and returns False if a non-empty cell is found
         for cell in row:
-            if cell.value is not None and cell.value != '':
+            if cell.value is not None and cell.value != "":
                 return False
         return True

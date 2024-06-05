@@ -23,12 +23,12 @@ class MaaSClient(MaasService):
         self.endpoint_id = endpoint_id
 
     @classmethod
-    def from_credential(cls, credentials: dict) -> 'MaaSClient':
-        host = credentials['api_endpoint_host']
-        region = credentials['volc_region']
-        ak = credentials['volc_access_key_id']
-        sk = credentials['volc_secret_access_key']
-        endpoint_id = credentials['endpoint_id']
+    def from_credential(cls, credentials: dict) -> "MaaSClient":
+        host = credentials["api_endpoint_host"]
+        region = credentials["volc_region"]
+        ak = credentials["volc_access_key_id"]
+        sk = credentials["volc_secret_access_key"]
+        endpoint_id = credentials["endpoint_id"]
 
         client = cls(host, region)
         client.set_endpoint_id(endpoint_id)
@@ -38,8 +38,8 @@ class MaaSClient(MaasService):
 
     def chat(self, params: dict, messages: list[PromptMessage], stream=False) -> Generator | dict:
         req = {
-            'parameters': params,
-            'messages': [self.convert_prompt_message_to_maas_message(prompt) for prompt in messages]
+            "parameters": params,
+            "messages": [self.convert_prompt_message_to_maas_message(prompt) for prompt in messages],
         }
         if not stream:
             return super().chat(
@@ -52,9 +52,7 @@ class MaaSClient(MaasService):
         )
 
     def embeddings(self, texts: list[str]) -> dict:
-        req = {
-            'input': texts
-        }
+        req = {"input": texts}
         return super().embeddings(self.endpoint_id, req)
 
     @staticmethod
@@ -62,37 +60,33 @@ class MaaSClient(MaasService):
         if isinstance(message, UserPromptMessage):
             message = cast(UserPromptMessage, message)
             if isinstance(message.content, str):
-                message_dict = {"role": ChatRole.USER,
-                                "content": message.content}
+                message_dict = {"role": ChatRole.USER, "content": message.content}
             else:
                 content = []
                 for message_content in message.content:
                     if message_content.type == PromptMessageContentType.TEXT:
-                        raise ValueError(
-                            'Content object type only support image_url')
+                        raise ValueError("Content object type only support image_url")
                     elif message_content.type == PromptMessageContentType.IMAGE:
-                        message_content = cast(
-                            ImagePromptMessageContent, message_content)
-                        image_data = re.sub(
-                            r'^data:image\/[a-zA-Z]+;base64,', '', message_content.data)
-                        content.append({
-                            'type': 'image_url',
-                            'image_url': {
-                                'url': '',
-                                'image_bytes': image_data,
-                                'detail': message_content.detail,
+                        message_content = cast(ImagePromptMessageContent, message_content)
+                        image_data = re.sub(r"^data:image\/[a-zA-Z]+;base64,", "", message_content.data)
+                        content.append(
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": "",
+                                    "image_bytes": image_data,
+                                    "detail": message_content.detail,
+                                },
                             }
-                        })
+                        )
 
-                message_dict = {'role': ChatRole.USER, 'content': content}
+                message_dict = {"role": ChatRole.USER, "content": content}
         elif isinstance(message, AssistantPromptMessage):
             message = cast(AssistantPromptMessage, message)
-            message_dict = {'role': ChatRole.ASSISTANT,
-                            'content': message.content}
+            message_dict = {"role": ChatRole.ASSISTANT, "content": message.content}
         elif isinstance(message, SystemPromptMessage):
             message = cast(SystemPromptMessage, message)
-            message_dict = {'role': ChatRole.SYSTEM,
-                            'content': message.content}
+            message_dict = {"role": ChatRole.SYSTEM, "content": message.content}
         else:
             raise ValueError(f"Got unknown PromptMessage type {message}")
 

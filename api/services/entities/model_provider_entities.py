@@ -22,14 +22,16 @@ class CustomConfigurationStatus(Enum):
     """
     Enum class for custom configuration status.
     """
-    ACTIVE = 'active'
-    NO_CONFIGURE = 'no-configure'
+
+    ACTIVE = "active"
+    NO_CONFIGURE = "no-configure"
 
 
 class CustomConfigurationResponse(BaseModel):
     """
     Model class for provider custom configuration response.
     """
+
     status: CustomConfigurationStatus
 
 
@@ -37,6 +39,7 @@ class SystemConfigurationResponse(BaseModel):
     """
     Model class for provider system configuration response.
     """
+
     enabled: bool
     current_quota_type: Optional[ProviderQuotaType] = None
     quota_configurations: list[QuotaConfiguration] = []
@@ -46,6 +49,7 @@ class ProviderResponse(BaseModel):
     """
     Model class for provider response.
     """
+
     provider: str
     label: I18nObject
     description: Optional[I18nObject] = None
@@ -64,18 +68,18 @@ class ProviderResponse(BaseModel):
     def __init__(self, **data) -> None:
         super().__init__(**data)
 
-        url_prefix = (current_app.config.get("CONSOLE_API_URL")
-                      + f"/console/api/workspaces/current/model-providers/{self.provider}")
+        url_prefix = (
+            current_app.config.get("CONSOLE_API_URL")
+            + f"/console/api/workspaces/current/model-providers/{self.provider}"
+        )
         if self.icon_small is not None:
             self.icon_small = I18nObject(
-                en_US=f"{url_prefix}/icon_small/en_US",
-                zh_Hans=f"{url_prefix}/icon_small/zh_Hans"
+                en_US=f"{url_prefix}/icon_small/en_US", zh_Hans=f"{url_prefix}/icon_small/zh_Hans"
             )
 
         if self.icon_large is not None:
             self.icon_large = I18nObject(
-                en_US=f"{url_prefix}/icon_large/en_US",
-                zh_Hans=f"{url_prefix}/icon_large/zh_Hans"
+                en_US=f"{url_prefix}/icon_large/en_US", zh_Hans=f"{url_prefix}/icon_large/zh_Hans"
             )
 
 
@@ -83,6 +87,7 @@ class ModelResponse(ProviderModel):
     """
     Model class for model response.
     """
+
     status: ModelStatus
 
 
@@ -90,6 +95,7 @@ class ProviderWithModelsResponse(BaseModel):
     """
     Model class for provider with models response.
     """
+
     provider: str
     label: I18nObject
     icon_small: Optional[I18nObject] = None
@@ -100,18 +106,18 @@ class ProviderWithModelsResponse(BaseModel):
     def __init__(self, **data) -> None:
         super().__init__(**data)
 
-        url_prefix = (current_app.config.get("CONSOLE_API_URL")
-                      + f"/console/api/workspaces/current/model-providers/{self.provider}")
+        url_prefix = (
+            current_app.config.get("CONSOLE_API_URL")
+            + f"/console/api/workspaces/current/model-providers/{self.provider}"
+        )
         if self.icon_small is not None:
             self.icon_small = I18nObject(
-                en_US=f"{url_prefix}/icon_small/en_US",
-                zh_Hans=f"{url_prefix}/icon_small/zh_Hans"
+                en_US=f"{url_prefix}/icon_small/en_US", zh_Hans=f"{url_prefix}/icon_small/zh_Hans"
             )
 
         if self.icon_large is not None:
             self.icon_large = I18nObject(
-                en_US=f"{url_prefix}/icon_large/en_US",
-                zh_Hans=f"{url_prefix}/icon_large/zh_Hans"
+                en_US=f"{url_prefix}/icon_large/en_US", zh_Hans=f"{url_prefix}/icon_large/zh_Hans"
             )
 
 
@@ -123,18 +129,18 @@ class SimpleProviderEntityResponse(SimpleProviderEntity):
     def __init__(self, **data) -> None:
         super().__init__(**data)
 
-        url_prefix = (current_app.config.get("CONSOLE_API_URL")
-                      + f"/console/api/workspaces/current/model-providers/{self.provider}")
+        url_prefix = (
+            current_app.config.get("CONSOLE_API_URL")
+            + f"/console/api/workspaces/current/model-providers/{self.provider}"
+        )
         if self.icon_small is not None:
             self.icon_small = I18nObject(
-                en_US=f"{url_prefix}/icon_small/en_US",
-                zh_Hans=f"{url_prefix}/icon_small/zh_Hans"
+                en_US=f"{url_prefix}/icon_small/en_US", zh_Hans=f"{url_prefix}/icon_small/zh_Hans"
             )
 
         if self.icon_large is not None:
             self.icon_large = I18nObject(
-                en_US=f"{url_prefix}/icon_large/en_US",
-                zh_Hans=f"{url_prefix}/icon_large/zh_Hans"
+                en_US=f"{url_prefix}/icon_large/en_US", zh_Hans=f"{url_prefix}/icon_large/zh_Hans"
             )
 
 
@@ -142,6 +148,7 @@ class DefaultModelResponse(BaseModel):
     """
     Default model entity.
     """
+
     model: str
     model_type: ModelType
     provider: SimpleProviderEntityResponse
@@ -151,6 +158,7 @@ class ModelWithProviderEntityResponse(ModelWithProviderEntity):
     """
     Model with provider entity.
     """
+
     provider: SimpleProviderEntityResponse
 
     def __init__(self, model: ModelWithProviderEntity) -> None:

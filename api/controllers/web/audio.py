@@ -31,14 +31,10 @@ from services.errors.audio import (
 
 class AudioApi(WebApiResource):
     def post(self, app_model: App, end_user):
-        file = request.files['file']
+        file = request.files["file"]
 
         try:
-            response = AudioService.transcript_asr(
-                app_model=app_model,
-                file=file,
-                end_user=end_user
-            )
+            response = AudioService.transcript_asr(app_model=app_model, file=file, end_user=end_user)
 
             return response
         except services.errors.app_model_config.AppModelConfigBrokenError:
@@ -72,13 +68,15 @@ class TextApi(WebApiResource):
         try:
             response = AudioService.transcript_tts(
                 app_model=app_model,
-                text=request.form['text'],
+                text=request.form["text"],
                 end_user=end_user.external_user_id,
-                voice=request.form['voice'] if request.form.get('voice') else app_model.app_model_config.text_to_speech_dict.get('voice'),
-                streaming=False
+                voice=request.form["voice"]
+                if request.form.get("voice")
+                else app_model.app_model_config.text_to_speech_dict.get("voice"),
+                streaming=False,
             )
 
-            return {'data': response.data.decode('latin1')}
+            return {"data": response.data.decode("latin1")}
         except services.errors.app_model_config.AppModelConfigBrokenError:
             logging.exception("App model config broken.")
             raise AppUnavailableError()
@@ -105,5 +103,5 @@ class TextApi(WebApiResource):
             raise InternalServerError()
 
 
-api.add_resource(AudioApi, '/audio-to-text')
-api.add_resource(TextApi, '/text-to-audio')
+api.add_resource(AudioApi, "/audio-to-text")
+api.add_resource(TextApi, "/text-to-audio")

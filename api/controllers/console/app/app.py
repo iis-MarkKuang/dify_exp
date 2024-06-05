@@ -1,5 +1,6 @@
 import json
 import uuid
+import random
 
 from flask_login import current_user
 from flask_restful import Resource, inputs, marshal, marshal_with, reqparse
@@ -22,35 +23,63 @@ from models.model import App, AppMode, AppModelConfig
 from services.app_service import AppService
 from services.tag_service import TagService
 
-ALLOW_CREATE_APP_MODES = ['chat', 'agent-chat', 'advanced-chat', 'workflow', 'completion']
+ALLOW_CREATE_APP_MODES = ["chat", "agent-chat", "advanced-chat", "workflow", "completion"]
 
 
-class AppListApi(Resource):
-    by_path_counter = metrics.counter(
-        'by_path_counter', 'Request count by request paths',
-        labels={'path': lambda: request.path}
-    )
-
-    # @by_path_counter
+class AppMetricsTestApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
-    @metrics.gauge('in_progress', 'Long running requests in progress')
-    @metrics.summary('dify_apps_list_requests_by_status', 'Dify apps list Request latencies by status',
-                     labels={'status': lambda r: r.status_code})
+    @metrics.gauge("in_progress_metrics", "Long running requests in progress")
+    @metrics.summary(
+        "dify_apps_metrics_requests_by_resp_status",
+        "Dify apps metrics Request latencies by status",
+        labels={"status": lambda r: r.status_code},
+    )
     def get(self):
         """Get app list"""
+        return {
+            "data": [],
+            "total": 0,
+            "page": 1,
+            "limit": 20,
+            "has_more": False,
+            "status": 200 if random.random() > 0.5 else 201,
+        }
+
+
+class AppListApi(Resource):
+    @setup_required
+    @login_required
+    @account_initialization_required
+    @metrics.gauge("in_progress", "Long running requests in progress")
+    @metrics.summary(
+        "dify_apps_list_requests_by_status",
+        "Dify apps list Request latencies by status",
+        labels={"status": lambda r: r.status_code},
+    )
+    def get(self):
+        """Get app list"""
+
         def uuid_list(value):
             try:
-                return [str(uuid.UUID(v)) for v in value.split(',')]
+                return [str(uuid.UUID(v)) for v in value.split(",")]
             except ValueError:
                 abort(400, message="Invalid UUID format in tag_ids.")
+
         parser = reqparse.RequestParser()
-        parser.add_argument('page', type=inputs.int_range(1, 99999), required=False, default=1, location='args')
-        parser.add_argument('limit', type=inputs.int_range(1, 100), required=False, default=20, location='args')
-        parser.add_argument('mode', type=str, choices=['chat', 'workflow', 'agent-chat', 'channel', 'all'], default='all', location='args', required=False)
-        parser.add_argument('name', type=str, location='args', required=False)
-        parser.add_argument('tag_ids', type=uuid_list, location='args', required=False)
+        parser.add_argument("page", type=inputs.int_range(1, 99999), required=False, default=1, location="args")
+        parser.add_argument("limit", type=inputs.int_range(1, 100), required=False, default=20, location="args")
+        parser.add_argument(
+            "mode",
+            type=str,
+            choices=["chat", "workflow", "agent-chat", "channel", "all"],
+            default="all",
+            location="args",
+            required=False,
+        )
+        parser.add_argument("name", type=str, location="args", required=False)
+        parser.add_argument("tag_ids", type=uuid_list, location="args", required=False)
 
         args = parser.parse_args()
 
@@ -58,7 +87,7 @@ class AppListApi(Resource):
         app_service = AppService()
         app_pagination = app_service.get_paginate_apps(current_user.current_tenant_id, current_user.account_id, args)
         if not app_pagination:
-            return {'data': [], 'total': 0, 'page': 1, 'limit': 20, 'has_more': False}
+            return {"data": [], "total": 0, "page": 1, "limit": 20, "has_more": False}
 
         return marshal(app_pagination, app_pagination_fields)
 
@@ -66,22 +95,22 @@ class AppListApi(Resource):
     @login_required
     @account_initialization_required
     @marshal_with(app_detail_fields)
-    @cloud_edition_billing_resource_check('apps')
+    @cloud_edition_billing_resource_check("apps")
     def post(self):
         """Create app"""
         parser = reqparse.RequestParser()
-        parser.add_argument('name', type=str, required=True, location='json')
-        parser.add_argument('description', type=str, location='json')
-        parser.add_argument('mode', type=str, choices=ALLOW_CREATE_APP_MODES, location='json')
-        parser.add_argument('icon', type=str, location='json')
-        parser.add_argument('icon_background', type=str, location='json')
+        parser.add_argument("name", type=str, required=True, location="json")
+        parser.add_argument("description", type=str, location="json")
+        parser.add_argument("mode", type=str, choices=ALLOW_CREATE_APP_MODES, location="json")
+        parser.add_argument("icon", type=str, location="json")
+        parser.add_argument("icon_background", type=str, location="json")
         args = parser.parse_args()
 
         # The role of the current user in the ta table must be admin or owner
         if not current_user.is_admin_or_owner:
             raise Forbidden()
 
-        if 'mode' not in args or args['mode'] is None:
+        if "mode" not in args or args["mode"] is None:
             raise BadRequest("mode is required")
 
         app_service = AppService()
@@ -95,7 +124,7 @@ class AppImportApi(Resource):
     @login_required
     @account_initialization_required
     @marshal_with(app_detail_fields_with_site)
-    @cloud_edition_billing_resource_check('apps')
+    @cloud_edition_billing_resource_check("apps")
     def post(self):
         """Import app"""
         # The role of the current user in the ta table must be admin or owner
@@ -103,21 +132,20 @@ class AppImportApi(Resource):
             raise Forbidden()
 
         parser = reqparse.RequestParser()
-        parser.add_argument('data', type=str, required=True, nullable=False, location='json')
-        parser.add_argument('name', type=str, location='json')
-        parser.add_argument('description', type=str, location='json')
-        parser.add_argument('icon', type=str, location='json')
-        parser.add_argument('icon_background', type=str, location='json')
+        parser.add_argument("data", type=str, required=True, nullable=False, location="json")
+        parser.add_argument("name", type=str, location="json")
+        parser.add_argument("description", type=str, location="json")
+        parser.add_argument("icon", type=str, location="json")
+        parser.add_argument("icon_background", type=str, location="json")
         args = parser.parse_args()
 
         app_service = AppService()
-        app = app_service.import_app(current_user.current_tenant_id, args['data'], args, current_user)
+        app = app_service.import_app(current_user.current_tenant_id, args["data"], args, current_user)
 
         return app, 201
 
 
 class AppApi(Resource):
-
     @setup_required
     @login_required
     @account_initialization_required
@@ -139,10 +167,10 @@ class AppApi(Resource):
     def put(self, app_model):
         """Update app"""
         parser = reqparse.RequestParser()
-        parser.add_argument('name', type=str, required=True, nullable=False, location='json')
-        parser.add_argument('description', type=str, location='json')
-        parser.add_argument('icon', type=str, location='json')
-        parser.add_argument('icon_background', type=str, location='json')
+        parser.add_argument("name", type=str, required=True, nullable=False, location="json")
+        parser.add_argument("description", type=str, location="json")
+        parser.add_argument("icon", type=str, location="json")
+        parser.add_argument("icon_background", type=str, location="json")
         args = parser.parse_args()
 
         app_service = AppService()
@@ -162,7 +190,7 @@ class AppApi(Resource):
         app_service = AppService()
         app_service.delete_app(app_model)
 
-        return {'result': 'success'}, 204
+        return {"result": "success"}, 204
 
 
 class AppCopyApi(Resource):
@@ -178,10 +206,10 @@ class AppCopyApi(Resource):
             raise Forbidden()
 
         parser = reqparse.RequestParser()
-        parser.add_argument('name', type=str, location='json')
-        parser.add_argument('description', type=str, location='json')
-        parser.add_argument('icon', type=str, location='json')
-        parser.add_argument('icon_background', type=str, location='json')
+        parser.add_argument("name", type=str, location="json")
+        parser.add_argument("description", type=str, location="json")
+        parser.add_argument("icon", type=str, location="json")
+        parser.add_argument("icon_background", type=str, location="json")
         args = parser.parse_args()
 
         app_service = AppService()
@@ -200,9 +228,7 @@ class AppExportApi(Resource):
         """Export app"""
         app_service = AppService()
 
-        return {
-            "data": app_service.export_app(app_model)
-        }
+        return {"data": app_service.export_app(app_model)}
 
 
 class AppNameApi(Resource):
@@ -213,11 +239,11 @@ class AppNameApi(Resource):
     @marshal_with(app_detail_fields)
     def post(self, app_model):
         parser = reqparse.RequestParser()
-        parser.add_argument('name', type=str, required=True, location='json')
+        parser.add_argument("name", type=str, required=True, location="json")
         args = parser.parse_args()
 
         app_service = AppService()
-        app_model = app_service.update_app_name(app_model, args.get('name'))
+        app_model = app_service.update_app_name(app_model, args.get("name"))
 
         return app_model
 
@@ -230,12 +256,12 @@ class AppIconApi(Resource):
     @marshal_with(app_detail_fields)
     def post(self, app_model):
         parser = reqparse.RequestParser()
-        parser.add_argument('icon', type=str, location='json')
-        parser.add_argument('icon_background', type=str, location='json')
+        parser.add_argument("icon", type=str, location="json")
+        parser.add_argument("icon_background", type=str, location="json")
         args = parser.parse_args()
 
         app_service = AppService()
-        app_model = app_service.update_app_icon(app_model, args.get('icon'), args.get('icon_background'))
+        app_model = app_service.update_app_icon(app_model, args.get("icon"), args.get("icon_background"))
 
         return app_model
 
@@ -248,11 +274,11 @@ class AppSiteStatus(Resource):
     @marshal_with(app_detail_fields)
     def post(self, app_model):
         parser = reqparse.RequestParser()
-        parser.add_argument('enable_site', type=bool, required=True, location='json')
+        parser.add_argument("enable_site", type=bool, required=True, location="json")
         args = parser.parse_args()
 
         app_service = AppService()
-        app_model = app_service.update_app_site_status(app_model, args.get('enable_site'))
+        app_model = app_service.update_app_site_status(app_model, args.get("enable_site"))
 
         return app_model
 
@@ -265,21 +291,21 @@ class AppApiStatus(Resource):
     @marshal_with(app_detail_fields)
     def post(self, app_model):
         parser = reqparse.RequestParser()
-        parser.add_argument('enable_api', type=bool, required=True, location='json')
+        parser.add_argument("enable_api", type=bool, required=True, location="json")
         args = parser.parse_args()
 
         app_service = AppService()
-        app_model = app_service.update_app_api_status(app_model, args.get('enable_api'))
+        app_model = app_service.update_app_api_status(app_model, args.get("enable_api"))
 
         return app_model
 
 
-api.add_resource(AppListApi, '/apps')
-api.add_resource(AppImportApi, '/apps/import')
-api.add_resource(AppApi, '/apps/<uuid:app_id>')
-api.add_resource(AppCopyApi, '/apps/<uuid:app_id>/copy')
-api.add_resource(AppExportApi, '/apps/<uuid:app_id>/export')
-api.add_resource(AppNameApi, '/apps/<uuid:app_id>/name')
-api.add_resource(AppIconApi, '/apps/<uuid:app_id>/icon')
-api.add_resource(AppSiteStatus, '/apps/<uuid:app_id>/site-enable')
-api.add_resource(AppApiStatus, '/apps/<uuid:app_id>/api-enable')
+api.add_resource(AppListApi, "/apps")
+api.add_resource(AppImportApi, "/apps/import")
+api.add_resource(AppApi, "/apps/<uuid:app_id>")
+api.add_resource(AppCopyApi, "/apps/<uuid:app_id>/copy")
+api.add_resource(AppExportApi, "/apps/<uuid:app_id>/export")
+api.add_resource(AppNameApi, "/apps/<uuid:app_id>/name")
+api.add_resource(AppIconApi, "/apps/<uuid:app_id>/icon")
+api.add_resource(AppSiteStatus, "/apps/<uuid:app_id>/site-enable")
+api.add_resource(AppApiStatus, "/apps/<uuid:app_id>/api-enable")

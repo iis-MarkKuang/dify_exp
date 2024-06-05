@@ -37,25 +37,23 @@ class AppService:
         filters = [
             App.tenant_id == tenant_id,
             # App.creator_account_id == account_id if App.creator_account_id is not None else True,
-            App.is_universal == False
+            App.is_universal == False,
         ]
 
-        if args['mode'] == 'workflow':
+        if args["mode"] == "workflow":
             filters.append(App.mode.in_([AppMode.WORKFLOW.value, AppMode.COMPLETION.value]))
-        elif args['mode'] == 'chat':
+        elif args["mode"] == "chat":
             filters.append(App.mode.in_([AppMode.CHAT.value, AppMode.ADVANCED_CHAT.value]))
-        elif args['mode'] == 'agent-chat':
+        elif args["mode"] == "agent-chat":
             filters.append(App.mode == AppMode.AGENT_CHAT.value)
-        elif args['mode'] == 'channel':
+        elif args["mode"] == "channel":
             filters.append(App.mode == AppMode.CHANNEL.value)
 
-        if args.get('name'):
-            name = args['name'][:30]
-            filters.append(App.name.ilike(f'%{name}%'))
-        if args.get('tag_ids'):
-            target_ids = TagService.get_target_ids_by_tag_ids('app',
-                                                              tenant_id,
-                                                              args['tag_ids'])
+        if args.get("name"):
+            name = args["name"][:30]
+            filters.append(App.name.ilike(f"%{name}%"))
+        if args.get("tag_ids"):
+            target_ids = TagService.get_target_ids_by_tag_ids("app", tenant_id, args["tag_ids"])
             if target_ids:
                 filters.append(App.id.in_(target_ids))
             else:
@@ -63,9 +61,9 @@ class AppService:
 
         app_models = db.paginate(
             db.select(App).where(*filters).order_by(App.created_at.desc()),
-            page=args['page'],
-            per_page=args['limit'],
-            error_out=False
+            page=args["page"],
+            per_page=args["limit"],
+            error_out=False,
         )
 
         return app_models
@@ -77,21 +75,20 @@ class AppService:
         :param args: request args
         :param account: Account instance
         """
-        app_mode = AppMode.value_of(args['mode'])
+        app_mode = AppMode.value_of(args["mode"])
         app_template = default_app_templates[app_mode]
 
         # get model config
-        default_model_config = app_template.get('model_config')
+        default_model_config = app_template.get("model_config")
         default_model_config = default_model_config.copy() if default_model_config else None
-        if default_model_config and 'model' in default_model_config:
+        if default_model_config and "model" in default_model_config:
             # get model provider
             model_manager = ModelManager()
 
             # get default model instance
             try:
                 model_instance = model_manager.get_default_model_instance(
-                    tenant_id=account.current_tenant_id,
-                    model_type=ModelType.LLM
+                    tenant_id=account.current_tenant_id, model_type=ModelType.LLM
                 )
             except (ProviderTokenNotInitError, LLMBadRequestError):
                 model_instance = None
@@ -100,30 +97,30 @@ class AppService:
                 model_instance = None
 
             if model_instance:
-                if model_instance.model == default_model_config['model']['name']:
-                    default_model_dict = default_model_config['model']
+                if model_instance.model == default_model_config["model"]["name"]:
+                    default_model_dict = default_model_config["model"]
                 else:
                     llm_model = cast(LargeLanguageModel, model_instance.model_type_instance)
                     model_schema = llm_model.get_model_schema(model_instance.model, model_instance.credentials)
 
                     default_model_dict = {
-                        'provider': model_instance.provider,
-                        'name': model_instance.model,
-                        'mode': model_schema.model_properties.get(ModelPropertyKey.MODE),
-                        'completion_params': {}
+                        "provider": model_instance.provider,
+                        "name": model_instance.model,
+                        "mode": model_schema.model_properties.get(ModelPropertyKey.MODE),
+                        "completion_params": {},
                     }
             else:
-                default_model_dict = default_model_config['model']
+                default_model_dict = default_model_config["model"]
 
-            default_model_config['model'] = json.dumps(default_model_dict)
+            default_model_config["model"] = json.dumps(default_model_dict)
 
-        app = App(**app_template['app'])
+        app = App(**app_template["app"])
         app.creator_account_id = account.account_id
-        app.name = args['name']
-        app.description = args.get('description', '')
-        app.mode = args['mode']
-        app.icon = args['icon']
-        app.icon_background = args['icon_background']
+        app.name = args["name"]
+        app.description = args.get("description", "")
+        app.mode = args["mode"]
+        app.icon = args["icon"]
+        app.icon_background = args["icon_background"]
         app.tenant_id = account.current_tenant_id
 
         db.session.add(app)
@@ -156,35 +153,36 @@ class AppService:
         except yaml.YAMLError as e:
             raise ValueError("Invalid YAML format in data argument.")
 
-        app_data = import_data.get('app')
-        model_config_data = import_data.get('model_config')
-        workflow = import_data.get('workflow')
+        app_data = import_data.get("app")
+        model_config_data = import_data.get("model_config")
+        workflow = import_data.get("workflow")
 
         if not app_data:
             raise ValueError("Missing app in data argument")
 
-        app_mode = AppMode.value_of(app_data.get('mode'))
+        app_mode = AppMode.value_of(app_data.get("mode"))
         if app_mode in [AppMode.ADVANCED_CHAT, AppMode.WORKFLOW]:
             if not workflow:
-                raise ValueError("Missing workflow in data argument "
-                                 "when app mode is advanced-chat or workflow")
+                raise ValueError("Missing workflow in data argument " "when app mode is advanced-chat or workflow")
         elif app_mode in [AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.COMPLETION]:
             if not model_config_data:
-                raise ValueError("Missing model_config in data argument "
-                                 "when app mode is chat, agent-chat or completion")
+                raise ValueError(
+                    "Missing model_config in data argument " "when app mode is chat, agent-chat or completion"
+                )
         else:
             raise ValueError("Invalid app mode")
 
         app = App(
             tenant_id=tenant_id,
-            mode=app_data.get('mode'),
-            name=args.get("name") if args.get("name") else app_data.get('name'),
-            description=args.get("description") if args.get("description") else app_data.get('description', ''),
-            icon=args.get("icon") if args.get("icon") else app_data.get('icon'),
-            icon_background=args.get("icon_background") if args.get("icon_background") \
-                else app_data.get('icon_background'),
+            mode=app_data.get("mode"),
+            name=args.get("name") if args.get("name") else app_data.get("name"),
+            description=args.get("description") if args.get("description") else app_data.get("description", ""),
+            icon=args.get("icon") if args.get("icon") else app_data.get("icon"),
+            icon_background=args.get("icon_background")
+            if args.get("icon_background")
+            else app_data.get("icon_background"),
             enable_site=True,
-            enable_api=True
+            enable_api=True,
         )
 
         db.session.add(app)
@@ -197,16 +195,12 @@ class AppService:
             workflow_service = WorkflowService()
             draft_workflow = workflow_service.sync_draft_workflow(
                 app_model=app,
-                graph=workflow.get('graph'),
-                features=workflow.get('features'),
+                graph=workflow.get("graph"),
+                features=workflow.get("features"),
                 unique_hash=None,
-                account=account
-            )
-            workflow_service.publish_workflow(
-                app_model=app,
                 account=account,
-                draft_workflow=draft_workflow
             )
+            workflow_service.publish_workflow(app_model=app, account=account, draft_workflow=draft_workflow)
 
         if model_config_data:
             app_model_config = AppModelConfig()
@@ -218,10 +212,7 @@ class AppService:
 
             app.app_model_config_id = app_model_config.id
 
-            app_model_config_was_updated.send(
-                app,
-                app_model_config=app_model_config
-            )
+            app_model_config_was_updated.send(app, app_model_config=app_model_config)
 
         return app
 
@@ -239,21 +230,18 @@ class AppService:
                 "mode": app.mode,
                 "icon": app.icon,
                 "icon_background": app.icon_background,
-                "description": app.description
+                "description": app.description,
             }
         }
 
         if app_mode in [AppMode.ADVANCED_CHAT, AppMode.WORKFLOW]:
             workflow_service = WorkflowService()
             workflow = workflow_service.get_draft_workflow(app)
-            export_data['workflow'] = {
-                "graph": workflow.graph_dict,
-                "features": workflow.features_dict
-            }
+            export_data["workflow"] = {"graph": workflow.graph_dict, "features": workflow.features_dict}
         else:
             app_model_config = app.app_model_config
 
-            export_data['model_config'] = app_model_config.to_dict()
+            export_data["model_config"] = app_model_config.to_dict()
 
         return yaml.dump(export_data)
 
@@ -266,7 +254,7 @@ class AppService:
             model_config: AppModelConfig = app.app_model_config
             agent_mode = model_config.agent_mode_dict
             # decrypt agent tool parameters if it's secret-input
-            for tool in agent_mode.get('tools') or []:
+            for tool in agent_mode.get("tools") or []:
                 if not isinstance(tool, dict) or len(tool.keys()) <= 3:
                     continue
                 agent_tool_entity = AgentToolEntity(**tool)
@@ -282,7 +270,7 @@ class AppService:
                         tool_runtime=tool_runtime,
                         provider_name=agent_tool_entity.provider_id,
                         provider_type=agent_tool_entity.provider_type,
-                        identity_id=f'AGENT.{app.id}'
+                        identity_id=f"AGENT.{app.id}",
                     )
 
                     # get decrypted parameters
@@ -293,7 +281,7 @@ class AppService:
                         masked_parameter = {}
 
                     # override tool parameters
-                    tool['tool_parameters'] = masked_parameter
+                    tool["tool_parameters"] = masked_parameter
                 except Exception as e:
                     pass
 
@@ -304,13 +292,14 @@ class AppService:
                 """
                 Modified App class
                 """
+
                 def __init__(self, app):
                     self.__dict__.update(app.__dict__)
 
                 @property
                 def app_model_config(self):
                     return model_config
-                
+
             app = ModifiedApp(app)
 
         return app
@@ -322,10 +311,10 @@ class AppService:
         :param args: request args
         :return: App instance
         """
-        app.name = args.get('name')
-        app.description = args.get('description', '')
-        app.icon = args.get('icon')
-        app.icon_background = args.get('icon_background')
+        app.name = args.get("name")
+        app.description = args.get("description", "")
+        app.icon = args.get("icon")
+        app.icon_background = args.get("icon_background")
         app.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
         db.session.commit()
 
@@ -417,9 +406,7 @@ class AppService:
         """
         app_mode = AppMode.value_of(app_model.mode)
 
-        meta = {
-            'tool_icons': {}
-        }
+        meta = {"tool_icons": {}}
 
         if app_mode in [AppMode.ADVANCED_CHAT, AppMode.WORKFLOW]:
             workflow = app_model.workflow
@@ -427,17 +414,19 @@ class AppService:
                 return meta
 
             graph = workflow.graph_dict
-            nodes = graph.get('nodes', [])
+            nodes = graph.get("nodes", [])
             tools = []
             for node in nodes:
-                if node.get('data', {}).get('type') == 'tool':
-                    node_data = node.get('data', {})
-                    tools.append({
-                        'provider_type': node_data.get('provider_type'),
-                        'provider_id': node_data.get('provider_id'),
-                        'tool_name': node_data.get('tool_name'),
-                        'tool_parameters': {}
-                    })
+                if node.get("data", {}).get("type") == "tool":
+                    node_data = node.get("data", {})
+                    tools.append(
+                        {
+                            "provider_type": node_data.get("provider_type"),
+                            "provider_id": node_data.get("provider_id"),
+                            "tool_name": node_data.get("tool_name"),
+                            "tool_parameters": {},
+                        }
+                    )
         else:
             app_model_config: AppModelConfig = app_model.app_model_config
 
@@ -447,30 +436,28 @@ class AppService:
             agent_config = app_model_config.agent_mode_dict or {}
 
             # get all tools
-            tools = agent_config.get('tools', [])
+            tools = agent_config.get("tools", [])
 
-        url_prefix = (current_app.config.get("CONSOLE_API_URL")
-                      + "/console/api/workspaces/current/tool-provider/builtin/")
+        url_prefix = (
+            current_app.config.get("CONSOLE_API_URL") + "/console/api/workspaces/current/tool-provider/builtin/"
+        )
 
         for tool in tools:
             keys = list(tool.keys())
             if len(keys) >= 4:
                 # current tool standard
-                provider_type = tool.get('provider_type')
-                provider_id = tool.get('provider_id')
-                tool_name = tool.get('tool_name')
-                if provider_type == 'builtin':
-                    meta['tool_icons'][tool_name] = url_prefix + provider_id + '/icon'
-                elif provider_type == 'api':
+                provider_type = tool.get("provider_type")
+                provider_id = tool.get("provider_id")
+                tool_name = tool.get("tool_name")
+                if provider_type == "builtin":
+                    meta["tool_icons"][tool_name] = url_prefix + provider_id + "/icon"
+                elif provider_type == "api":
                     try:
                         provider: ApiToolProvider = db.session.query(ApiToolProvider).filter(
                             ApiToolProvider.id == provider_id
                         )
-                        meta['tool_icons'][tool_name] = json.loads(provider.icon)
+                        meta["tool_icons"][tool_name] = json.loads(provider.icon)
                     except:
-                        meta['tool_icons'][tool_name] = {
-                            "background": "#252525",
-                            "content": "\ud83d\ude01"
-                        }
+                        meta["tool_icons"][tool_name] = {"background": "#252525", "content": "\ud83d\ude01"}
 
         return meta

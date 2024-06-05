@@ -39,9 +39,9 @@ class VolcengineMaaSTextEmbeddingModel(TextEmbeddingModel):
     Model class for VolcengineMaaS text embedding model.
     """
 
-    def _invoke(self, model: str, credentials: dict,
-                texts: list[str], user: Optional[str] = None) \
-            -> TextEmbeddingResult:
+    def _invoke(
+        self, model: str, credentials: dict, texts: list[str], user: Optional[str] = None
+    ) -> TextEmbeddingResult:
         """
         Invoke text embedding model
 
@@ -54,14 +54,9 @@ class VolcengineMaaSTextEmbeddingModel(TextEmbeddingModel):
         client = MaaSClient.from_credential(credentials)
         resp = MaaSClient.wrap_exception(lambda: client.embeddings(texts))
 
-        usage = self._calc_response_usage(
-            model=model, credentials=credentials, tokens=resp['usage']['total_tokens'])
+        usage = self._calc_response_usage(model=model, credentials=credentials, tokens=resp["usage"]["total_tokens"])
 
-        result = TextEmbeddingResult(
-            model=model,
-            embeddings=[v['embedding'] for v in resp['data']],
-            usage=usage
-        )
+        result = TextEmbeddingResult(model=model, embeddings=[v["embedding"] for v in resp["data"]], usage=usage)
 
         return result
 
@@ -89,7 +84,7 @@ class VolcengineMaaSTextEmbeddingModel(TextEmbeddingModel):
         :return:
         """
         try:
-            self._invoke(model=model, credentials=credentials, texts=['ping'])
+            self._invoke(model=model, credentials=credentials, texts=["ping"])
         except MaasException as e:
             raise CredentialsValidateFailedError(e.message)
 
@@ -113,16 +108,13 @@ class VolcengineMaaSTextEmbeddingModel(TextEmbeddingModel):
 
     def get_customizable_model_schema(self, model: str, credentials: dict) -> AIModelEntity:
         """
-            generate custom model entities from credentials
+        generate custom model entities from credentials
         """
-        model_properties = ModelConfigs.get(
-            credentials['base_model_name'], {}).get('model_properties', {}).copy()
-        if credentials.get('context_size'):
-            model_properties[ModelPropertyKey.CONTEXT_SIZE] = int(
-                credentials.get('context_size', 4096))
-        if credentials.get('max_chunks'):
-            model_properties[ModelPropertyKey.MAX_CHUNKS] = int(
-                credentials.get('max_chunks', 4096))
+        model_properties = ModelConfigs.get(credentials["base_model_name"], {}).get("model_properties", {}).copy()
+        if credentials.get("context_size"):
+            model_properties[ModelPropertyKey.CONTEXT_SIZE] = int(credentials.get("context_size", 4096))
+        if credentials.get("max_chunks"):
+            model_properties[ModelPropertyKey.MAX_CHUNKS] = int(credentials.get("max_chunks", 4096))
         entity = AIModelEntity(
             model=model,
             label=I18nObject(en_US=model),
@@ -131,10 +123,10 @@ class VolcengineMaaSTextEmbeddingModel(TextEmbeddingModel):
             model_properties=model_properties,
             parameter_rules=[],
             pricing=PriceConfig(
-                input=Decimal(credentials.get('input_price', 0)),
-                unit=Decimal(credentials.get('unit', 0)),
-                currency=credentials.get('currency', "USD")
-            )
+                input=Decimal(credentials.get("input_price", 0)),
+                unit=Decimal(credentials.get("unit", 0)),
+                currency=credentials.get("currency", "USD"),
+            ),
         )
 
         return entity
@@ -150,10 +142,7 @@ class VolcengineMaaSTextEmbeddingModel(TextEmbeddingModel):
         """
         # get input price info
         input_price_info = self.get_price(
-            model=model,
-            credentials=credentials,
-            price_type=PriceType.INPUT,
-            tokens=tokens
+            model=model, credentials=credentials, price_type=PriceType.INPUT, tokens=tokens
         )
 
         # transform usage
@@ -164,7 +153,7 @@ class VolcengineMaaSTextEmbeddingModel(TextEmbeddingModel):
             price_unit=input_price_info.unit,
             total_price=input_price_info.total_amount,
             currency=input_price_info.currency,
-            latency=time.perf_counter() - self.started_at
+            latency=time.perf_counter() - self.started_at,
         )
 
         return usage

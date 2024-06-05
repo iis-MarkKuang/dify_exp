@@ -8,11 +8,12 @@ class CreatedByRole(Enum):
     """
     Enum class for createdByRole
     """
+
     ACCOUNT = "account"
     END_USER = "end_user"
 
     @classmethod
-    def value_of(cls, value: str) -> 'CreatedByRole':
+    def value_of(cls, value: str) -> "CreatedByRole":
         """
         Get value of given mode.
 
@@ -22,19 +23,20 @@ class CreatedByRole(Enum):
         for role in cls:
             if role.value == value:
                 return role
-        raise ValueError(f'invalid createdByRole value {value}')
+        raise ValueError(f"invalid createdByRole value {value}")
 
 
 class CreatedFrom(Enum):
     """
     Enum class for createdFrom
     """
+
     SERVICE_API = "service-api"
     WEB_APP = "web-app"
     EXPLORE = "explore"
 
     @classmethod
-    def value_of(cls, value: str) -> 'CreatedFrom':
+    def value_of(cls, value: str) -> "CreatedFrom":
         """
         Get value of given mode.
 
@@ -44,7 +46,7 @@ class CreatedFrom(Enum):
         for role in cls:
             if role.value == value:
                 return role
-        raise ValueError(f'invalid createdFrom value {value}')
+        raise ValueError(f"invalid createdFrom value {value}")
 
 
 class StringUUID(TypeDecorator):
@@ -54,13 +56,13 @@ class StringUUID(TypeDecorator):
     def process_bind_param(self, value, dialect):
         if value is None:
             return value
-        elif dialect.name == 'postgresql':
+        elif dialect.name == "postgresql":
             return str(value)
         else:
             return value.hex
 
     def load_dialect_impl(self, dialect):
-        if dialect.name == 'postgresql':
+        if dialect.name == "postgresql":
             return dialect.type_descriptor(UUID())
         else:
             return dialect.type_descriptor(CHAR(36))

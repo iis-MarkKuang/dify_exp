@@ -38,8 +38,7 @@ class ModelInstance:
         :return:
         """
         credentials = provider_model_bundle.configuration.get_current_credentials(
-            model_type=provider_model_bundle.model_type_instance.model_type,
-            model=model
+            model_type=provider_model_bundle.model_type_instance.model_type, model=model
         )
 
         if credentials is None:
@@ -47,10 +46,16 @@ class ModelInstance:
 
         return credentials
 
-    def invoke_llm(self, prompt_messages: list[PromptMessage], model_parameters: Optional[dict] = None,
-                   tools: Optional[list[PromptMessageTool]] = None, stop: Optional[list[str]] = None,
-                   stream: bool = True, user: Optional[str] = None, callbacks: list[Callback] = None) \
-            -> Union[LLMResult, Generator]:
+    def invoke_llm(
+        self,
+        prompt_messages: list[PromptMessage],
+        model_parameters: Optional[dict] = None,
+        tools: Optional[list[PromptMessageTool]] = None,
+        stop: Optional[list[str]] = None,
+        stream: bool = True,
+        user: Optional[str] = None,
+        callbacks: list[Callback] = None,
+    ) -> Union[LLMResult, Generator]:
         """
         Invoke large language model
 
@@ -76,11 +81,10 @@ class ModelInstance:
             stop=stop,
             stream=stream,
             user=user,
-            callbacks=callbacks
+            callbacks=callbacks,
         )
 
-    def invoke_text_embedding(self, texts: list[str], user: Optional[str] = None) \
-            -> TextEmbeddingResult:
+    def invoke_text_embedding(self, texts: list[str], user: Optional[str] = None) -> TextEmbeddingResult:
         """
         Invoke large language model
 
@@ -92,17 +96,16 @@ class ModelInstance:
             raise Exception("Model type instance is not TextEmbeddingModel")
 
         self.model_type_instance = cast(TextEmbeddingModel, self.model_type_instance)
-        return self.model_type_instance.invoke(
-            model=self.model,
-            credentials=self.credentials,
-            texts=texts,
-            user=user
-        )
+        return self.model_type_instance.invoke(model=self.model, credentials=self.credentials, texts=texts, user=user)
 
-    def invoke_rerank(self, query: str, docs: list[str], score_threshold: Optional[float] = None,
-                      top_n: Optional[int] = None,
-                      user: Optional[str] = None) \
-            -> RerankResult:
+    def invoke_rerank(
+        self,
+        query: str,
+        docs: list[str],
+        score_threshold: Optional[float] = None,
+        top_n: Optional[int] = None,
+        user: Optional[str] = None,
+    ) -> RerankResult:
         """
         Invoke rerank model
 
@@ -124,11 +127,10 @@ class ModelInstance:
             docs=docs,
             score_threshold=score_threshold,
             top_n=top_n,
-            user=user
+            user=user,
         )
 
-    def invoke_moderation(self, text: str, user: Optional[str] = None) \
-            -> bool:
+    def invoke_moderation(self, text: str, user: Optional[str] = None) -> bool:
         """
         Invoke moderation model
 
@@ -140,15 +142,9 @@ class ModelInstance:
             raise Exception("Model type instance is not ModerationModel")
 
         self.model_type_instance = cast(ModerationModel, self.model_type_instance)
-        return self.model_type_instance.invoke(
-            model=self.model,
-            credentials=self.credentials,
-            text=text,
-            user=user
-        )
+        return self.model_type_instance.invoke(model=self.model, credentials=self.credentials, text=text, user=user)
 
-    def invoke_speech2text(self, file: IO[bytes], user: Optional[str] = None) \
-            -> str:
+    def invoke_speech2text(self, file: IO[bytes], user: Optional[str] = None) -> str:
         """
         Invoke large language model
 
@@ -160,15 +156,11 @@ class ModelInstance:
             raise Exception("Model type instance is not Speech2TextModel")
 
         self.model_type_instance = cast(Speech2TextModel, self.model_type_instance)
-        return self.model_type_instance.invoke(
-            model=self.model,
-            credentials=self.credentials,
-            file=file,
-            user=user
-        )
+        return self.model_type_instance.invoke(model=self.model, credentials=self.credentials, file=file, user=user)
 
-    def invoke_tts(self, content_text: str, tenant_id: str, voice: str, streaming: bool, user: Optional[str] = None) \
-            -> str:
+    def invoke_tts(
+        self, content_text: str, tenant_id: str, voice: str, streaming: bool, user: Optional[str] = None
+    ) -> str:
         """
         Invoke large language tts model
 
@@ -190,7 +182,7 @@ class ModelInstance:
             user=user,
             tenant_id=tenant_id,
             voice=voice,
-            streaming=streaming
+            streaming=streaming,
         )
 
     def get_tts_voices(self, language: str) -> list:
@@ -205,9 +197,7 @@ class ModelInstance:
 
         self.model_type_instance = cast(TTSModel, self.model_type_instance)
         return self.model_type_instance.get_tts_model_voices(
-            model=self.model,
-            credentials=self.credentials,
-            language=language
+            model=self.model, credentials=self.credentials, language=language
         )
 
 
@@ -227,9 +217,7 @@ class ModelManager:
         if not provider:
             return self.get_default_model_instance(tenant_id, model_type)
         provider_model_bundle = self._provider_manager.get_provider_model_bundle(
-            tenant_id=tenant_id,
-            provider=provider,
-            model_type=model_type
+            tenant_id=tenant_id, provider=provider, model_type=model_type
         )
 
         return ModelInstance(provider_model_bundle, model)
@@ -241,10 +229,7 @@ class ModelManager:
         :param model_type: model type
         :return:
         """
-        default_model_entity = self._provider_manager.get_default_model(
-            tenant_id=tenant_id,
-            model_type=model_type
-        )
+        default_model_entity = self._provider_manager.get_default_model(tenant_id=tenant_id, model_type=model_type)
 
         if not default_model_entity:
             raise ProviderTokenNotInitError(f"Default model not found for {model_type}")
@@ -253,5 +238,5 @@ class ModelManager:
             tenant_id=tenant_id,
             provider=default_model_entity.provider.provider,
             model_type=model_type,
-            model=default_model_entity.model
+            model=default_model_entity.model,
         )

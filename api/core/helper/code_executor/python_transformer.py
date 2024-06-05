@@ -29,28 +29,51 @@ print(result)
 
 PYTHON_PRELOAD = """"""
 
-PYTHON_STANDARD_PACKAGES = set([
-    'json', 'datetime', 'math', 'random', 're', 'string', 'sys', 'time', 'traceback', 'uuid', 'os', 'base64',
-    'hashlib', 'hmac', 'binascii', 'collections', 'functools', 'operator', 'itertools', 'uuid', 'numpy'
-])
+PYTHON_STANDARD_PACKAGES = set(
+    [
+        "json",
+        "datetime",
+        "math",
+        "random",
+        "re",
+        "string",
+        "sys",
+        "time",
+        "traceback",
+        "uuid",
+        "os",
+        "base64",
+        "hashlib",
+        "hmac",
+        "binascii",
+        "collections",
+        "functools",
+        "operator",
+        "itertools",
+        "uuid",
+        "numpy",
+    ]
+)
+
 
 class PythonTemplateTransformer(TemplateTransformer):
     @classmethod
-    def transform_caller(cls, code: str, inputs: dict, 
-                         dependencies: Optional[list[CodeDependency]] = None) -> tuple[str, str, list[CodeDependency]]:
+    def transform_caller(
+        cls, code: str, inputs: dict, dependencies: Optional[list[CodeDependency]] = None
+    ) -> tuple[str, str, list[CodeDependency]]:
         """
         Transform code to python runner
         :param code: code
         :param inputs: inputs
         :return:
         """
-        
+
         # transform inputs to json string
-        inputs_str = b64encode(json.dumps(inputs, ensure_ascii=False).encode()).decode('utf-8')
+        inputs_str = b64encode(json.dumps(inputs, ensure_ascii=False).encode()).decode("utf-8")
 
         # replace code and inputs
-        runner = PYTHON_RUNNER.replace('{{code}}', code)
-        runner = runner.replace('{{inputs}}', inputs_str)
+        runner = PYTHON_RUNNER.replace("{{code}}", code)
+        runner = runner.replace("{{inputs}}", inputs_str)
 
         # add standard packages
         if dependencies is None:
@@ -58,13 +81,13 @@ class PythonTemplateTransformer(TemplateTransformer):
 
         for package in PYTHON_STANDARD_PACKAGES:
             if package not in dependencies:
-                dependencies.append(CodeDependency(name=package, version=''))
+                dependencies.append(CodeDependency(name=package, version=""))
 
         # deduplicate
         dependencies = list({dep.name: dep for dep in dependencies if dep.name}.values())
 
         return runner, PYTHON_PRELOAD, dependencies
-    
+
     @classmethod
     def transform_response(cls, response: str) -> dict:
         """
@@ -73,8 +96,8 @@ class PythonTemplateTransformer(TemplateTransformer):
         :return:
         """
         # extract result
-        result = re.search(r'<<RESULT>>(.*?)<<RESULT>>', response, re.DOTALL)
+        result = re.search(r"<<RESULT>>(.*?)<<RESULT>>", response, re.DOTALL)
         if not result:
-            raise ValueError('Failed to parse result')
+            raise ValueError("Failed to parse result")
         result = result.group(1)
         return json.loads(result)

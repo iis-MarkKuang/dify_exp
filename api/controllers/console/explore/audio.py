@@ -32,14 +32,10 @@ class ChatAudioApi(InstalledAppResource):
     def post(self, installed_app):
         app_model = installed_app.app
 
-        file = request.files['file']
+        file = request.files["file"]
 
         try:
-            response = AudioService.transcript_asr(
-                app_model=app_model,
-                file=file,
-                end_user=None
-            )
+            response = AudioService.transcript_asr(app_model=app_model, file=file, end_user=None)
 
             return response
         except services.errors.app_model_config.AppModelConfigBrokenError:
@@ -75,11 +71,13 @@ class ChatTextApi(InstalledAppResource):
         try:
             response = AudioService.transcript_tts(
                 app_model=app_model,
-                text=request.form['text'],
-                voice=request.form['voice'] if request.form.get('voice') else app_model.app_model_config.text_to_speech_dict.get('voice'),
-                streaming=False
+                text=request.form["text"],
+                voice=request.form["voice"]
+                if request.form.get("voice")
+                else app_model.app_model_config.text_to_speech_dict.get("voice"),
+                streaming=False,
             )
-            return {'data': response.data.decode('latin1')}
+            return {"data": response.data.decode("latin1")}
         except services.errors.app_model_config.AppModelConfigBrokenError:
             logging.exception("App model config broken.")
             raise AppUnavailableError()
@@ -106,5 +104,5 @@ class ChatTextApi(InstalledAppResource):
             raise InternalServerError()
 
 
-api.add_resource(ChatAudioApi, '/installed-apps/<uuid:installed_app_id>/audio-to-text', endpoint='installed_app_audio')
-api.add_resource(ChatTextApi, '/installed-apps/<uuid:installed_app_id>/text-to-audio', endpoint='installed_app_text')
+api.add_resource(ChatAudioApi, "/installed-apps/<uuid:installed_app_id>/audio-to-text", endpoint="installed_app_audio")
+api.add_resource(ChatTextApi, "/installed-apps/<uuid:installed_app_id>/text-to-audio", endpoint="installed_app_text")

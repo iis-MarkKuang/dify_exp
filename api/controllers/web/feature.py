@@ -9,4 +9,4 @@ class SystemFeatureApi(Resource):
         return FeatureService.get_system_features().dict()
 
 
-api.add_resource(SystemFeatureApi, '/system-features')
+api.add_resource(SystemFeatureApi, "/system-features")

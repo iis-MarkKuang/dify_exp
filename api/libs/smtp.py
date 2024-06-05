@@ -23,12 +23,12 @@ class SMTPClient:
                 smtp.login(self.username, self.password)
 
             msg = MIMEMultipart()
-            msg['Subject'] = mail['subject']
-            msg['From'] = self._from
-            msg['To'] = mail['to']
-            msg.attach(MIMEText(mail['html'], 'html'))
+            msg["Subject"] = mail["subject"]
+            msg["From"] = self._from
+            msg["To"] = mail["to"]
+            msg.attach(MIMEText(mail["html"], "html"))
 
-            smtp.sendmail(self._from, mail['to'], msg.as_string())
+            smtp.sendmail(self._from, mail["to"], msg.as_string())
         except smtplib.SMTPException as e:
             logging.error(f"SMTP error occurred: {str(e)}")
             raise

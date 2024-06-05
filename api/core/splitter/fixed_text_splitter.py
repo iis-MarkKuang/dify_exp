@@ -1,4 +1,5 @@
 """Functionality for splitting text."""
+
 from __future__ import annotations
 
 from typing import Any, Optional, cast
@@ -19,16 +20,16 @@ from core.splitter.text_splitter import (
 
 class EnhanceRecursiveCharacterTextSplitter(RecursiveCharacterTextSplitter):
     """
-        This class is used to implement from_gpt2_encoder, to prevent using of tiktoken
+    This class is used to implement from_gpt2_encoder, to prevent using of tiktoken
     """
 
     @classmethod
     def from_encoder(
-            cls: type[TS],
-            embedding_model_instance: Optional[ModelInstance],
-            allowed_special: Union[Literal[all], Set[str]] = set(),
-            disallowed_special: Union[Literal[all], Collection[str]] = "all",
-            **kwargs: Any,
+        cls: type[TS],
+        embedding_model_instance: Optional[ModelInstance],
+        allowed_special: Union[Literal[all], Set[str]] = set(),
+        disallowed_special: Union[Literal[all], Collection[str]] = "all",
+        **kwargs: Any,
     ):
         def _token_encoder(text: str) -> int:
             if not text:
@@ -38,16 +39,14 @@ class EnhanceRecursiveCharacterTextSplitter(RecursiveCharacterTextSplitter):
                 embedding_model_type_instance = embedding_model_instance.model_type_instance
                 embedding_model_type_instance = cast(TextEmbeddingModel, embedding_model_type_instance)
                 return embedding_model_type_instance.get_num_tokens(
-                    model=embedding_model_instance.model,
-                    credentials=embedding_model_instance.credentials,
-                    texts=[text]
+                    model=embedding_model_instance.model, credentials=embedding_model_instance.credentials, texts=[text]
                 )
             else:
                 return GPT2Tokenizer.get_num_tokens(text)
 
         if issubclass(cls, TokenTextSplitter):
             extra_kwargs = {
-                "model_name": embedding_model_instance.model if embedding_model_instance else 'gpt2',
+                "model_name": embedding_model_instance.model if embedding_model_instance else "gpt2",
                 "allowed_special": allowed_special,
                 "disallowed_special": disallowed_special,
             }

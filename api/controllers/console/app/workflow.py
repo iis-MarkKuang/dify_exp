@@ -54,30 +54,26 @@ class DraftWorkflowApi(Resource):
         """
         Sync draft workflow
         """
-        content_type = request.headers.get('Content-Type')
+        content_type = request.headers.get("Content-Type")
 
-        if 'application/json' in content_type:
+        if "application/json" in content_type:
             parser = reqparse.RequestParser()
-            parser.add_argument('graph', type=dict, required=True, nullable=False, location='json')
-            parser.add_argument('features', type=dict, required=True, nullable=False, location='json')
-            parser.add_argument('hash', type=str, required=False, location='json')
+            parser.add_argument("graph", type=dict, required=True, nullable=False, location="json")
+            parser.add_argument("features", type=dict, required=True, nullable=False, location="json")
+            parser.add_argument("hash", type=str, required=False, location="json")
             args = parser.parse_args()
-        elif 'text/plain' in content_type:
+        elif "text/plain" in content_type:
             try:
-                data = json.loads(request.data.decode('utf-8'))
-                if 'graph' not in data or 'features' not in data:
-                    raise ValueError('graph or features not found in data')
+                data = json.loads(request.data.decode("utf-8"))
+                if "graph" not in data or "features" not in data:
+                    raise ValueError("graph or features not found in data")
 
-                if not isinstance(data.get('graph'), dict) or not isinstance(data.get('features'), dict):
-                    raise ValueError('graph or features is not a dict')
+                if not isinstance(data.get("graph"), dict) or not isinstance(data.get("features"), dict):
+                    raise ValueError("graph or features is not a dict")
 
-                args = {
-                    'graph': data.get('graph'),
-                    'features': data.get('features'),
-                    'hash': data.get('hash')
-                }
+                args = {"graph": data.get("graph"), "features": data.get("features"), "hash": data.get("hash")}
             except json.JSONDecodeError:
-                return {'message': 'Invalid JSON data'}, 400
+                return {"message": "Invalid JSON data"}, 400
         else:
             abort(415)
 
@@ -86,10 +82,10 @@ class DraftWorkflowApi(Resource):
         try:
             workflow = workflow_service.sync_draft_workflow(
                 app_model=app_model,
-                graph=args.get('graph'),
-                features=args.get('features'),
-                unique_hash=args.get('hash'),
-                account=current_user
+                graph=args.get("graph"),
+                features=args.get("features"),
+                unique_hash=args.get("hash"),
+                account=current_user,
             )
         except WorkflowHashNotEqualError:
             raise DraftWorkflowNotSync()
@@ -97,7 +93,7 @@ class DraftWorkflowApi(Resource):
         return {
             "result": "success",
             "hash": workflow.unique_hash,
-            "updated_at": TimestampField().format(workflow.updated_at or workflow.created_at)
+            "updated_at": TimestampField().format(workflow.updated_at or workflow.created_at),
         }
 
 
@@ -111,19 +107,15 @@ class AdvancedChatDraftWorkflowRunApi(Resource):
         Run draft workflow
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('inputs', type=dict, location='json')
-        parser.add_argument('query', type=str, required=True, location='json', default='')
-        parser.add_argument('files', type=list, location='json')
-        parser.add_argument('conversation_id', type=uuid_value, location='json')
+        parser.add_argument("inputs", type=dict, location="json")
+        parser.add_argument("query", type=str, required=True, location="json", default="")
+        parser.add_argument("files", type=list, location="json")
+        parser.add_argument("conversation_id", type=uuid_value, location="json")
         args = parser.parse_args()
 
         try:
             response = AppGenerateService.generate(
-                app_model=app_model,
-                user=current_user,
-                args=args,
-                invoke_from=InvokeFrom.DEBUGGER,
-                streaming=True
+                app_model=app_model, user=current_user, args=args, invoke_from=InvokeFrom.DEBUGGER, streaming=True
             )
 
             return helper.compact_generate_response(response)
@@ -136,6 +128,7 @@ class AdvancedChatDraftWorkflowRunApi(Resource):
         except Exception as e:
             logging.exception("internal server error.")
             raise InternalServerError()
+
 
 class AdvancedChatDraftRunIterationNodeApi(Resource):
     @setup_required
@@ -147,16 +140,12 @@ class AdvancedChatDraftRunIterationNodeApi(Resource):
         Run draft workflow iteration node
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('inputs', type=dict, location='json')
+        parser.add_argument("inputs", type=dict, location="json")
         args = parser.parse_args()
 
         try:
             response = AppGenerateService.generate_single_iteration(
-                app_model=app_model,
-                user=current_user,
-                node_id=node_id,
-                args=args,
-                streaming=True
+                app_model=app_model, user=current_user, node_id=node_id, args=args, streaming=True
             )
 
             return helper.compact_generate_response(response)
@@ -169,6 +158,7 @@ class AdvancedChatDraftRunIterationNodeApi(Resource):
         except Exception as e:
             logging.exception("internal server error.")
             raise InternalServerError()
+
 
 class WorkflowDraftRunIterationNodeApi(Resource):
     @setup_required
@@ -180,16 +170,12 @@ class WorkflowDraftRunIterationNodeApi(Resource):
         Run draft workflow iteration node
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('inputs', type=dict, location='json')
+        parser.add_argument("inputs", type=dict, location="json")
         args = parser.parse_args()
 
         try:
             response = AppGenerateService.generate_single_iteration(
-                app_model=app_model,
-                user=current_user,
-                node_id=node_id,
-                args=args,
-                streaming=True
+                app_model=app_model, user=current_user, node_id=node_id, args=args, streaming=True
             )
 
             return helper.compact_generate_response(response)
@@ -203,6 +189,7 @@ class WorkflowDraftRunIterationNodeApi(Resource):
             logging.exception("internal server error.")
             raise InternalServerError()
 
+
 class DraftWorkflowRunApi(Resource):
     @setup_required
     @login_required
@@ -213,17 +200,13 @@ class DraftWorkflowRunApi(Resource):
         Run draft workflow
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('inputs', type=dict, required=True, nullable=False, location='json')
-        parser.add_argument('files', type=list, required=False, location='json')
+        parser.add_argument("inputs", type=dict, required=True, nullable=False, location="json")
+        parser.add_argument("files", type=list, required=False, location="json")
         args = parser.parse_args()
 
         try:
             response = AppGenerateService.generate(
-                app_model=app_model,
-                user=current_user,
-                args=args,
-                invoke_from=InvokeFrom.DEBUGGER,
-                streaming=True
+                app_model=app_model, user=current_user, args=args, invoke_from=InvokeFrom.DEBUGGER, streaming=True
             )
 
             return helper.compact_generate_response(response)
@@ -245,9 +228,7 @@ class WorkflowTaskStopApi(Resource):
         """
         AppQueueManager.set_stop_flag(task_id, InvokeFrom.DEBUGGER, current_user.id)
 
-        return {
-            "result": "success"
-        }
+        return {"result": "success"}
 
 
 class DraftWorkflowNodeRunApi(Resource):
@@ -261,22 +242,18 @@ class DraftWorkflowNodeRunApi(Resource):
         Run draft workflow node
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('inputs', type=dict, required=True, nullable=False, location='json')
+        parser.add_argument("inputs", type=dict, required=True, nullable=False, location="json")
         args = parser.parse_args()
 
         workflow_service = WorkflowService()
         workflow_node_execution = workflow_service.run_draft_workflow_node(
-            app_model=app_model,
-            node_id=node_id,
-            user_inputs=args.get('inputs'),
-            account=current_user
+            app_model=app_model, node_id=node_id, user_inputs=args.get("inputs"), account=current_user
         )
 
         return workflow_node_execution
 
 
 class PublishedWorkflowApi(Resource):
-
     @setup_required
     @login_required
     @account_initialization_required
@@ -304,10 +281,7 @@ class PublishedWorkflowApi(Resource):
         workflow_service = WorkflowService()
         workflow = workflow_service.publish_workflow(app_model=app_model, account=current_user)
 
-        return {
-            "result": "success",
-            "created_at": TimestampField().format(workflow.created_at)
-        }
+        return {"result": "success", "created_at": TimestampField().format(workflow.created_at)}
 
 
 class DefaultBlockConfigsApi(Resource):
@@ -334,22 +308,19 @@ class DefaultBlockConfigApi(Resource):
         Get default block config
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('q', type=str, location='args')
+        parser.add_argument("q", type=str, location="args")
         args = parser.parse_args()
 
         filters = None
-        if args.get('q'):
+        if args.get("q"):
             try:
-                filters = json.loads(args.get('q'))
+                filters = json.loads(args.get("q"))
             except json.JSONDecodeError:
-                raise ValueError('Invalid filters')
+                raise ValueError("Invalid filters")
 
         # Get default block configs
         workflow_service = WorkflowService()
-        return workflow_service.get_default_block_config(
-            node_type=block_type,
-            filters=filters
-        )
+        return workflow_service.get_default_block_config(node_type=block_type, filters=filters)
 
 
 class ConvertToWorkflowApi(Resource):
@@ -365,36 +336,38 @@ class ConvertToWorkflowApi(Resource):
         """
         if request.data:
             parser = reqparse.RequestParser()
-            parser.add_argument('name', type=str, required=False, nullable=True, location='json')
-            parser.add_argument('icon', type=str, required=False, nullable=True, location='json')
-            parser.add_argument('icon_background', type=str, required=False, nullable=True, location='json')
+            parser.add_argument("name", type=str, required=False, nullable=True, location="json")
+            parser.add_argument("icon", type=str, required=False, nullable=True, location="json")
+            parser.add_argument("icon_background", type=str, required=False, nullable=True, location="json")
             args = parser.parse_args()
         else:
             args = {}
 
         # convert to workflow mode
         workflow_service = WorkflowService()
-        new_app_model = workflow_service.convert_to_workflow(
-            app_model=app_model,
-            account=current_user,
-            args=args
-        )
+        new_app_model = workflow_service.convert_to_workflow(app_model=app_model, account=current_user, args=args)
 
         # return app id
         return {
-            'new_app_id': new_app_model.id,
+            "new_app_id": new_app_model.id,
         }
 
 
-api.add_resource(DraftWorkflowApi, '/apps/<uuid:app_id>/workflows/draft')
-api.add_resource(AdvancedChatDraftWorkflowRunApi, '/apps/<uuid:app_id>/advanced-chat/workflows/draft/run')
-api.add_resource(DraftWorkflowRunApi, '/apps/<uuid:app_id>/workflows/draft/run')
-api.add_resource(WorkflowTaskStopApi, '/apps/<uuid:app_id>/workflow-runs/tasks/<string:task_id>/stop')
-api.add_resource(DraftWorkflowNodeRunApi, '/apps/<uuid:app_id>/workflows/draft/nodes/<string:node_id>/run')
-api.add_resource(AdvancedChatDraftRunIterationNodeApi, '/apps/<uuid:app_id>/advanced-chat/workflows/draft/iteration/nodes/<string:node_id>/run')
-api.add_resource(WorkflowDraftRunIterationNodeApi, '/apps/<uuid:app_id>/workflows/draft/iteration/nodes/<string:node_id>/run')
-api.add_resource(PublishedWorkflowApi, '/apps/<uuid:app_id>/workflows/publish')
-api.add_resource(DefaultBlockConfigsApi, '/apps/<uuid:app_id>/workflows/default-workflow-block-configs')
-api.add_resource(DefaultBlockConfigApi, '/apps/<uuid:app_id>/workflows/default-workflow-block-configs'
-                                        '/<string:block_type>')
-api.add_resource(ConvertToWorkflowApi, '/apps/<uuid:app_id>/convert-to-workflow')
+api.add_resource(DraftWorkflowApi, "/apps/<uuid:app_id>/workflows/draft")
+api.add_resource(AdvancedChatDraftWorkflowRunApi, "/apps/<uuid:app_id>/advanced-chat/workflows/draft/run")
+api.add_resource(DraftWorkflowRunApi, "/apps/<uuid:app_id>/workflows/draft/run")
+api.add_resource(WorkflowTaskStopApi, "/apps/<uuid:app_id>/workflow-runs/tasks/<string:task_id>/stop")
+api.add_resource(DraftWorkflowNodeRunApi, "/apps/<uuid:app_id>/workflows/draft/nodes/<string:node_id>/run")
+api.add_resource(
+    AdvancedChatDraftRunIterationNodeApi,
+    "/apps/<uuid:app_id>/advanced-chat/workflows/draft/iteration/nodes/<string:node_id>/run",
+)
+api.add_resource(
+    WorkflowDraftRunIterationNodeApi, "/apps/<uuid:app_id>/workflows/draft/iteration/nodes/<string:node_id>/run"
+)
+api.add_resource(PublishedWorkflowApi, "/apps/<uuid:app_id>/workflows/publish")
+api.add_resource(DefaultBlockConfigsApi, "/apps/<uuid:app_id>/workflows/default-workflow-block-configs")
+api.add_resource(
+    DefaultBlockConfigApi, "/apps/<uuid:app_id>/workflows/default-workflow-block-configs" "/<string:block_type>"
+)
+api.add_resource(ConvertToWorkflowApi, "/apps/<uuid:app_id>/convert-to-workflow")

@@ -7,13 +7,13 @@ from models.model import Site
 def handle(sender, **kwargs):
     """Create site record when an app is created."""
     app = sender
-    account = kwargs.get('account')
+    account = kwargs.get("account")
     site = Site(
         app_id=app.id,
         title=app.name,
         default_language=account.interface_language,
-        customize_token_strategy='not_allow',
-        code=Site.generate_code(16)
+        customize_token_strategy="not_allow",
+        code=Site.generate_code(16),
     )
 
     db.session.add(site)

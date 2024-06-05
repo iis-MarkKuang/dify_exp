@@ -39,7 +39,7 @@ class ChatMessageAudioApi(Resource):
     @account_initialization_required
     @get_app_model(mode=[AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT])
     def post(self, app_model):
-        file = request.files['file']
+        file = request.files["file"]
 
         try:
             response = AudioService.transcript_asr(
@@ -84,12 +84,14 @@ class ChatMessageTextApi(Resource):
         try:
             response = AudioService.transcript_tts(
                 app_model=app_model,
-                text=request.form['text'],
-                voice=request.form['voice'] if request.form.get('voice') else app_model.app_model_config.text_to_speech_dict.get('voice'),
-                streaming=False
+                text=request.form["text"],
+                voice=request.form["voice"]
+                if request.form.get("voice")
+                else app_model.app_model_config.text_to_speech_dict.get("voice"),
+                streaming=False,
             )
 
-            return {'data': response.data.decode('latin1')}
+            return {"data": response.data.decode("latin1")}
         except services.errors.app_model_config.AppModelConfigBrokenError:
             logging.exception("App model config broken.")
             raise AppUnavailableError()
@@ -124,12 +126,12 @@ class TextModesApi(Resource):
     def get(self, app_model):
         try:
             parser = reqparse.RequestParser()
-            parser.add_argument('language', type=str, required=True, location='args')
+            parser.add_argument("language", type=str, required=True, location="args")
             args = parser.parse_args()
 
             response = AudioService.transcript_tts_voices(
                 tenant_id=app_model.tenant_id,
-                language=args['language'],
+                language=args["language"],
             )
 
             return response
@@ -158,6 +160,6 @@ class TextModesApi(Resource):
             raise InternalServerError()
 
 
-api.add_resource(ChatMessageAudioApi, '/apps/<uuid:app_id>/audio-to-text')
-api.add_resource(ChatMessageTextApi, '/apps/<uuid:app_id>/text-to-audio')
-api.add_resource(TextModesApi, '/apps/<uuid:app_id>/text-to-audio/voices')
+api.add_resource(ChatMessageAudioApi, "/apps/<uuid:app_id>/audio-to-text")
+api.add_resource(ChatMessageTextApi, "/apps/<uuid:app_id>/text-to-audio")
+api.add_resource(TextModesApi, "/apps/<uuid:app_id>/text-to-audio/voices")

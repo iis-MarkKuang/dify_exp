@@ -7,28 +7,28 @@ from core.tools.tool.builtin_tool import BuiltinTool
 
 
 class CrawlTool(BuiltinTool):
-    def _invoke(self, user_id: str, tool_parameters: dict[str, Any]) -> Union[ToolInvokeMessage, list[ToolInvokeMessage]]:
+    def _invoke(
+        self, user_id: str, tool_parameters: dict[str, Any]
+    ) -> Union[ToolInvokeMessage, list[ToolInvokeMessage]]:
         # initialize the app object with the api key
-        app = FirecrawlApp(api_key=self.runtime.credentials['firecrawl_api_key'])
+        app = FirecrawlApp(api_key=self.runtime.credentials["firecrawl_api_key"])
 
         options = {
-            'crawlerOptions': {
-                'excludes': tool_parameters.get('excludes', '').split(',') if tool_parameters.get('excludes') else [],
-                'includes': tool_parameters.get('includes', '').split(',') if tool_parameters.get('includes') else [],
-                'limit': tool_parameters.get('limit', 5)
+            "crawlerOptions": {
+                "excludes": tool_parameters.get("excludes", "").split(",") if tool_parameters.get("excludes") else [],
+                "includes": tool_parameters.get("includes", "").split(",") if tool_parameters.get("includes") else [],
+                "limit": tool_parameters.get("limit", 5),
             },
-            'pageOptions': {
-                'onlyMainContent': tool_parameters.get('onlyMainContent', False)
-            }
+            "pageOptions": {"onlyMainContent": tool_parameters.get("onlyMainContent", False)},
         }
 
         # crawl the url
         crawl_result = app.crawl_url(
-            url=tool_parameters['url'], 
+            url=tool_parameters["url"],
             params=options,
-            wait_until_done=True, 
+            wait_until_done=True,
         )
-        
+
         # reformat crawl result
         crawl_output = "**Crawl Result**\n\n"
         try:
@@ -45,6 +45,5 @@ class CrawlTool(BuiltinTool):
             crawl_output += f"**- URL:** {result.get('metadata', {}).get('ogUrl', '')}\n\n"
             crawl_output += f"**- Web Content:**\n{result.get('markdown', '')}\n\n"
             crawl_output += "---\n\n"
-
 
         return self.create_text_message(crawl_output)

@@ -16,18 +16,14 @@ from .wraps import only_edition_self_hosted
 
 
 class SetupApi(Resource):
-
     def get(self):
-        if current_app.config['EDITION'] == 'SELF_HOSTED':
+        if current_app.config["EDITION"] == "SELF_HOSTED":
             # setup_status = get_setup_status()
             setup_status = get_setup_status()
             if setup_status:
-                return {
-                    'step': 'finished',
-                    'setup_at': setup_status.setup_at.isoformat()
-                }
-            return {'step': 'not_started'}
-        return {'step': 'finished'}
+                return {"step": "finished", "setup_at": setup_status.setup_at.isoformat()}
+            return {"step": "not_started"}
+        return {"step": "finished"}
 
     @only_edition_self_hosted
     def post(self):
@@ -40,38 +36,29 @@ class SetupApi(Resource):
         tenant_count = TenantService.get_tenant_count()
         if tenant_count > 0:
             raise AlreadySetupError()
-    
+
         if not get_init_validate_status():
             raise NotInitValidateError()
 
         parser = reqparse.RequestParser()
-        parser.add_argument('email', type=email,
-                            required=True, location='json')
-        parser.add_argument('name', type=str_len(
-            30), required=True, location='json')
-        parser.add_argument('password', type=valid_password,
-                            required=True, location='json')
+        parser.add_argument("email", type=email, required=True, location="json")
+        parser.add_argument("name", type=str_len(30), required=True, location="json")
+        parser.add_argument("password", type=valid_password, required=True, location="json")
         args = parser.parse_args()
 
         # Register
-        account = RegisterService.register(
-            email=args['email'],
-            name=args['name'],
-            password=args['password']
-        )
+        account = RegisterService.register(email=args["email"], name=args["name"], password=args["password"])
 
         TenantService.create_owner_tenant_if_not_exist(account)
 
         setup()
         AccountService.update_last_login(account, request)
 
-        return {'result': 'success'}, 201
+        return {"result": "success"}, 201
 
 
 def setup():
-    dify_setup = DifySetup(
-        version=current_app.config['CURRENT_VERSION']
-    )
+    dify_setup = DifySetup(version=current_app.config["CURRENT_VERSION"])
     db.session.add(dify_setup)
 
 
@@ -81,7 +68,7 @@ def setup_required(view):
         # check setup
         if not get_init_validate_status():
             raise NotInitValidateError()
-        
+
         elif not get_setup_status():
             raise NotSetupError()
 
@@ -95,9 +82,10 @@ def get_setup_status():
 
 
 def get_setup_status():
-    if current_app.config['EDITION'] == 'SELF_HOSTED':
+    if current_app.config["EDITION"] == "SELF_HOSTED":
         return DifySetup.query.first()
     else:
         return True
 
-api.add_resource(SetupApi, '/setup')
+
+api.add_resource(SetupApi, "/setup")

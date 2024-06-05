@@ -15,19 +15,19 @@ from models.model import Site
 
 def parse_app_site_args():
     parser = reqparse.RequestParser()
-    parser.add_argument('title', type=str, required=False, location='json')
-    parser.add_argument('icon', type=str, required=False, location='json')
-    parser.add_argument('icon_background', type=str, required=False, location='json')
-    parser.add_argument('description', type=str, required=False, location='json')
-    parser.add_argument('default_language', type=supported_language, required=False, location='json')
-    parser.add_argument('customize_domain', type=str, required=False, location='json')
-    parser.add_argument('copyright', type=str, required=False, location='json')
-    parser.add_argument('privacy_policy', type=str, required=False, location='json')
-    parser.add_argument('custom_disclaimer', type=str, required=False, location='json')
-    parser.add_argument('customize_token_strategy', type=str, choices=['must', 'allow', 'not_allow'],
-                        required=False,
-                        location='json')
-    parser.add_argument('prompt_public', type=bool, required=False, location='json')
+    parser.add_argument("title", type=str, required=False, location="json")
+    parser.add_argument("icon", type=str, required=False, location="json")
+    parser.add_argument("icon_background", type=str, required=False, location="json")
+    parser.add_argument("description", type=str, required=False, location="json")
+    parser.add_argument("default_language", type=supported_language, required=False, location="json")
+    parser.add_argument("customize_domain", type=str, required=False, location="json")
+    parser.add_argument("copyright", type=str, required=False, location="json")
+    parser.add_argument("privacy_policy", type=str, required=False, location="json")
+    parser.add_argument("custom_disclaimer", type=str, required=False, location="json")
+    parser.add_argument(
+        "customize_token_strategy", type=str, choices=["must", "allow", "not_allow"], required=False, location="json"
+    )
+    parser.add_argument("prompt_public", type=bool, required=False, location="json")
     return parser.parse_args()
 
 
@@ -44,32 +44,30 @@ class AppSite(Resource):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
 
-        site = db.session.query(Site). \
-            filter(Site.app_id == app_model.id). \
-            one_or_404()
+        site = db.session.query(Site).filter(Site.app_id == app_model.id).one_or_404()
 
         for attr_name in [
-            'title',
-            'icon',
-            'icon_background',
-            'description',
-            'default_language',
-            'customize_domain',
-            'copyright',
-            'privacy_policy',
-            'custom_disclaimer',
-            'customize_token_strategy',
-            'prompt_public'
+            "title",
+            "icon",
+            "icon_background",
+            "description",
+            "default_language",
+            "customize_domain",
+            "copyright",
+            "privacy_policy",
+            "custom_disclaimer",
+            "customize_token_strategy",
+            "prompt_public",
         ]:
             value = args.get(attr_name)
             if value is not None:
                 setattr(site, attr_name, value)
 
-                if attr_name == 'title':
+                if attr_name == "title":
                     app_model.name = value
-                elif attr_name == 'icon':
+                elif attr_name == "icon":
                     app_model.icon = value
-                elif attr_name == 'icon_background':
+                elif attr_name == "icon_background":
                     app_model.icon_background = value
 
         db.session.commit()
@@ -78,7 +76,6 @@ class AppSite(Resource):
 
 
 class AppSiteAccessTokenReset(Resource):
-
     @setup_required
     @login_required
     @account_initialization_required
@@ -100,5 +97,5 @@ class AppSiteAccessTokenReset(Resource):
         return site
 
 
-api.add_resource(AppSite, '/apps/<uuid:app_id>/site')
-api.add_resource(AppSiteAccessTokenReset, '/apps/<uuid:app_id>/site/access-token-reset')
+api.add_resource(AppSite, "/apps/<uuid:app_id>/site")
+api.add_resource(AppSiteAccessTokenReset, "/apps/<uuid:app_id>/site/access-token-reset")

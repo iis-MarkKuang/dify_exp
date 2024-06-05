@@ -9,6 +9,7 @@ class RerankingModelConfig(BaseModel):
     """
     Reranking Model Config.
     """
+
     provider: str
     model: str
 
@@ -17,6 +18,7 @@ class MultipleRetrievalConfig(BaseModel):
     """
     Multiple Retrieval Config.
     """
+
     top_k: int
     score_threshold: Optional[float]
     reranking_model: RerankingModelConfig
@@ -24,8 +26,9 @@ class MultipleRetrievalConfig(BaseModel):
 
 class ModelConfig(BaseModel):
     """
-     Model Config.
+    Model Config.
     """
+
     provider: str
     name: str
     mode: str
@@ -36,6 +39,7 @@ class SingleRetrievalConfig(BaseModel):
     """
     Single Retrieval Config.
     """
+
     model: ModelConfig
 
 
@@ -43,9 +47,10 @@ class KnowledgeRetrievalNodeData(BaseNodeData):
     """
     Knowledge retrieval Node Data.
     """
-    type: str = 'knowledge-retrieval'
+
+    type: str = "knowledge-retrieval"
     query_variable_selector: list[str]
     dataset_ids: list[str]
-    retrieval_mode: Literal['single', 'multiple']
+    retrieval_mode: Literal["single", "multiple"]
     multiple_retrieval_config: Optional[MultipleRetrievalConfig]
     single_retrieval_config: Optional[SingleRetrievalConfig]

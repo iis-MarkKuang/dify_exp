@@ -19,13 +19,12 @@ class WeaviateConfig(BaseModel):
 
     @root_validator()
     def validate_config(cls, values: dict) -> dict:
-        if not values['endpoint']:
+        if not values["endpoint"]:
             raise ValueError("config WEAVIATE_ENDPOINT is required")
         return values
 
 
 class WeaviateVector(BaseVector):
-
     def __init__(self, collection_name: str, config: WeaviateConfig, attributes: list):
         super().__init__(collection_name)
         self._client = self._init_client(config)
@@ -38,10 +37,7 @@ class WeaviateVector(BaseVector):
 
         try:
             client = weaviate.Client(
-                url=config.endpoint,
-                auth_client_secret=auth_config,
-                timeout_config=(5, 60),
-                startup_period=None
+                url=config.endpoint, auth_client_secret=auth_config, timeout_config=(5, 60), startup_period=None
             )
         except requests.exceptions.ConnectionError:
             raise ConnectionError("Vector database connection error")
@@ -59,14 +55,14 @@ class WeaviateVector(BaseVector):
         return client
 
     def get_type(self) -> str:
-        return 'weaviate'
+        return "weaviate"
 
     def get_collection_name(self, dataset: Dataset) -> str:
         if dataset.index_struct_dict:
-            class_prefix: str = dataset.index_struct_dict['vector_store']['class_prefix']
-            if not class_prefix.endswith('_Node'):
+            class_prefix: str = dataset.index_struct_dict["vector_store"]["class_prefix"]
+            if not class_prefix.endswith("_Node"):
                 # original class_prefix
-                class_prefix += '_Node'
+                class_prefix += "_Node"
 
             return class_prefix
 
@@ -74,10 +70,7 @@ class WeaviateVector(BaseVector):
         return Dataset.gen_collection_name_by_id(dataset_id)
 
     def to_index_struct(self) -> dict:
-        return {
-            "type": self.get_type(),
-            "vector_store": {"class_prefix": self._collection_name}
-        }
+        return {"type": self.get_type(), "vector_store": {"class_prefix": self._collection_name}}
 
     def create(self, texts: list[Document], embeddings: list[list[float]], **kwargs):
         # create collection
@@ -86,9 +79,9 @@ class WeaviateVector(BaseVector):
         self.add_texts(texts, embeddings)
 
     def _create_collection(self):
-        lock_name = 'vector_indexing_lock_{}'.format(self._collection_name)
+        lock_name = "vector_indexing_lock_{}".format(self._collection_name)
         with redis_client.lock(lock_name, timeout=20):
-            collection_exist_cache_key = 'vector_indexing_{}'.format(self._collection_name)
+            collection_exist_cache_key = "vector_indexing_{}".format(self._collection_name)
             if redis_client.get(collection_exist_cache_key):
                 return
             schema = self._default_schema(self._collection_name)
@@ -124,17 +117,9 @@ class WeaviateVector(BaseVector):
         # check whether the index already exists
         schema = self._default_schema(self._collection_name)
         if self._client.schema.contains(schema):
-            where_filter = {
-                "operator": "Equal",
-                "path": [key],
-                "valueText": value
-            }
+            where_filter = {"operator": "Equal", "path": [key], "valueText": value}
 
-            self._client.batch.delete_objects(
-                class_name=self._collection_name,
-                where=where_filter,
-                output='minimal'
-            )
+            self._client.batch.delete_objects(class_name=self._collection_name, where=where_filter, output="minimal")
 
     def delete(self):
         # check whether the index already exists
@@ -149,11 +134,19 @@ class WeaviateVector(BaseVector):
         # check whether the index already exists
         if not self._client.schema.contains(schema):
             return False
-        result = self._client.query.get(collection_name).with_additional(["id"]).with_where({
-            "path": ["doc_id"],
-            "operator": "Equal",
-            "valueText": id,
-        }).with_limit(1).do()
+        result = (
+            self._client.query.get(collection_name)
+            .with_additional(["id"])
+            .with_where(
+                {
+                    "path": ["doc_id"],
+                    "operator": "Equal",
+                    "valueText": id,
+                }
+            )
+            .with_limit(1)
+            .do()
+        )
 
         if "errors" in result:
             raise ValueError(f"Error during query: {result['errors']}")
@@ -201,10 +194,10 @@ class WeaviateVector(BaseVector):
 
         docs = []
         for doc, score in docs_and_scores:
-            score_threshold = kwargs.get("score_threshold", .0) if kwargs.get('score_threshold', .0) else 0.0
+            score_threshold = kwargs.get("score_threshold", 0.0) if kwargs.get("score_threshold", 0.0) else 0.0
             # check score threshold
             if score > score_threshold:
-                doc.metadata['score'] = score
+                doc.metadata["score"] = score
                 docs.append(doc)
 
         return docs
@@ -230,8 +223,8 @@ class WeaviateVector(BaseVector):
             query_obj = query_obj.with_where(kwargs.get("where_filter"))
         if kwargs.get("additional"):
             query_obj = query_obj.with_additional(kwargs.get("additional"))
-        properties = ['text']
-        result = query_obj.with_bm25(query=query, properties=properties).with_limit(kwargs.get('top_k', 2)).do()
+        properties = ["text"]
+        result = query_obj.with_bm25(query=query, properties=properties).with_limit(kwargs.get("top_k", 2)).do()
         if "errors" in result:
             raise ValueError(f"Error during query: {result['errors']}")
         docs = []

@@ -8,36 +8,31 @@ from core.tools.tool.builtin_tool import BuiltinTool
 
 
 class JinaReaderTool(BuiltinTool):
-    _jina_reader_endpoint = 'https://r.jina.ai/'
+    _jina_reader_endpoint = "https://r.jina.ai/"
 
-    def _invoke(self, 
-                user_id: str,
-               tool_parameters: dict[str, Any], 
-        ) -> Union[ToolInvokeMessage, list[ToolInvokeMessage]]:
+    def _invoke(
+        self,
+        user_id: str,
+        tool_parameters: dict[str, Any],
+    ) -> Union[ToolInvokeMessage, list[ToolInvokeMessage]]:
         """
-            invoke tools
+        invoke tools
         """
-        url = tool_parameters['url']
+        url = tool_parameters["url"]
 
-        headers = {
-            'Accept': 'application/json'
-        }
+        headers = {"Accept": "application/json"}
 
-        target_selector = tool_parameters.get('target_selector', None)
+        target_selector = tool_parameters.get("target_selector", None)
         if target_selector is not None:
-            headers['X-Target-Selector'] = target_selector
+            headers["X-Target-Selector"] = target_selector
 
-        wait_for_selector = tool_parameters.get('wait_for_selector', None)
+        wait_for_selector = tool_parameters.get("wait_for_selector", None)
         if wait_for_selector is not None:
-            headers['X-Wait-For-Selector'] = wait_for_selector
+            headers["X-Wait-For-Selector"] = wait_for_selector
 
-        response = ssrf_proxy.get(
-            str(URL(self._jina_reader_endpoint + url)), 
-            headers=headers,
-            timeout=(10, 60)
-        )
+        response = ssrf_proxy.get(str(URL(self._jina_reader_endpoint + url)), headers=headers, timeout=(10, 60))
 
-        if tool_parameters.get('summary', False):
+        if tool_parameters.get("summary", False):
             return self.create_text_message(self.summary(user_id, response.text))
-        
+
         return self.create_text_message(response.text)

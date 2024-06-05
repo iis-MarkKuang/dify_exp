@@ -11,6 +11,7 @@ class ValueType(Enum):
     """
     Value Type Enum
     """
+
     STRING = "string"
     NUMBER = "number"
     OBJECT = "object"
@@ -22,9 +23,7 @@ class ValueType(Enum):
 
 
 class VariablePool:
-
-    def __init__(self, system_variables: dict[SystemVariable, Any],
-                 user_inputs: dict) -> None:
+    def __init__(self, system_variables: dict[SystemVariable, Any], user_inputs: dict) -> None:
         # system variables
         # for example:
         # {
@@ -35,7 +34,7 @@ class VariablePool:
         self.user_inputs = user_inputs
         self.system_variables = system_variables
         for system_variable, value in system_variables.items():
-            self.append_variable('sys', [system_variable.value], value)
+            self.append_variable("sys", [system_variable.value], value)
 
     def append_variable(self, node_id: str, variable_key_list: list[str], value: VariableValue) -> None:
         """
@@ -52,8 +51,9 @@ class VariablePool:
 
         self.variables_mapping[node_id][variable_key_list_hash] = value
 
-    def get_variable_value(self, variable_selector: list[str],
-                           target_value_type: Optional[ValueType] = None) -> Optional[VariableValue]:
+    def get_variable_value(
+        self, variable_selector: list[str], target_value_type: Optional[ValueType] = None
+    ) -> Optional[VariableValue]:
         """
         Get variable
         :param variable_selector: include node_id and variables
@@ -61,7 +61,7 @@ class VariablePool:
         :return:
         """
         if len(variable_selector) < 2:
-            raise ValueError('Invalid value selector')
+            raise ValueError("Invalid value selector")
 
         node_id = variable_selector[0]
         if node_id not in self.variables_mapping:
@@ -81,13 +81,15 @@ class VariablePool:
                 return int(value)
             elif target_value_type == ValueType.OBJECT:
                 if not isinstance(value, dict):
-                    raise ValueError('Invalid value type: object')
-            elif target_value_type in [ValueType.ARRAY_STRING,
-                                       ValueType.ARRAY_NUMBER,
-                                       ValueType.ARRAY_OBJECT,
-                                       ValueType.ARRAY_FILE]:
+                    raise ValueError("Invalid value type: object")
+            elif target_value_type in [
+                ValueType.ARRAY_STRING,
+                ValueType.ARRAY_NUMBER,
+                ValueType.ARRAY_OBJECT,
+                ValueType.ARRAY_FILE,
+            ]:
                 if not isinstance(value, list):
-                    raise ValueError(f'Invalid value type: {target_value_type.value}')
+                    raise ValueError(f"Invalid value type: {target_value_type.value}")
 
         return value
 

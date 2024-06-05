@@ -8,11 +8,9 @@ logger = logging.getLogger(__name__)
 
 
 class InputModeration:
-    def check(self, app_id: str,
-              tenant_id: str,
-              app_config: AppConfig,
-              inputs: dict,
-              query: str) -> tuple[bool, dict, str]:
+    def check(
+        self, app_id: str, tenant_id: str, app_config: AppConfig, inputs: dict, query: str
+    ) -> tuple[bool, dict, str]:
         """
         Process sensitive_word_avoidance.
         :param app_id: app id
@@ -29,10 +27,7 @@ class InputModeration:
         moderation_type = sensitive_word_avoidance_config.type
 
         moderation_factory = ModerationFactory(
-            name=moderation_type,
-            app_id=app_id,
-            tenant_id=tenant_id,
-            config=sensitive_word_avoidance_config.config
+            name=moderation_type, app_id=app_id, tenant_id=tenant_id, config=sensitive_word_avoidance_config.config
         )
 
         moderation_result = moderation_factory.moderation_for_inputs(inputs, query)

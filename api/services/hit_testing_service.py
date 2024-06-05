@@ -15,14 +15,11 @@ from models.account import Account
 from models.dataset import Dataset, DatasetQuery, DocumentSegment
 
 default_retrieval_model = {
-    'search_method': 'semantic_search',
-    'reranking_enable': False,
-    'reranking_model': {
-        'reranking_provider_name': '',
-        'reranking_model_name': ''
-    },
-    'top_k': 2,
-    'score_threshold_enabled': False
+    "search_method": "semantic_search",
+    "reranking_enable": False,
+    "reranking_model": {"reranking_provider_name": "", "reranking_model_name": ""},
+    "top_k": 2,
+    "score_threshold_enabled": False,
 }
 
 
@@ -33,9 +30,9 @@ class HitTestingService:
             return {
                 "query": {
                     "content": query,
-                    "tsne_position": {'x': 0, 'y': 0},
+                    "tsne_position": {"x": 0, "y": 0},
                 },
-                "records": []
+                "records": [],
             }
 
         start = time.perf_counter()
@@ -50,30 +47,25 @@ class HitTestingService:
             tenant_id=dataset.tenant_id,
             model_type=ModelType.TEXT_EMBEDDING,
             provider=dataset.embedding_model_provider,
-            model=dataset.embedding_model
+            model=dataset.embedding_model,
         )
 
         embeddings = CacheEmbedding(embedding_model)
 
-        all_documents = RetrievalService.retrieve(retrival_method=retrieval_model['search_method'],
-                                                  dataset_id=dataset.id,
-                                                  query=query,
-                                                  top_k=retrieval_model['top_k'],
-                                                  score_threshold=retrieval_model['score_threshold']
-                                                  if retrieval_model['score_threshold_enabled'] else None,
-                                                  reranking_model=retrieval_model['reranking_model']
-                                                  if retrieval_model['reranking_enable'] else None
-                                                  )
+        all_documents = RetrievalService.retrieve(
+            retrival_method=retrieval_model["search_method"],
+            dataset_id=dataset.id,
+            query=query,
+            top_k=retrieval_model["top_k"],
+            score_threshold=retrieval_model["score_threshold"] if retrieval_model["score_threshold_enabled"] else None,
+            reranking_model=retrieval_model["reranking_model"] if retrieval_model["reranking_enable"] else None,
+        )
 
         end = time.perf_counter()
         logging.debug(f"Hit testing retrieve in {end - start:0.4f} seconds")
 
         dataset_query = DatasetQuery(
-            dataset_id=dataset.id,
-            content=query,
-            source='hit_testing',
-            created_by_role='account',
-            created_by=account.id
+            dataset_id=dataset.id, content=query, source="hit_testing", created_by_role="account", created_by=account.id
         )
 
         db.session.add(dataset_query)
@@ -83,9 +75,7 @@ class HitTestingService:
 
     @classmethod
     def compact_retrieve_response(cls, dataset: Dataset, embeddings: Embeddings, query: str, documents: list[Document]):
-        text_embeddings = [
-            embeddings.embed_query(query)
-        ]
+        text_embeddings = [embeddings.embed_query(query)]
 
         text_embeddings.extend(embeddings.embed_documents([document.page_content for document in documents]))
 
@@ -96,14 +86,18 @@ class HitTestingService:
         i = 0
         records = []
         for document in documents:
-            index_node_id = document.metadata['doc_id']
+            index_node_id = document.metadata["doc_id"]
 
-            segment = db.session.query(DocumentSegment).filter(
-                DocumentSegment.dataset_id == dataset.id,
-                DocumentSegment.enabled == True,
-                DocumentSegment.status == 'completed',
-                DocumentSegment.index_node_id == index_node_id
-            ).first()
+            segment = (
+                db.session.query(DocumentSegment)
+                .filter(
+                    DocumentSegment.dataset_id == dataset.id,
+                    DocumentSegment.enabled == True,
+                    DocumentSegment.status == "completed",
+                    DocumentSegment.index_node_id == index_node_id,
+                )
+                .first()
+            )
 
             if not segment:
                 i += 1
@@ -111,8 +105,8 @@ class HitTestingService:
 
             record = {
                 "segment": segment,
-                "score": document.metadata.get('score', None),
-                "tsne_position": tsne_position_data[i]
+                "score": document.metadata.get("score", None),
+                "tsne_position": tsne_position_data[i],
             }
 
             records.append(record)
@@ -124,14 +118,14 @@ class HitTestingService:
                 "content": query,
                 "tsne_position": query_position,
             },
-            "records": records
+            "records": records,
         }
 
     @classmethod
     def get_tsne_positions_from_embeddings(cls, embeddings: list):
         embedding_length = len(embeddings)
         if embedding_length <= 1:
-            return [{'x': 0, 'y': 0}]
+            return [{"x": 0, "y": 0}]
 
         noise = np.random.normal(0, 1e-4, np.array(embeddings).shape)
         concatenate_data = np.array(embeddings) + noise
@@ -146,13 +140,13 @@ class HitTestingService:
 
         tsne_position_data = []
         for i in range(len(data_tsne)):
-            tsne_position_data.append({'x': float(data_tsne[i][0]), 'y': float(data_tsne[i][1])})
+            tsne_position_data.append({"x": float(data_tsne[i][0]), "y": float(data_tsne[i][1])})
 
         return tsne_position_data
 
     @classmethod
     def hit_testing_args_check(cls, args):
-        query = args['query']
+        query = args["query"]
 
         if not query or len(query) > 250:
-            raise ValueError('Query is required and cannot exceed 250 characters')
+            raise ValueError("Query is required and cannot exceed 250 characters")

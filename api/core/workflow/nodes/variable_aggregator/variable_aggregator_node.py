@@ -23,13 +23,9 @@ class VariableAggregatorNode(BaseNode):
                 value = variable_pool.get_variable_value(variable)
 
                 if value is not None:
-                    outputs = {
-                        "output": value
-                    }
+                    outputs = {"output": value}
 
-                    inputs = {
-                        '.'.join(variable[1:]): value
-                    }
+                    inputs = {".".join(variable[1:]): value}
                     break
         else:
             for group in node_data.advanced_setting.groups:
@@ -37,15 +33,11 @@ class VariableAggregatorNode(BaseNode):
                     value = variable_pool.get_variable_value(variable)
 
                     if value is not None:
-                        outputs[f'{group.group_name}_output'] = value
-                        inputs['.'.join(variable[1:])] = value
+                        outputs[f"{group.group_name}_output"] = value
+                        inputs[".".join(variable[1:])] = value
                         break
 
-        return NodeRunResult(
-            status=WorkflowNodeExecutionStatus.SUCCEEDED,
-            outputs=outputs,
-            inputs=inputs
-        )
+        return NodeRunResult(status=WorkflowNodeExecutionStatus.SUCCEEDED, outputs=outputs, inputs=inputs)
 
     @classmethod
     def _extract_variable_selector_to_variable_mapping(cls, node_data: BaseNodeData) -> dict[str, list[str]]:

@@ -13,10 +13,19 @@ class TTSModel(AIModel):
     """
     Model class for ttstext model.
     """
+
     model_type: ModelType = ModelType.TTS
 
-    def invoke(self, model: str, tenant_id: str, credentials: dict, content_text: str, voice: str, streaming: bool,
-               user: Optional[str] = None):
+    def invoke(
+        self,
+        model: str,
+        tenant_id: str,
+        credentials: dict,
+        content_text: str,
+        voice: str,
+        streaming: bool,
+        user: Optional[str] = None,
+    ):
         """
         Invoke large language model
 
@@ -31,14 +40,29 @@ class TTSModel(AIModel):
         """
         try:
             self._is_ffmpeg_installed()
-            return self._invoke(model=model, credentials=credentials, user=user, streaming=streaming,
-                                content_text=content_text, voice=voice, tenant_id=tenant_id)
+            return self._invoke(
+                model=model,
+                credentials=credentials,
+                user=user,
+                streaming=streaming,
+                content_text=content_text,
+                voice=voice,
+                tenant_id=tenant_id,
+            )
         except Exception as e:
             raise self._transform_invoke_error(e)
 
     @abstractmethod
-    def _invoke(self, model: str, tenant_id: str, credentials: dict, content_text: str, voice: str, streaming: bool,
-                user: Optional[str] = None):
+    def _invoke(
+        self,
+        model: str,
+        tenant_id: str,
+        credentials: dict,
+        content_text: str,
+        voice: str,
+        streaming: bool,
+        user: Optional[str] = None,
+    ):
         """
         Invoke large language model
 
@@ -67,9 +91,13 @@ class TTSModel(AIModel):
         if model_schema and ModelPropertyKey.VOICES in model_schema.model_properties:
             voices = model_schema.model_properties[ModelPropertyKey.VOICES]
             if language:
-                return [{'name': d['name'], 'value': d['mode']} for d in voices if language and language in d.get('language')]
+                return [
+                    {"name": d["name"], "value": d["mode"]}
+                    for d in voices
+                    if language and language in d.get("language")
+                ]
             else:
-                return [{'name': d['name'], 'value': d['mode']} for d in voices]
+                return [{"name": d["name"], "value": d["mode"]} for d in voices]
 
     def _get_model_default_voice(self, model: str, credentials: dict) -> any:
         """
@@ -120,7 +148,7 @@ class TTSModel(AIModel):
     @staticmethod
     def _split_text_into_sentences(text: str, limit: int, delimiters=None):
         if delimiters is None:
-            delimiters = set('。！？；\n')
+            delimiters = set("。！？；\n")
 
         buf = []
         word_count = 0
@@ -128,7 +156,7 @@ class TTSModel(AIModel):
             buf.append(char)
             if char in delimiters:
                 if word_count >= limit:
-                    yield ''.join(buf)
+                    yield "".join(buf)
                     buf = []
                     word_count = 0
                 else:
@@ -137,7 +165,7 @@ class TTSModel(AIModel):
                 word_count += 1
 
         if buf:
-            yield ''.join(buf)
+            yield "".join(buf)
 
     @staticmethod
     def _is_ffmpeg_installed():
@@ -146,13 +174,17 @@ class TTSModel(AIModel):
             if "ffmpeg version" in output.decode("utf-8"):
                 return True
             else:
-                raise InvokeBadRequestError("ffmpeg is not installed, "
-                                            "details: https://docs.dify.ai/getting-started/install-self-hosted"
-                                            "/install-faq#id-14.-what-to-do-if-this-error-occurs-in-text-to-speech")
+                raise InvokeBadRequestError(
+                    "ffmpeg is not installed, "
+                    "details: https://docs.dify.ai/getting-started/install-self-hosted"
+                    "/install-faq#id-14.-what-to-do-if-this-error-occurs-in-text-to-speech"
+                )
         except Exception:
-            raise InvokeBadRequestError("ffmpeg is not installed, "
-                                        "details: https://docs.dify.ai/getting-started/install-self-hosted"
-                                        "/install-faq#id-14.-what-to-do-if-this-error-occurs-in-text-to-speech")
+            raise InvokeBadRequestError(
+                "ffmpeg is not installed, "
+                "details: https://docs.dify.ai/getting-started/install-self-hosted"
+                "/install-faq#id-14.-what-to-do-if-this-error-occurs-in-text-to-speech"
+            )
 
     # Todo: To improve the streaming function
     @staticmethod
@@ -160,6 +192,6 @@ class TTSModel(AIModel):
         hash_object = hashlib.sha256(file_content.encode())
         hex_digest = hash_object.hexdigest()
 
-        namespace_uuid = uuid.UUID('a5da6ef9-b303-596f-8e88-bf8fa40f4b31')
+        namespace_uuid = uuid.UUID("a5da6ef9-b303-596f-8e88-bf8fa40f4b31")
         unique_uuid = uuid.uuid5(namespace_uuid, hex_digest)
         return str(unique_uuid)

@@ -27,25 +27,26 @@ class PgvectoRSConfig(BaseModel):
 
     @root_validator()
     def validate_config(cls, values: dict) -> dict:
-        if not values['host']:
+        if not values["host"]:
             raise ValueError("config PGVECTO_RS_HOST is required")
-        if not values['port']:
+        if not values["port"]:
             raise ValueError("config PGVECTO_RS_PORT is required")
-        if not values['user']:
+        if not values["user"]:
             raise ValueError("config PGVECTO_RS_USER is required")
-        if not values['password']:
+        if not values["password"]:
             raise ValueError("config PGVECTO_RS_PASSWORD is required")
-        if not values['database']:
+        if not values["database"]:
             raise ValueError("config PGVECTO_RS_DATABASE is required")
         return values
 
 
 class PGVectoRS(BaseVector):
-
     def __init__(self, collection_name: str, config: PgvectoRSConfig, dim: int):
         super().__init__(collection_name)
         self._client_config = config
-        self._url = f"postgresql+psycopg2://{config.user}:{config.password}@{config.host}:{config.port}/{config.database}"
+        self._url = (
+            f"postgresql+psycopg2://{config.user}:{config.password}@{config.host}:{config.port}/{config.database}"
+        )
         self._client = create_engine(self._url)
         with Session(self._client) as session:
             session.execute(text("CREATE EXTENSION IF NOT EXISTS vectors"))
@@ -67,16 +68,16 @@ class PGVectoRS(BaseVector):
         self._distance_op = "<=>"
 
     def get_type(self) -> str:
-        return 'pgvecto-rs'
+        return "pgvecto-rs"
 
     def create(self, texts: list[Document], embeddings: list[list[float]], **kwargs):
         self.create_collection(len(embeddings[0]))
         self.add_texts(texts, embeddings)
 
     def create_collection(self, dimension: int):
-        lock_name = 'vector_indexing_lock_{}'.format(self._collection_name)
+        lock_name = "vector_indexing_lock_{}".format(self._collection_name)
         with redis_client.lock(lock_name, timeout=20):
-            collection_exist_cache_key = 'vector_indexing_{}'.format(self._collection_name)
+            collection_exist_cache_key = "vector_indexing_{}".format(self._collection_name)
             if redis_client.get(collection_exist_cache_key):
                 return
             index_name = f"{self._collection_name}_embedding_index"
@@ -125,19 +126,17 @@ class PGVectoRS(BaseVector):
         return pks
 
     def delete_by_document_id(self, document_id: str):
-        ids = self.get_ids_by_metadata_field('document_id', document_id)
+        ids = self.get_ids_by_metadata_field("document_id", document_id)
         if ids:
             with Session(self._client) as session:
                 select_statement = sql_text(f"DELETE FROM {self._collection_name} WHERE id = ANY(:ids)")
-                session.execute(select_statement, {'ids': ids})
+                session.execute(select_statement, {"ids": ids})
                 session.commit()
 
     def get_ids_by_metadata_field(self, key: str, value: str):
         result = None
         with Session(self._client) as session:
-            select_statement = sql_text(
-                f"SELECT id FROM {self._collection_name} WHERE meta->>'{key}' = '{value}'; "
-            )
+            select_statement = sql_text(f"SELECT id FROM {self._collection_name} WHERE meta->>'{key}' = '{value}'; ")
             result = session.execute(select_statement).fetchall()
         if result:
             return [item[0] for item in result]
@@ -145,12 +144,11 @@ class PGVectoRS(BaseVector):
             return None
 
     def delete_by_metadata_field(self, key: str, value: str):
-
         ids = self.get_ids_by_metadata_field(key, value)
         if ids:
             with Session(self._client) as session:
                 select_statement = sql_text(f"DELETE FROM {self._collection_name} WHERE id = ANY(:ids)")
-                session.execute(select_statement, {'ids': ids})
+                session.execute(select_statement, {"ids": ids})
                 session.commit()
 
     def delete_by_ids(self, ids: list[str]) -> None:
@@ -158,13 +156,13 @@ class PGVectoRS(BaseVector):
             select_statement = sql_text(
                 f"SELECT id FROM {self._collection_name} WHERE meta->>'doc_id' = ANY (:doc_ids); "
             )
-            result = session.execute(select_statement, {'doc_ids': ids}).fetchall()
+            result = session.execute(select_statement, {"doc_ids": ids}).fetchall()
         if result:
             ids = [item[0] for item in result]
             if ids:
                 with Session(self._client) as session:
                     select_statement = sql_text(f"DELETE FROM {self._collection_name} WHERE id = ANY(:ids)")
-                    session.execute(select_statement, {'ids': ids})
+                    session.execute(select_statement, {"ids": ids})
                     session.commit()
 
     def delete(self) -> None:
@@ -189,7 +187,7 @@ class PGVectoRS(BaseVector):
                         query_vector,
                     ).label("distance"),
                 )
-                .limit(kwargs.get('top_k', 2))
+                .limit(kwargs.get("top_k", 2))
                 .order_by("distance")
             )
             res = session.execute(stmt)
@@ -200,11 +198,10 @@ class PGVectoRS(BaseVector):
         for record, dis in results:
             metadata = record.meta
             score = 1 - dis
-            metadata['score'] = score
-            score_threshold = kwargs.get('score_threshold') if kwargs.get('score_threshold') else 0.0
+            metadata["score"] = score
+            score_threshold = kwargs.get("score_threshold") if kwargs.get("score_threshold") else 0.0
             if score > score_threshold:
-                doc = Document(page_content=record.text,
-                               metadata=metadata)
+                doc = Document(page_content=record.text, metadata=metadata)
                 docs.append(doc)
         return docs
 

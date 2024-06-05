@@ -33,14 +33,10 @@ from services.errors.audio import (
 class AudioApi(Resource):
     @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.FORM))
     def post(self, app_model: App, end_user: EndUser):
-        file = request.files['file']
+        file = request.files["file"]
 
         try:
-            response = AudioService.transcript_asr(
-                app_model=app_model,
-                file=file,
-                end_user=end_user
-            )
+            response = AudioService.transcript_asr(app_model=app_model, file=file, end_user=end_user)
 
             return response
         except services.errors.app_model_config.AppModelConfigBrokenError:
@@ -73,18 +69,18 @@ class TextApi(Resource):
     @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.JSON))
     def post(self, app_model: App, end_user: EndUser):
         parser = reqparse.RequestParser()
-        parser.add_argument('text', type=str, required=True, nullable=False, location='json')
-        parser.add_argument('voice', type=str, location='json')
-        parser.add_argument('streaming', type=bool, required=False, nullable=False, location='json')
+        parser.add_argument("text", type=str, required=True, nullable=False, location="json")
+        parser.add_argument("voice", type=str, location="json")
+        parser.add_argument("streaming", type=bool, required=False, nullable=False, location="json")
         args = parser.parse_args()
 
         try:
             response = AudioService.transcript_tts(
                 app_model=app_model,
-                text=args['text'],
+                text=args["text"],
                 end_user=end_user,
-                voice=args.get('voice'),
-                streaming=args['streaming']
+                voice=args.get("voice"),
+                streaming=args["streaming"],
             )
 
             return response
@@ -114,5 +110,5 @@ class TextApi(Resource):
             raise InternalServerError()
 
 
-api.add_resource(AudioApi, '/audio-to-text')
-api.add_resource(TextApi, '/text-to-audio')
+api.add_resource(AudioApi, "/audio-to-text")
+api.add_resource(TextApi, "/text-to-audio")

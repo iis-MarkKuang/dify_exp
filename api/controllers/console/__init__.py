@@ -1,8 +1,10 @@
 import json
+
 from flask import Blueprint, Response
+from prometheus_flask_exporter import RESTfulPrometheusMetrics
 
 from libs.external_api import ExternalApi
-from prometheus_flask_exporter import RESTfulPrometheusMetrics
+
 
 def get_custom_resp_converter():
     def _make_response(response):
@@ -10,18 +12,20 @@ def get_custom_resp_converter():
             response = (None, 200)
         return Response(
             response=json.dumps(response),
-            status=response['status'] if (response is not None and 'status' in response) else 200,
-            mimetype="application/json"
+            status=response["status"] if (response is not None and "status" in response) else 200,
+            mimetype="application/json",
         )
+
     return _make_response
 
-bp = Blueprint('console', __name__, url_prefix='/console/api')
+
+bp = Blueprint("console", __name__, url_prefix="/console/api")
 api = ExternalApi(bp)
 metrics = RESTfulPrometheusMetrics(app=None, api=api, response_converter=get_custom_resp_converter())
 
 
 # Import other controllers
-from . import admin, apikey, extension, feature, ping, setup, version, doc_translation
+from . import admin, apikey, doc_translation, extension, feature, ping, setup, version
 
 # Import app controllers
 from .app import (

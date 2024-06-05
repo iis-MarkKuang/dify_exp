@@ -7,10 +7,6 @@ from models.model import InstalledApp
 def handle(sender, **kwargs):
     """Create an installed app when an app is created."""
     app = sender
-    installed_app = InstalledApp(
-        tenant_id=app.tenant_id,
-        app_id=app.id,
-        app_owner_tenant_id=app.tenant_id
-    )
+    installed_app = InstalledApp(tenant_id=app.tenant_id, app_id=app.id, app_owner_tenant_id=app.tenant_id)
     db.session.add(installed_app)
     db.session.commit()

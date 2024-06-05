@@ -20,8 +20,7 @@ class TokenBufferMemory:
         self.conversation = conversation
         self.model_instance = model_instance
 
-    def get_history_prompt_messages(self, max_token_limit: int = 2000,
-                                    message_limit: int = 10) -> list[PromptMessage]:
+    def get_history_prompt_messages(self, max_token_limit: int = 2000, message_limit: int = 10) -> list[PromptMessage]:
         """
         Get history prompt messages.
         :param max_token_limit: max token limit
@@ -30,16 +29,16 @@ class TokenBufferMemory:
         app_record = self.conversation.app
 
         # fetch limited messages, and return reversed
-        messages = db.session.query(Message).filter(
-            Message.conversation_id == self.conversation.id,
-            Message.answer != ''
-        ).order_by(Message.created_at.desc()).limit(message_limit).all()
+        messages = (
+            db.session.query(Message)
+            .filter(Message.conversation_id == self.conversation.id, Message.answer != "")
+            .order_by(Message.created_at.desc())
+            .limit(message_limit)
+            .all()
+        )
 
         messages = list(reversed(messages))
-        message_file_parser = MessageFileParser(
-            tenant_id=app_record.tenant_id,
-            app_id=app_record.id
-        )
+        message_file_parser = MessageFileParser(tenant_id=app_record.tenant_id, app_id=app_record.id)
 
         prompt_messages = []
         for message in messages:
@@ -49,15 +48,11 @@ class TokenBufferMemory:
                     file_extra_config = FileUploadConfigManager.convert(message.app_model_config.to_dict())
                 else:
                     file_extra_config = FileUploadConfigManager.convert(
-                        message.workflow_run.workflow.features_dict,
-                        is_vision=False
+                        message.workflow_run.workflow.features_dict, is_vision=False
                     )
 
                 if file_extra_config:
-                    file_objs = message_file_parser.transform_message_files(
-                        files,
-                        file_extra_config
-                    )
+                    file_objs = message_file_parser.transform_message_files(files, file_extra_config)
                 else:
                     file_objs = []
 
@@ -82,9 +77,7 @@ class TokenBufferMemory:
         model_type_instance = provider_instance.get_model_instance(ModelType.LLM)
 
         curr_message_tokens = model_type_instance.get_num_tokens(
-            self.model_instance.model,
-            self.model_instance.credentials,
-            prompt_messages
+            self.model_instance.model, self.model_instance.credentials, prompt_messages
         )
 
         if curr_message_tokens > max_token_limit:
@@ -92,17 +85,18 @@ class TokenBufferMemory:
             while curr_message_tokens > max_token_limit and prompt_messages:
                 pruned_memory.append(prompt_messages.pop(0))
                 curr_message_tokens = model_type_instance.get_num_tokens(
-                    self.model_instance.model,
-                    self.model_instance.credentials,
-                    prompt_messages
+                    self.model_instance.model, self.model_instance.credentials, prompt_messages
                 )
 
         return prompt_messages
 
-    def get_history_prompt_text(self, human_prefix: str = "Human",
-                                ai_prefix: str = "Assistant",
-                                max_token_limit: int = 2000,
-                                message_limit: int = 10) -> str:
+    def get_history_prompt_text(
+        self,
+        human_prefix: str = "Human",
+        ai_prefix: str = "Assistant",
+        max_token_limit: int = 2000,
+        message_limit: int = 10,
+    ) -> str:
         """
         Get history prompt text.
         :param human_prefix: human prefix
@@ -111,10 +105,7 @@ class TokenBufferMemory:
         :param message_limit: message limit
         :return:
         """
-        prompt_messages = self.get_history_prompt_messages(
-            max_token_limit=max_token_limit,
-            message_limit=message_limit
-        )
+        prompt_messages = self.get_history_prompt_messages(max_token_limit=max_token_limit, message_limit=message_limit)
 
         string_messages = []
         for m in prompt_messages:

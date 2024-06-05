@@ -13,6 +13,7 @@ class UserFrom(Enum):
     """
     User from
     """
+
     ACCOUNT = "account"
     END_USER = "end-user"
 
@@ -39,7 +40,7 @@ class BaseNode(ABC):
     user_id: str
     user_from: UserFrom
     invoke_from: InvokeFrom
-    
+
     workflow_call_depth: int
 
     node_id: str
@@ -48,15 +49,18 @@ class BaseNode(ABC):
 
     callbacks: list[BaseWorkflowCallback]
 
-    def __init__(self, tenant_id: str,
-                 app_id: str,
-                 workflow_id: str,
-                 user_id: str,
-                 user_from: UserFrom,
-                 invoke_from: InvokeFrom,
-                 config: dict,
-                 callbacks: list[BaseWorkflowCallback] = None,
-                 workflow_call_depth: int = 0) -> None:
+    def __init__(
+        self,
+        tenant_id: str,
+        app_id: str,
+        workflow_id: str,
+        user_id: str,
+        user_from: UserFrom,
+        invoke_from: InvokeFrom,
+        config: dict,
+        callbacks: list[BaseWorkflowCallback] = None,
+        workflow_call_depth: int = 0,
+    ) -> None:
         self.tenant_id = tenant_id
         self.app_id = app_id
         self.workflow_id = workflow_id
@@ -87,9 +91,7 @@ class BaseNode(ABC):
         :param variable_pool: variable pool
         :return:
         """
-        result = self._run(
-            variable_pool=variable_pool
-        )
+        result = self._run(variable_pool=variable_pool)
 
         self.node_run_result = result
         return result
@@ -106,10 +108,7 @@ class BaseNode(ABC):
                 callback.on_node_text_chunk(
                     node_id=self.node_id,
                     text=text,
-                    metadata={
-                        "node_type": self.node_type,
-                        "value_selector": value_selector
-                    }
+                    metadata={"node_type": self.node_type, "value_selector": value_selector},
                 )
 
     @classmethod
@@ -149,6 +148,7 @@ class BaseNode(ABC):
         """
         return self._node_type
 
+
 class BaseIterationNode(BaseNode):
     @abstractmethod
     def _run(self, variable_pool: VariablePool) -> BaseIterationState:
@@ -174,7 +174,7 @@ class BaseIterationNode(BaseNode):
         :return: next node id
         """
         return self._get_next_iteration(variable_pool, state)
-    
+
     @abstractmethod
     def _get_next_iteration(self, variable_pool: VariablePool, state: BaseIterationState) -> NodeRunResult | str:
         """

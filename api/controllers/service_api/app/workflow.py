@@ -34,20 +34,16 @@ class WorkflowRunApi(Resource):
             raise NotWorkflowAppError()
 
         parser = reqparse.RequestParser()
-        parser.add_argument('inputs', type=dict, required=True, nullable=False, location='json')
-        parser.add_argument('files', type=list, required=False, location='json')
-        parser.add_argument('response_mode', type=str, choices=['blocking', 'streaming'], location='json')
+        parser.add_argument("inputs", type=dict, required=True, nullable=False, location="json")
+        parser.add_argument("files", type=list, required=False, location="json")
+        parser.add_argument("response_mode", type=str, choices=["blocking", "streaming"], location="json")
         args = parser.parse_args()
 
-        streaming = args.get('response_mode') == 'streaming'
+        streaming = args.get("response_mode") == "streaming"
 
         try:
             response = AppGenerateService.generate(
-                app_model=app_model,
-                user=end_user,
-                args=args,
-                invoke_from=InvokeFrom.SERVICE_API,
-                streaming=streaming
+                app_model=app_model, user=end_user, args=args, invoke_from=InvokeFrom.SERVICE_API, streaming=streaming
             )
 
             return helper.compact_generate_response(response)
@@ -78,10 +74,8 @@ class WorkflowTaskStopApi(Resource):
 
         AppQueueManager.set_stop_flag(task_id, InvokeFrom.SERVICE_API, end_user.id)
 
-        return {
-            "result": "success"
-        }
+        return {"result": "success"}
 
 
-api.add_resource(WorkflowRunApi, '/workflows/run')
-api.add_resource(WorkflowTaskStopApi, '/workflows/tasks/<string:task_id>/stop')
+api.add_resource(WorkflowRunApi, "/workflows/run")
+api.add_resource(WorkflowTaskStopApi, "/workflows/tasks/<string:task_id>/stop")

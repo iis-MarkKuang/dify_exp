@@ -1,4 +1,4 @@
-from typing import Any, Literal, Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -9,6 +9,7 @@ class RerankingModelConfig(BaseModel):
     """
     Reranking Model Config.
     """
+
     provider: str
     model: str
 
@@ -17,6 +18,7 @@ class MultipleRetrievalConfig(BaseModel):
     """
     Multiple Retrieval Config.
     """
+
     top_k: int
     score_threshold: Optional[float]
     reranking_model: RerankingModelConfig
@@ -24,8 +26,9 @@ class MultipleRetrievalConfig(BaseModel):
 
 class ModelConfig(BaseModel):
     """
-     Model Config.
+    Model Config.
     """
+
     provider: str
     name: str
     mode: str
@@ -36,6 +39,7 @@ class SingleRetrievalConfig(BaseModel):
     """
     Single Retrieval Config.
     """
+
     model: ModelConfig
 
 
@@ -43,5 +47,6 @@ class DocSelectNodeData(BaseNodeData):
     """
     Knowledge retrieval Node Data.
     """
-    type: str = 'doc-select'
+
+    type: str = "doc-select"
     doc_ids: list[str]

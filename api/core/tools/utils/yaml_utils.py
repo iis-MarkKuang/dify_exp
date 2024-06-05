@@ -16,19 +16,19 @@ def load_yaml_file(file_path: str, ignore_error: bool = False) -> dict:
     """
     try:
         if not file_path or not os.path.exists(file_path):
-            raise FileNotFoundError(f'Failed to load YAML file {file_path}: file not found')
+            raise FileNotFoundError(f"Failed to load YAML file {file_path}: file not found")
 
-        with open(file_path, encoding='utf-8') as file:
+        with open(file_path, encoding="utf-8") as file:
             try:
                 return yaml.safe_load(file)
             except Exception as e:
-                raise YAMLError(f'Failed to load YAML file {file_path}: {e}')
+                raise YAMLError(f"Failed to load YAML file {file_path}: {e}")
     except FileNotFoundError as e:
-        logging.debug(f'Failed to load YAML file {file_path}: {e}')
+        logging.debug(f"Failed to load YAML file {file_path}: {e}")
         return {}
     except Exception as e:
         if ignore_error:
-            logging.warning(f'Failed to load YAML file {file_path}: {e}')
+            logging.warning(f"Failed to load YAML file {file_path}: {e}")
             return {}
         else:
             raise e

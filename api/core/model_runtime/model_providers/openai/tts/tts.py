@@ -19,8 +19,16 @@ class OpenAIText2SpeechModel(_CommonOpenAI, TTSModel):
     Model class for OpenAI Speech to text model.
     """
 
-    def _invoke(self, model: str, tenant_id: str, credentials: dict,
-                content_text: str, voice: str, streaming: bool, user: Optional[str] = None) -> any:
+    def _invoke(
+        self,
+        model: str,
+        tenant_id: str,
+        credentials: dict,
+        content_text: str,
+        voice: str,
+        streaming: bool,
+        user: Optional[str] = None,
+    ) -> any:
         """
         _invoke text2speech model
 
@@ -34,15 +42,24 @@ class OpenAIText2SpeechModel(_CommonOpenAI, TTSModel):
         :return: text translated to audio file
         """
         audio_type = self._get_model_audio_type(model, credentials)
-        if not voice or voice not in [d['value'] for d in self.get_tts_model_voices(model=model, credentials=credentials)]:
+        if not voice or voice not in [
+            d["value"] for d in self.get_tts_model_voices(model=model, credentials=credentials)
+        ]:
             voice = self._get_model_default_voice(model, credentials)
         if streaming:
-            return Response(stream_with_context(self._tts_invoke_streaming(model=model,
-                                                                           credentials=credentials,
-                                                                           content_text=content_text,
-                                                                           tenant_id=tenant_id,
-                                                                           voice=voice)),
-                            status=200, mimetype=f'audio/{audio_type}')
+            return Response(
+                stream_with_context(
+                    self._tts_invoke_streaming(
+                        model=model,
+                        credentials=credentials,
+                        content_text=content_text,
+                        tenant_id=tenant_id,
+                        voice=voice,
+                    )
+                ),
+                status=200,
+                mimetype=f"audio/{audio_type}",
+            )
         else:
             return self._tts_invoke(model=model, credentials=credentials, content_text=content_text, voice=voice)
 
@@ -59,7 +76,7 @@ class OpenAIText2SpeechModel(_CommonOpenAI, TTSModel):
             self._tts_invoke(
                 model=model,
                 credentials=credentials,
-                content_text='Hello Dify!',
+                content_text="Hello Dify!",
                 voice=self._get_model_default_voice(model, credentials),
             )
         except Exception as ex:
@@ -84,8 +101,12 @@ class OpenAIText2SpeechModel(_CommonOpenAI, TTSModel):
 
             # Create a thread pool and map the function to the list of sentences
             with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-                futures = [executor.submit(self._process_sentence, sentence=sentence, model=model, voice=voice,
-                                           credentials=credentials) for sentence in sentences]
+                futures = [
+                    executor.submit(
+                        self._process_sentence, sentence=sentence, model=model, voice=voice, credentials=credentials
+                    )
+                    for sentence in sentences
+                ]
                 for future in futures:
                     try:
                         if future.result():
@@ -94,8 +115,11 @@ class OpenAIText2SpeechModel(_CommonOpenAI, TTSModel):
                         raise InvokeBadRequestError(str(ex))
 
             if len(audio_bytes_list) > 0:
-                audio_segments = [AudioSegment.from_file(BytesIO(audio_bytes), format=audio_type) for audio_bytes in
-                                  audio_bytes_list if audio_bytes]
+                audio_segments = [
+                    AudioSegment.from_file(BytesIO(audio_bytes), format=audio_type)
+                    for audio_bytes in audio_bytes_list
+                    if audio_bytes
+                ]
                 combined_segment = reduce(lambda x, y: x + y, audio_segments)
                 buffer: BytesIO = BytesIO()
                 combined_segment.export(buffer, format=audio_type)
@@ -105,8 +129,9 @@ class OpenAIText2SpeechModel(_CommonOpenAI, TTSModel):
             raise InvokeBadRequestError(str(ex))
 
     # Todo: To improve the streaming function
-    def _tts_invoke_streaming(self, model: str, tenant_id: str, credentials: dict, content_text: str,
-                              voice: str) -> any:
+    def _tts_invoke_streaming(
+        self, model: str, tenant_id: str, credentials: dict, content_text: str, voice: str
+    ) -> any:
         """
         _tts_invoke_streaming text2speech model
 
@@ -124,7 +149,7 @@ class OpenAIText2SpeechModel(_CommonOpenAI, TTSModel):
         word_limit = self._get_model_word_limit(model, credentials)
         audio_type = self._get_model_audio_type(model, credentials)
         tts_file_id = self._get_file_name(content_text)
-        file_path = f'generate_files/audio/{tenant_id}/{tts_file_id}.{audio_type}'
+        file_path = f"generate_files/audio/{tenant_id}/{tts_file_id}.{audio_type}"
         try:
             client = OpenAI(**credentials_kwargs)
             sentences = list(self._split_text_into_sentences(text=content_text, limit=word_limit))
@@ -135,8 +160,7 @@ class OpenAIText2SpeechModel(_CommonOpenAI, TTSModel):
         except Exception as ex:
             raise InvokeBadRequestError(str(ex))
 
-    def _process_sentence(self, sentence: str, model: str,
-                          voice, credentials: dict):
+    def _process_sentence(self, sentence: str, model: str, voice, credentials: dict):
         """
         _tts_invoke openai text2speech model api
 
