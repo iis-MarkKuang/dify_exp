@@ -24,10 +24,13 @@ class ChatAppRunner(AppRunner):
     Chat Application Runner
     """
 
-    def run(self, application_generate_entity: ChatAppGenerateEntity,
-            queue_manager: AppQueueManager,
-            conversation: Conversation,
-            message: Message) -> None:
+    def run(
+        self,
+        application_generate_entity: ChatAppGenerateEntity,
+        queue_manager: AppQueueManager,
+        conversation: Conversation,
+        message: Message,
+    ) -> None:
         """
         Run application
         :param application_generate_entity: application generate entity
@@ -58,7 +61,7 @@ class ChatAppRunner(AppRunner):
             prompt_template_entity=app_config.prompt_template,
             inputs=inputs,
             files=files,
-            query=query
+            query=query,
         )
 
         memory = None
@@ -66,13 +69,10 @@ class ChatAppRunner(AppRunner):
             # get memory of conversation (read-only)
             model_instance = ModelInstance(
                 provider_model_bundle=application_generate_entity.model_config.provider_model_bundle,
-                model=application_generate_entity.model_config.model
+                model=application_generate_entity.model_config.model,
             )
 
-            memory = TokenBufferMemory(
-                conversation=conversation,
-                model_instance=model_instance
-            )
+            memory = TokenBufferMemory(conversation=conversation, model_instance=model_instance)
 
         # organize all inputs and template to prompt messages
         # Include: prompt template, inputs, query(optional), files(optional)
@@ -84,7 +84,7 @@ class ChatAppRunner(AppRunner):
             inputs=inputs,
             files=files,
             query=query,
-            memory=memory
+            memory=memory,
         )
 
         # moderation
@@ -103,7 +103,7 @@ class ChatAppRunner(AppRunner):
                 app_generate_entity=application_generate_entity,
                 prompt_messages=prompt_messages,
                 text=str(e),
-                stream=application_generate_entity.stream
+                stream=application_generate_entity.stream,
             )
             return
 
@@ -114,13 +114,13 @@ class ChatAppRunner(AppRunner):
                 message=message,
                 query=query,
                 user_id=application_generate_entity.user_id,
-                invoke_from=application_generate_entity.invoke_from
+                invoke_from=application_generate_entity.invoke_from,
             )
 
             if annotation_reply:
                 queue_manager.publish(
                     QueueAnnotationReplyEvent(message_annotation_id=annotation_reply.id),
-                    PublishFrom.APPLICATION_MANAGER
+                    PublishFrom.APPLICATION_MANAGER,
                 )
 
                 self.direct_output(
@@ -128,7 +128,7 @@ class ChatAppRunner(AppRunner):
                     app_generate_entity=application_generate_entity,
                     prompt_messages=prompt_messages,
                     text=annotation_reply.content,
-                    stream=application_generate_entity.stream
+                    stream=application_generate_entity.stream,
                 )
                 return
 
@@ -140,7 +140,7 @@ class ChatAppRunner(AppRunner):
                 app_id=app_record.id,
                 external_data_tools=external_data_tools,
                 inputs=inputs,
-                query=query
+                query=query,
             )
 
         # get context from datasets
@@ -151,7 +151,7 @@ class ChatAppRunner(AppRunner):
                 app_record.id,
                 message.id,
                 application_generate_entity.user_id,
-                application_generate_entity.invoke_from
+                application_generate_entity.invoke_from,
             )
 
             dataset_retrieval = DatasetRetrieval()
@@ -165,7 +165,7 @@ class ChatAppRunner(AppRunner):
                 invoke_from=application_generate_entity.invoke_from,
                 show_retrieve_source=app_config.additional_features.show_retrieve_source,
                 hit_callback=hit_callback,
-                memory=memory
+                memory=memory,
             )
 
         # reorganize all inputs and template to prompt messages
@@ -179,14 +179,14 @@ class ChatAppRunner(AppRunner):
             files=files,
             query=query,
             context=context,
-            memory=memory
+            memory=memory,
         )
 
         # check hosting moderation
         hosting_moderation_result = self.check_hosting_moderation(
             application_generate_entity=application_generate_entity,
             queue_manager=queue_manager,
-            prompt_messages=prompt_messages
+            prompt_messages=prompt_messages,
         )
 
         if hosting_moderation_result:
@@ -194,14 +194,13 @@ class ChatAppRunner(AppRunner):
 
         # Re-calculate the max tokens if sum(prompt_token +  max_tokens) over model token limit
         self.recalc_llm_max_tokens(
-            model_config=application_generate_entity.model_config,
-            prompt_messages=prompt_messages
+            model_config=application_generate_entity.model_config, prompt_messages=prompt_messages
         )
 
         # Invoke model
         model_instance = ModelInstance(
             provider_model_bundle=application_generate_entity.model_config.provider_model_bundle,
-            model=application_generate_entity.model_config.model
+            model=application_generate_entity.model_config.model,
         )
 
         db.session.close()
@@ -216,7 +215,5 @@ class ChatAppRunner(AppRunner):
 
         # handle invoke result
         self._handle_invoke_result(
-            invoke_result=invoke_result,
-            queue_manager=queue_manager,
-            stream=application_generate_entity.stream
+            invoke_result=invoke_result, queue_manager=queue_manager, stream=application_generate_entity.stream
         )

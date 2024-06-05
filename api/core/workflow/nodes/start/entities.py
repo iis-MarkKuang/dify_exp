@@ -6,4 +6,5 @@ class StartNodeData(BaseNodeData):
     """
     Start Node Data
     """
+
     variables: list[VariableEntity] = []

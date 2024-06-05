@@ -15,23 +15,15 @@ class Storage:
         self.storage_runner = None
 
     def init_app(self, app: Flask):
-        storage_type = app.config.get('STORAGE_TYPE')
-        if storage_type == 's3':
-            self.storage_runner = S3Storage(
-                app=app
-            )
-        elif storage_type == 'azure-blob':
-            self.storage_runner = AzureStorage(
-                app=app
-            )
-        elif storage_type == 'aliyun-oss':
-            self.storage_runner = AliyunStorage(
-                app=app
-            )
-        elif storage_type == 'google-storage':
-            self.storage_runner = GoogleStorage(
-                app=app
-            )
+        storage_type = app.config.get("STORAGE_TYPE")
+        if storage_type == "s3":
+            self.storage_runner = S3Storage(app=app)
+        elif storage_type == "azure-blob":
+            self.storage_runner = AzureStorage(app=app)
+        elif storage_type == "aliyun-oss":
+            self.storage_runner = AliyunStorage(app=app)
+        elif storage_type == "google-storage":
+            self.storage_runner = GoogleStorage(app=app)
         else:
             self.storage_runner = LocalStorage(app=app)
 

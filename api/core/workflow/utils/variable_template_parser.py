@@ -29,15 +29,12 @@ class VariableTemplateParser:
     def extract_variable_selectors(self) -> list[VariableSelector]:
         variable_selectors = []
         for variable_key in self.variable_keys:
-            remove_hash = variable_key.replace('#', '')
-            split_result = remove_hash.split('.')
+            remove_hash = variable_key.replace("#", "")
+            split_result = remove_hash.split(".")
             if len(split_result) < 2:
                 continue
 
-            variable_selectors.append(VariableSelector(
-                variable=variable_key,
-                value_selector=split_result
-            ))
+            variable_selectors.append(VariableSelector(variable=variable_key, value_selector=split_result))
 
         return variable_selectors
 
@@ -51,8 +48,8 @@ class VariableTemplateParser:
             return value
 
         prompt = re.sub(REGEX, replacer, self.template)
-        return re.sub(r'<\|.*?\|>', '', prompt)
+        return re.sub(r"<\|.*?\|>", "", prompt)
 
     @classmethod
     def remove_template_variables(cls, text: str):
-        return re.sub(REGEX, r'{\1}', text)
+        return re.sub(REGEX, r"{\1}", text)

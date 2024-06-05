@@ -10,68 +10,69 @@ from httpx import Request as HttpxRequest
 from requests import Response as RequestsResponse
 from yarl import URL
 
-MOCK = os.getenv('MOCK_SWITCH', 'false') == 'true'
+MOCK = os.getenv("MOCK_SWITCH", "false") == "true"
+
 
 class MockedHttp:
-    def requests_request(method: Literal['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], url: str,
-                        **kwargs) -> RequestsResponse:
+    def requests_request(
+        method: Literal["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], url: str, **kwargs
+    ) -> RequestsResponse:
         """
         Mocked requests.request
         """
         response = RequestsResponse()
-        response.url = str(URL(url) % kwargs.get('params', {}))
-        response.headers = kwargs.get('headers', {})
+        response.url = str(URL(url) % kwargs.get("params", {}))
+        response.headers = kwargs.get("headers", {})
 
-        if url == 'http://404.com':
+        if url == "http://404.com":
             response.status_code = 404
-            response._content = b'Not Found'
+            response._content = b"Not Found"
             return response
-        
+
         # get data, files
-        data = kwargs.get('data', None)
-        files = kwargs.get('files', None)
+        data = kwargs.get("data", None)
+        files = kwargs.get("files", None)
 
         if data is not None:
-            resp = dumps(data).encode('utf-8')
+            resp = dumps(data).encode("utf-8")
         if files is not None:
-            resp = dumps(files).encode('utf-8')
+            resp = dumps(files).encode("utf-8")
         else:
-            resp = b'OK'
+            resp = b"OK"
 
         response.status_code = 200
         response._content = resp
         return response
 
-    def httpx_request(method: Literal['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], 
-                      url: str, **kwargs) -> httpx.Response:
+    def httpx_request(
+        method: Literal["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], url: str, **kwargs
+    ) -> httpx.Response:
         """
         Mocked httpx.request
         """
-        response = httpx.Response(
-            status_code=200,
-            request=HttpxRequest(method, url)
-        )
-        response.headers = kwargs.get('headers', {})
+        response = httpx.Response(status_code=200, request=HttpxRequest(method, url))
+        response.headers = kwargs.get("headers", {})
 
-        if url == 'http://404.com':
+        if url == "http://404.com":
             response.status_code = 404
-            response.content = b'Not Found'
+            response.content = b"Not Found"
             return response
-        
+
         # get data, files
-        data = kwargs.get('data', None)
-        files = kwargs.get('files', None)
+        data = kwargs.get("data", None)
+        files = kwargs.get("files", None)
 
         if data is not None:
-            resp = dumps(data).encode('utf-8')
+            resp = dumps(data).encode("utf-8")
         if files is not None:
-            resp = dumps(files).encode('utf-8')
+            resp = dumps(files).encode("utf-8")
         else:
-            resp = b'OK'
+            resp = b"OK"
 
         response.status_code = 200
         response._content = resp
         return response
+
 
 @pytest.fixture
 def setup_http_mock(request, monkeypatch: MonkeyPatch):

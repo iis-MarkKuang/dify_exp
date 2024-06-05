@@ -6,7 +6,7 @@ from models.account import Tenant
 
 
 def obfuscated_token(token: str):
-    return token[:6] + '*' * (len(token) - 8) + token[-2:]
+    return token[:6] + "*" * (len(token) - 8) + token[-2:]
 
 
 def encrypt_token(tenant_id: str, token: str):

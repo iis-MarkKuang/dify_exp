@@ -17,9 +17,9 @@ from core.workflow.nodes.http_request.entities import (
 from core.workflow.nodes.http_request.http_executor import HttpExecutor, HttpExecutorResponse
 from models.workflow import WorkflowNodeExecutionStatus
 
-HTTP_REQUEST_DEFAULT_TIMEOUT = HttpRequestNodeData.Timeout(connect=min(10, MAX_CONNECT_TIMEOUT),
-                                                           read=min(60, MAX_READ_TIMEOUT),
-                                                           write=min(20, MAX_WRITE_TIMEOUT))
+HTTP_REQUEST_DEFAULT_TIMEOUT = HttpRequestNodeData.Timeout(
+    connect=min(10, MAX_CONNECT_TIMEOUT), read=min(60, MAX_READ_TIMEOUT), write=min(20, MAX_WRITE_TIMEOUT)
+)
 
 
 class HttpRequestNode(BaseNode):
@@ -35,15 +35,13 @@ class HttpRequestNode(BaseNode):
                 "authorization": {
                     "type": "no-auth",
                 },
-                "body": {
-                    "type": "none"
-                },
+                "body": {"type": "none"},
                 "timeout": {
                     **HTTP_REQUEST_DEFAULT_TIMEOUT.dict(),
                     "max_connect_timeout": MAX_CONNECT_TIMEOUT,
                     "max_read_timeout": MAX_READ_TIMEOUT,
                     "max_write_timeout": MAX_WRITE_TIMEOUT,
-                }
+                },
             },
         }
 
@@ -54,9 +52,9 @@ class HttpRequestNode(BaseNode):
         # init http executor
         http_executor = None
         try:
-            http_executor = HttpExecutor(node_data=node_data,
-                                         timeout=self._get_request_timeout(node_data),
-                                         variable_pool=variable_pool)
+            http_executor = HttpExecutor(
+                node_data=node_data, timeout=self._get_request_timeout(node_data), variable_pool=variable_pool
+            )
 
             # invoke http executor
             response = http_executor.invoke()
@@ -64,31 +62,25 @@ class HttpRequestNode(BaseNode):
             process_data = {}
             if http_executor:
                 process_data = {
-                    'request': http_executor.to_raw_request(
+                    "request": http_executor.to_raw_request(
                         mask_authorization_header=node_data.mask_authorization_header
                     ),
                 }
-            return NodeRunResult(
-                status=WorkflowNodeExecutionStatus.FAILED,
-                error=str(e),
-                process_data=process_data
-            )
+            return NodeRunResult(status=WorkflowNodeExecutionStatus.FAILED, error=str(e), process_data=process_data)
 
         files = self.extract_files(http_executor.server_url, response)
 
         return NodeRunResult(
             status=WorkflowNodeExecutionStatus.SUCCEEDED,
             outputs={
-                'status_code': response.status_code,
-                'body': response.content if not files else '',
-                'headers': response.headers,
-                'files': files,
+                "status_code": response.status_code,
+                "body": response.content if not files else "",
+                "headers": response.headers,
+                "files": files,
             },
             process_data={
-                'request': http_executor.to_raw_request(
-                    mask_authorization_header=node_data.mask_authorization_header
-                ),
-            }
+                "request": http_executor.to_raw_request(mask_authorization_header=node_data.mask_authorization_header),
+            },
         )
 
     def _get_request_timeout(self, node_data: HttpRequestNodeData) -> HttpRequestNodeData.Timeout:
@@ -135,31 +127,33 @@ class HttpRequestNode(BaseNode):
         files = []
         mimetype, file_binary = response.extract_file()
         # if not image, return directly
-        if 'image' not in mimetype:
+        if "image" not in mimetype:
             return files
 
         if mimetype:
             # extract filename from url
             filename = path.basename(url)
             # extract extension if possible
-            extension = guess_extension(mimetype) or '.bin'
+            extension = guess_extension(mimetype) or ".bin"
 
             tool_file = ToolFileManager.create_file_by_raw(
-                user_id=self.user_id, 
-                tenant_id=self.tenant_id, 
-                conversation_id=None, 
-                file_binary=file_binary, 
+                user_id=self.user_id,
+                tenant_id=self.tenant_id,
+                conversation_id=None,
+                file_binary=file_binary,
                 mimetype=mimetype,
             )
 
-            files.append(FileVar(
-                tenant_id=self.tenant_id,
-                type=FileType.IMAGE,
-                transfer_method=FileTransferMethod.TOOL_FILE,
-                related_id=tool_file.id,
-                filename=filename,
-                extension=extension,
-                mime_type=mimetype,
-            ))
+            files.append(
+                FileVar(
+                    tenant_id=self.tenant_id,
+                    type=FileType.IMAGE,
+                    transfer_method=FileTransferMethod.TOOL_FILE,
+                    related_id=tool_file.id,
+                    filename=filename,
+                    extension=extension,
+                    mime_type=mimetype,
+                )
+            )
 
         return files

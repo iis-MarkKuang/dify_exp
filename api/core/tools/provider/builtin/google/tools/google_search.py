@@ -54,13 +54,7 @@ class SerpAPI:
             "api_key": self.serpapi_api_key,
             "q": query,
         }
-        params = {
-            "engine": "google",
-            "google_domain": "google.com",
-            "gl": "us",
-            "hl": "en",
-            **_params
-        }
+        params = {"engine": "google", "google_domain": "google.com", "gl": "us", "hl": "en", **_params}
         return params
 
     @staticmethod
@@ -68,7 +62,7 @@ class SerpAPI:
         """Process response from SerpAPI."""
         if "error" in res.keys():
             raise ValueError(f"Got error from SerpAPI: {res['error']}")
-        
+
         if typ == "text":
             toret = ""
             if "answer_box" in res.keys() and type(res["answer_box"]) == list:
@@ -77,26 +71,14 @@ class SerpAPI:
                 toret += res["answer_box"]["answer"] + "\n"
             if "answer_box" in res.keys() and "snippet" in res["answer_box"].keys():
                 toret += res["answer_box"]["snippet"] + "\n"
-            if (
-                "answer_box" in res.keys()
-                and "snippet_highlighted_words" in res["answer_box"].keys()
-            ):
+            if "answer_box" in res.keys() and "snippet_highlighted_words" in res["answer_box"].keys():
                 for item in res["answer_box"]["snippet_highlighted_words"]:
                     toret += item + "\n"
-            if (
-                "sports_results" in res.keys()
-                and "game_spotlight" in res["sports_results"].keys()
-            ):
+            if "sports_results" in res.keys() and "game_spotlight" in res["sports_results"].keys():
                 toret += res["sports_results"]["game_spotlight"] + "\n"
-            if (
-                "shopping_results" in res.keys()
-                and "title" in res["shopping_results"][0].keys()
-            ):
+            if "shopping_results" in res.keys() and "title" in res["shopping_results"][0].keys():
                 toret += res["shopping_results"][:3] + "\n"
-            if (
-                "knowledge_graph" in res.keys()
-                and "description" in res["knowledge_graph"].keys()
-            ):
+            if "knowledge_graph" in res.keys() and "description" in res["knowledge_graph"].keys():
                 toret = res["knowledge_graph"]["description"] + "\n"
             if "snippet" in res["organic_results"][0].keys():
                 toret = "\n".join(
@@ -104,20 +86,23 @@ class SerpAPI:
                     for item in res["organic_results"]
                     if "snippet" in item and "link" in item
                 )
-            if (
-                "images_results" in res.keys()
-                and "thumbnail" in res["images_results"][0].keys()
-            ):
+            if "images_results" in res.keys() and "thumbnail" in res["images_results"][0].keys():
                 thumbnails = [item["thumbnail"] for item in res["images_results"][:10]]
                 toret = thumbnails
             if toret == "":
                 toret = "No good search result found"
         elif typ == "link":
-            if "knowledge_graph" in res.keys() and "title" in res["knowledge_graph"].keys() \
-                    and "description_link" in res["knowledge_graph"].keys():
+            if (
+                "knowledge_graph" in res.keys()
+                and "title" in res["knowledge_graph"].keys()
+                and "description_link" in res["knowledge_graph"].keys()
+            ):
                 toret = res["knowledge_graph"]["description_link"]
-            elif "knowledge_graph" in res.keys() and "see_results_about" in res["knowledge_graph"].keys() \
-                and len(res["knowledge_graph"]["see_results_about"]) > 0:
+            elif (
+                "knowledge_graph" in res.keys()
+                and "see_results_about" in res["knowledge_graph"].keys()
+                and len(res["knowledge_graph"]["see_results_about"]) > 0
+            ):
                 see_result_about = res["knowledge_graph"]["see_results_about"]
                 toret = ""
                 for item in see_result_about:
@@ -149,19 +134,20 @@ class SerpAPI:
                 toret = "No good search result found"
         return toret
 
+
 class GoogleSearchTool(BuiltinTool):
-    def _invoke(self, 
-                user_id: str,
-               tool_parameters: dict[str, Any], 
-        ) -> Union[ToolInvokeMessage, list[ToolInvokeMessage]]:
+    def _invoke(
+        self,
+        user_id: str,
+        tool_parameters: dict[str, Any],
+    ) -> Union[ToolInvokeMessage, list[ToolInvokeMessage]]:
         """
-            invoke tools
+        invoke tools
         """
-        query = tool_parameters['query']
-        result_type = tool_parameters['result_type']
-        api_key = self.runtime.credentials['serpapi_api_key']
+        query = tool_parameters["query"]
+        result_type = tool_parameters["result_type"]
+        api_key = self.runtime.credentials["serpapi_api_key"]
         result = SerpAPI(api_key).run(query, result_type=result_type)
-        if result_type == 'text':
+        if result_type == "text":
             return self.create_text_message(text=result)
         return self.create_link_message(link=result)
-    

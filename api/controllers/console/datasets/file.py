@@ -20,7 +20,6 @@ PREVIEW_WORDS_LIMIT = 3000
 
 
 class FileApi(Resource):
-
     @setup_required
     @login_required
     @account_initialization_required
@@ -30,23 +29,22 @@ class FileApi(Resource):
         batch_count_limit = current_app.config.get("UPLOAD_FILE_BATCH_LIMIT")
         image_file_size_limit = current_app.config.get("UPLOAD_IMAGE_FILE_SIZE_LIMIT")
         return {
-            'file_size_limit': file_size_limit,
-            'batch_count_limit': batch_count_limit,
-            'image_file_size_limit': image_file_size_limit
+            "file_size_limit": file_size_limit,
+            "batch_count_limit": batch_count_limit,
+            "image_file_size_limit": image_file_size_limit,
         }, 200
 
     @setup_required
     @login_required
     @account_initialization_required
     @marshal_with(file_fields)
-    @cloud_edition_billing_resource_check(resource='documents')
+    @cloud_edition_billing_resource_check(resource="documents")
     def post(self):
-
         # get file from request
-        file = request.files['file']
+        file = request.files["file"]
 
         # check file
-        if 'file' not in request.files:
+        if "file" not in request.files:
             raise NoFileUploadedError()
 
         if len(request.files) > 1:
@@ -68,7 +66,7 @@ class FilePreviewApi(Resource):
     def get(self, file_id):
         file_id = str(file_id)
         text = FileService.get_file_preview(file_id)
-        return {'content': text}
+        return {"content": text}
 
 
 class FileSupportTypeApi(Resource):
@@ -76,11 +74,11 @@ class FileSupportTypeApi(Resource):
     @login_required
     @account_initialization_required
     def get(self):
-        etl_type = current_app.config['ETL_TYPE']
-        allowed_extensions = UNSTRUSTURED_ALLOWED_EXTENSIONS if etl_type == 'Unstructured' else ALLOWED_EXTENSIONS
-        return {'allowed_extensions': allowed_extensions}
+        etl_type = current_app.config["ETL_TYPE"]
+        allowed_extensions = UNSTRUSTURED_ALLOWED_EXTENSIONS if etl_type == "Unstructured" else ALLOWED_EXTENSIONS
+        return {"allowed_extensions": allowed_extensions}
 
 
-api.add_resource(FileApi, '/files/upload')
-api.add_resource(FilePreviewApi, '/files/<uuid:file_id>/preview')
-api.add_resource(FileSupportTypeApi, '/files/support-type')
+api.add_resource(FileApi, "/files/upload")
+api.add_resource(FilePreviewApi, "/files/<uuid:file_id>/preview")
+api.add_resource(FileSupportTypeApi, "/files/support-type")

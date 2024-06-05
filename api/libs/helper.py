@@ -15,7 +15,7 @@ from flask_restful import fields
 
 
 def run(script):
-    return subprocess.getstatusoutput('source /root/.bashrc && ' + script)
+    return subprocess.getstatusoutput("source /root/.bashrc && " + script)
 
 
 class TimestampField(fields.Raw):
@@ -30,29 +30,29 @@ def email(email):
     if re.match(pattern, email) is not None:
         return email
 
-    error = ('{email} is not a valid email.'
-             .format(email=email))
+    error = "{email} is not a valid email.".format(email=email)
     raise ValueError(error)
 
 
 def uuid_value(value):
-    if value == '':
+    if value == "":
         return str(value)
 
     try:
         uuid_obj = uuid.UUID(value)
         return str(uuid_obj)
     except ValueError:
-        error = ('{value} is not a valid uuid.'
-                 .format(value=value))
+        error = "{value} is not a valid uuid.".format(value=value)
         raise ValueError(error)
-    
+
+
 def alphanumeric(value: str):
     # check if the value is alphanumeric and underlined
-    if re.match(r'^[a-zA-Z0-9_]+$', value):
+    if re.match(r"^[a-zA-Z0-9_]+$", value):
         return value
-    
-    raise ValueError(f'{value} is not a valid alphanumeric value')
+
+    raise ValueError(f"{value} is not a valid alphanumeric value")
+
 
 def timestamp_value(timestamp):
     try:
@@ -61,31 +61,32 @@ def timestamp_value(timestamp):
             raise ValueError
         return int_timestamp
     except ValueError:
-        error = ('{timestamp} is not a valid timestamp.'
-                 .format(timestamp=timestamp))
+        error = "{timestamp} is not a valid timestamp.".format(timestamp=timestamp)
         raise ValueError(error)
 
 
 class str_len:
-    """ Restrict input to an integer in a range (inclusive) """
+    """Restrict input to an integer in a range (inclusive)"""
 
-    def __init__(self, max_length, argument='argument'):
+    def __init__(self, max_length, argument="argument"):
         self.max_length = max_length
         self.argument = argument
 
     def __call__(self, value):
         length = len(value)
         if length > self.max_length:
-            error = ('Invalid {arg}: {val}. {arg} cannot exceed length {length}'
-                     .format(arg=self.argument, val=value, length=self.max_length))
+            error = "Invalid {arg}: {val}. {arg} cannot exceed length {length}".format(
+                arg=self.argument, val=value, length=self.max_length
+            )
             raise ValueError(error)
 
         return value
 
 
 class float_range:
-    """ Restrict input to an float in a range (inclusive) """
-    def __init__(self, low, high, argument='argument'):
+    """Restrict input to an float in a range (inclusive)"""
+
+    def __init__(self, low, high, argument="argument"):
         self.low = low
         self.high = high
         self.argument = argument
@@ -93,15 +94,16 @@ class float_range:
     def __call__(self, value):
         value = _get_float(value)
         if value < self.low or value > self.high:
-            error = ('Invalid {arg}: {val}. {arg} must be within the range {lo} - {hi}'
-                     .format(arg=self.argument, val=value, lo=self.low, hi=self.high))
+            error = "Invalid {arg}: {val}. {arg} must be within the range {lo} - {hi}".format(
+                arg=self.argument, val=value, lo=self.low, hi=self.high
+            )
             raise ValueError(error)
 
         return value
 
 
 class datetime_string:
-    def __init__(self, format, argument='argument'):
+    def __init__(self, format, argument="argument"):
         self.format = format
         self.argument = argument
 
@@ -109,8 +111,9 @@ class datetime_string:
         try:
             datetime.strptime(value, self.format)
         except ValueError:
-            error = ('Invalid {arg}: {val}. {arg} must be conform to the format {format}'
-                     .format(arg=self.argument, val=value, format=self.format))
+            error = "Invalid {arg}: {val}. {arg} must be conform to the format {format}".format(
+                arg=self.argument, val=value, format=self.format
+            )
             raise ValueError(error)
 
         return value
@@ -120,14 +123,14 @@ def _get_float(value):
     try:
         return float(value)
     except (TypeError, ValueError):
-        raise ValueError('{} is not a valid float'.format(value))
+        raise ValueError("{} is not a valid float".format(value))
+
 
 def timezone(timezone_string):
     if timezone_string and timezone_string in available_timezones():
         return timezone_string
 
-    error = ('{timezone_string} is not a valid timezone.'
-             .format(timezone_string=timezone_string))
+    error = "{timezone_string} is not a valid timezone.".format(timezone_string=timezone_string)
     raise ValueError(error)
 
 
@@ -141,8 +144,8 @@ def generate_string(n):
 
 
 def get_remote_ip(request):
-    if request.headers.get('CF-Connecting-IP'):
-        return request.headers.get('Cf-Connecting-Ip')
+    if request.headers.get("CF-Connecting-IP"):
+        return request.headers.get("Cf-Connecting-Ip")
     elif request.headers.getlist("X-Forwarded-For"):
         return request.headers.getlist("X-Forwarded-For")[0]
     else:
@@ -150,16 +153,16 @@ def get_remote_ip(request):
 
 
 def generate_text_hash(text: str) -> str:
-    hash_text = str(text) + 'None'
+    hash_text = str(text) + "None"
     return sha256(hash_text.encode()).hexdigest()
 
 
 def compact_generate_response(response: Union[dict, Generator]) -> Response:
     if isinstance(response, dict):
-        return Response(response=json.dumps(response), status=200, mimetype='application/json')
+        return Response(response=json.dumps(response), status=200, mimetype="application/json")
     else:
+
         def generate() -> Generator:
             yield from response
 
-        return Response(stream_with_context(generate()), status=200,
-                        mimetype='text/event-stream')
+        return Response(stream_with_context(generate()), status=200, mimetype="text/event-stream")

@@ -1,4 +1,5 @@
 """Abstract interface for document loader implementations."""
+
 import csv
 from typing import Optional
 
@@ -18,12 +19,12 @@ class CSVExtractor(BaseExtractor):
     """
 
     def __init__(
-            self,
-            file_path: str,
-            encoding: Optional[str] = None,
-            autodetect_encoding: bool = False,
-            source_column: Optional[str] = None,
-            csv_args: Optional[dict] = None,
+        self,
+        file_path: str,
+        encoding: Optional[str] = None,
+        autodetect_encoding: bool = False,
+        source_column: Optional[str] = None,
+        csv_args: Optional[dict] = None,
     ):
         """Initialize with file path."""
         self._file_path = file_path
@@ -67,7 +68,7 @@ class CSVExtractor(BaseExtractor):
 
             for i, row in df.iterrows():
                 content = ";".join(f"{col.strip()}: {str(row[col]).strip()}" for col in df.columns)
-                source = row[self.source_column] if self.source_column else ''
+                source = row[self.source_column] if self.source_column else ""
                 metadata = {"source": source, "row": i}
                 doc = Document(page_content=content, metadata=metadata)
                 docs.append(doc)

@@ -12,8 +12,8 @@ from models.model import UploadFile
 
 
 class FileType(enum.Enum):
-    IMAGE = 'image'
-    PDF = 'pdf'
+    IMAGE = "image"
+    PDF = "pdf"
 
     @staticmethod
     def value_of(value):
@@ -24,9 +24,9 @@ class FileType(enum.Enum):
 
 
 class FileTransferMethod(enum.Enum):
-    REMOTE_URL = 'remote_url'
-    LOCAL_FILE = 'local_file'
-    TOOL_FILE = 'tool_file'
+    REMOTE_URL = "remote_url"
+    LOCAL_FILE = "local_file"
+    TOOL_FILE = "tool_file"
 
     @staticmethod
     def value_of(value):
@@ -35,9 +35,10 @@ class FileTransferMethod(enum.Enum):
                 return member
         raise ValueError(f"No matching enum found for value '{value}'")
 
+
 class FileBelongsTo(enum.Enum):
-    USER = 'user'
-    ASSISTANT = 'assistant'
+    USER = "user"
+    ASSISTANT = "assistant"
 
     @staticmethod
     def value_of(value):
@@ -61,15 +62,15 @@ class FileVar(BaseModel):
 
     def to_dict(self) -> dict:
         return {
-            '__variant': self.__class__.__name__,
-            'tenant_id': self.tenant_id,
-            'type': self.type.value,
-            'transfer_method': self.transfer_method.value,
-            'url': self.preview_url,
-            'related_id': self.related_id,
-            'filename': self.filename,
-            'extension': self.extension,
-            'mime_type': self.mime_type,
+            "__variant": self.__class__.__name__,
+            "tenant_id": self.tenant_id,
+            "type": self.type.value,
+            "transfer_method": self.transfer_method.value,
+            "url": self.preview_url,
+            "related_id": self.related_id,
+            "filename": self.filename,
+            "extension": self.extension,
+            "mime_type": self.mime_type,
         }
 
     def to_markdown(self) -> str:
@@ -81,7 +82,7 @@ class FileVar(BaseModel):
         if self.type == FileType.IMAGE:
             text = f'![{self.filename or ""}]({preview_url})'
         else:
-            text = f'[{self.filename or preview_url}]({preview_url})'
+            text = f"[{self.filename or preview_url}]({preview_url})"
 
         return text
 
@@ -110,7 +111,8 @@ class FileVar(BaseModel):
             return ImagePromptMessageContent(
                 data=self.data,
                 detail=ImagePromptMessageContent.DETAIL.HIGH
-                if image_config.get("detail") == "high" else ImagePromptMessageContent.DETAIL.LOW
+                if image_config.get("detail") == "high"
+                else ImagePromptMessageContent.DETAIL.LOW,
             )
 
     def _get_data(self, force_url: bool = False) -> Optional[str]:
@@ -118,19 +120,18 @@ class FileVar(BaseModel):
             if self.transfer_method == FileTransferMethod.REMOTE_URL:
                 return self.url
             elif self.transfer_method == FileTransferMethod.LOCAL_FILE:
-                upload_file = (db.session.query(UploadFile)
-                               .filter(
-                    UploadFile.id == self.related_id,
-                    UploadFile.tenant_id == self.tenant_id
-                ).first())
-
-                return UploadFileParser.get_image_data(
-                    upload_file=upload_file,
-                    force_url=force_url
+                upload_file = (
+                    db.session.query(UploadFile)
+                    .filter(UploadFile.id == self.related_id, UploadFile.tenant_id == self.tenant_id)
+                    .first()
                 )
+
+                return UploadFileParser.get_image_data(upload_file=upload_file, force_url=force_url)
             elif self.transfer_method == FileTransferMethod.TOOL_FILE:
                 extension = self.extension
                 # add sign url
-                return ToolFileParser.get_tool_file_manager().sign_file(tool_file_id=self.related_id, extension=extension)
+                return ToolFileParser.get_tool_file_manager().sign_file(
+                    tool_file_id=self.related_id, extension=extension
+                )
 
         return None

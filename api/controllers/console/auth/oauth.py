@@ -17,22 +17,19 @@ from .. import api
 
 def get_oauth_providers():
     with current_app.app_context():
-        github_oauth = GitHubOAuth(client_id=current_app.config.get('GITHUB_CLIENT_ID'),
-                                   client_secret=current_app.config.get(
-                                       'GITHUB_CLIENT_SECRET'),
-                                   redirect_uri=current_app.config.get(
-                                       'CONSOLE_API_URL') + '/console/api/oauth/authorize/github')
+        github_oauth = GitHubOAuth(
+            client_id=current_app.config.get("GITHUB_CLIENT_ID"),
+            client_secret=current_app.config.get("GITHUB_CLIENT_SECRET"),
+            redirect_uri=current_app.config.get("CONSOLE_API_URL") + "/console/api/oauth/authorize/github",
+        )
 
-        google_oauth = GoogleOAuth(client_id=current_app.config.get('GOOGLE_CLIENT_ID'),
-                                   client_secret=current_app.config.get(
-                                       'GOOGLE_CLIENT_SECRET'),
-                                   redirect_uri=current_app.config.get(
-                                       'CONSOLE_API_URL') + '/console/api/oauth/authorize/google')
+        google_oauth = GoogleOAuth(
+            client_id=current_app.config.get("GOOGLE_CLIENT_ID"),
+            client_secret=current_app.config.get("GOOGLE_CLIENT_SECRET"),
+            redirect_uri=current_app.config.get("CONSOLE_API_URL") + "/console/api/oauth/authorize/google",
+        )
 
-        OAUTH_PROVIDERS = {
-            'github': github_oauth,
-            'google': google_oauth
-        }
+        OAUTH_PROVIDERS = {"github": github_oauth, "google": google_oauth}
         return OAUTH_PROVIDERS
 
 
@@ -43,7 +40,7 @@ class OAuthLogin(Resource):
             oauth_provider = OAUTH_PROVIDERS.get(provider)
             print(vars(oauth_provider))
         if not oauth_provider:
-            return {'error': 'Invalid provider'}, 400
+            return {"error": "Invalid provider"}, 400
 
         auth_url = oauth_provider.get_authorization_url()
         return redirect(auth_url)
@@ -55,21 +52,20 @@ class OAuthCallback(Resource):
         with current_app.app_context():
             oauth_provider = OAUTH_PROVIDERS.get(provider)
         if not oauth_provider:
-            return {'error': 'Invalid provider'}, 400
+            return {"error": "Invalid provider"}, 400
 
-        code = request.args.get('code')
+        code = request.args.get("code")
         try:
             token = oauth_provider.get_access_token(code)
             user_info = oauth_provider.get_user_info(token)
         except requests.exceptions.HTTPError as e:
-            logging.exception(
-                f"An error occurred during the OAuth process with {provider}: {e.response.text}")
-            return {'error': 'OAuth process failed'}, 400
+            logging.exception(f"An error occurred during the OAuth process with {provider}: {e.response.text}")
+            return {"error": "OAuth process failed"}, 400
 
         account = _generate_account(provider, user_info)
         # Check account status
         if account.status == AccountStatus.BANNED.value or account.status == AccountStatus.CLOSED.value:
-            return {'error': 'Account is banned or closed.'}, 403
+            return {"error": "Account is banned or closed."}, 403
 
         if account.status == AccountStatus.PENDING.value:
             account.status = AccountStatus.ACTIVE.value
@@ -100,13 +96,9 @@ def _generate_account(provider: str, user_info: OAuthUserInfo):
 
     if not account:
         # Create account
-        account_name = user_info.name if user_info.name else 'Dify'
+        account_name = user_info.name if user_info.name else "Dify"
         account = RegisterService.register(
-            email=user_info.email,
-            name=account_name,
-            password=None,
-            open_id=user_info.id,
-            provider=provider
+            email=user_info.email, name=account_name, password=None, open_id=user_info.id, provider=provider
         )
 
         # Set interface language
@@ -124,5 +116,5 @@ def _generate_account(provider: str, user_info: OAuthUserInfo):
     return account
 
 
-api.add_resource(OAuthLogin, '/oauth/login/<provider>')
-api.add_resource(OAuthCallback, '/oauth/authorize/<provider>')
+api.add_resource(OAuthLogin, "/oauth/login/<provider>")
+api.add_resource(OAuthCallback, "/oauth/authorize/<provider>")

@@ -14,21 +14,26 @@ from services.errors.message import MessageNotExistsError
 
 class ConversationService:
     @classmethod
-    def pagination_by_last_id(cls, app_model: App, user: Optional[Union[Account, EndUser]],
-                              last_id: Optional[str], limit: int,
-                              invoke_from: InvokeFrom,
-                              include_ids: Optional[list] = None,
-                              exclude_ids: Optional[list] = None) -> InfiniteScrollPagination:
+    def pagination_by_last_id(
+        cls,
+        app_model: App,
+        user: Optional[Union[Account, EndUser]],
+        last_id: Optional[str],
+        limit: int,
+        invoke_from: InvokeFrom,
+        include_ids: Optional[list] = None,
+        exclude_ids: Optional[list] = None,
+    ) -> InfiniteScrollPagination:
         if not user:
             return InfiniteScrollPagination(data=[], limit=limit, has_more=False)
 
         base_query = db.session.query(Conversation).filter(
             Conversation.is_deleted == False,
             Conversation.app_id == app_model.id,
-            Conversation.from_source == ('api' if isinstance(user, EndUser) else 'console'),
+            Conversation.from_source == ("api" if isinstance(user, EndUser) else "console"),
             Conversation.from_end_user_id == (user.id if isinstance(user, EndUser) else None),
             Conversation.from_account_id == (user.id if isinstance(user, Account) else None),
-            or_(Conversation.invoke_from.is_(None), Conversation.invoke_from == invoke_from.value)
+            or_(Conversation.invoke_from.is_(None), Conversation.invoke_from == invoke_from.value),
         )
 
         if include_ids is not None:
@@ -45,10 +50,14 @@ class ConversationService:
             if not last_conversation:
                 raise LastConversationNotExistsError()
 
-            conversations = base_query.filter(
-                Conversation.created_at < last_conversation.created_at,
-                Conversation.id != last_conversation.id
-            ).order_by(Conversation.created_at.desc()).limit(limit).all()
+            conversations = (
+                base_query.filter(
+                    Conversation.created_at < last_conversation.created_at, Conversation.id != last_conversation.id
+                )
+                .order_by(Conversation.created_at.desc())
+                .limit(limit)
+                .all()
+            )
         else:
             conversations = base_query.order_by(Conversation.created_at.desc()).limit(limit).all()
 
@@ -57,21 +66,23 @@ class ConversationService:
             current_page_first_conversation = conversations[-1]
             rest_count = base_query.filter(
                 Conversation.created_at < current_page_first_conversation.created_at,
-                Conversation.id != current_page_first_conversation.id
+                Conversation.id != current_page_first_conversation.id,
             ).count()
 
             if rest_count > 0:
                 has_more = True
 
-        return InfiniteScrollPagination(
-            data=conversations,
-            limit=limit,
-            has_more=has_more
-        )
+        return InfiniteScrollPagination(data=conversations, limit=limit, has_more=has_more)
 
     @classmethod
-    def rename(cls, app_model: App, conversation_id: str,
-               user: Optional[Union[Account, EndUser]], name: str, auto_generate: bool):
+    def rename(
+        cls,
+        app_model: App,
+        conversation_id: str,
+        user: Optional[Union[Account, EndUser]],
+        name: str,
+        auto_generate: bool,
+    ):
         conversation = cls.get_conversation(app_model, conversation_id, user)
 
         if auto_generate:
@@ -85,11 +96,12 @@ class ConversationService:
     @classmethod
     def auto_generate_name(cls, app_model: App, conversation: Conversation):
         # get conversation first message
-        message = db.session.query(Message) \
-            .filter(
-                Message.app_id == app_model.id,
-                Message.conversation_id == conversation.id
-            ).order_by(Message.created_at.asc()).first()
+        message = (
+            db.session.query(Message)
+            .filter(Message.app_id == app_model.id, Message.conversation_id == conversation.id)
+            .order_by(Message.created_at.asc())
+            .first()
+        )
 
         if not message:
             raise MessageNotExistsError()
@@ -107,15 +119,18 @@ class ConversationService:
 
     @classmethod
     def get_conversation(cls, app_model: App, conversation_id: str, user: Optional[Union[Account, EndUser]]):
-        conversation = db.session.query(Conversation) \
+        conversation = (
+            db.session.query(Conversation)
             .filter(
-            Conversation.id == conversation_id,
-            Conversation.app_id == app_model.id,
-            Conversation.from_source == ('api' if isinstance(user, EndUser) else 'console'),
-            Conversation.from_end_user_id == (user.id if isinstance(user, EndUser) else None),
-            Conversation.from_account_id == (user.id if isinstance(user, Account) else None),
-            Conversation.is_deleted == False
-        ).first()
+                Conversation.id == conversation_id,
+                Conversation.app_id == app_model.id,
+                Conversation.from_source == ("api" if isinstance(user, EndUser) else "console"),
+                Conversation.from_end_user_id == (user.id if isinstance(user, EndUser) else None),
+                Conversation.from_account_id == (user.id if isinstance(user, Account) else None),
+                Conversation.is_deleted == False,
+            )
+            .first()
+        )
 
         if not conversation:
             raise ConversationNotExistsError()

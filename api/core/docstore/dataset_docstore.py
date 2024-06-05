@@ -13,10 +13,10 @@ from models.dataset import Dataset, DocumentSegment
 
 class DatasetDocumentStore:
     def __init__(
-            self,
-            dataset: Dataset,
-            user_id: str,
-            document_id: Optional[str] = None,
+        self,
+        dataset: Dataset,
+        user_id: str,
+        document_id: Optional[str] = None,
     ):
         self._dataset = dataset
         self._user_id = user_id
@@ -42,9 +42,9 @@ class DatasetDocumentStore:
 
     @property
     def docs(self) -> dict[str, Document]:
-        document_segments = db.session.query(DocumentSegment).filter(
-            DocumentSegment.dataset_id == self._dataset.id
-        ).all()
+        document_segments = (
+            db.session.query(DocumentSegment).filter(DocumentSegment.dataset_id == self._dataset.id).all()
+        )
 
         output = {}
         for document_segment in document_segments:
@@ -56,41 +56,40 @@ class DatasetDocumentStore:
                     "doc_hash": document_segment.index_node_hash,
                     "document_id": document_segment.document_id,
                     "dataset_id": document_segment.dataset_id,
-                }
+                },
             )
 
         return output
 
-    def add_documents(
-            self, docs: Sequence[Document], allow_update: bool = True
-    ) -> None:
-        max_position = db.session.query(func.max(DocumentSegment.position)).filter(
-            DocumentSegment.document_id == self._document_id
-        ).scalar()
+    def add_documents(self, docs: Sequence[Document], allow_update: bool = True) -> None:
+        max_position = (
+            db.session.query(func.max(DocumentSegment.position))
+            .filter(DocumentSegment.document_id == self._document_id)
+            .scalar()
+        )
 
         if max_position is None:
             max_position = 0
         embedding_model = None
-        if self._dataset.indexing_technique == 'high_quality':
+        if self._dataset.indexing_technique == "high_quality":
             model_manager = ModelManager()
             embedding_model = model_manager.get_model_instance(
                 tenant_id=self._dataset.tenant_id,
                 provider=self._dataset.embedding_model_provider,
                 model_type=ModelType.TEXT_EMBEDDING,
-                model=self._dataset.embedding_model
+                model=self._dataset.embedding_model,
             )
 
         for doc in docs:
             if not isinstance(doc, Document):
                 raise ValueError("doc must be a Document")
 
-            segment_document = self.get_document_segment(doc_id=doc.metadata['doc_id'])
+            segment_document = self.get_document_segment(doc_id=doc.metadata["doc_id"])
 
             # NOTE: doc could already exist in the store, but we overwrite it
             if not allow_update and segment_document:
                 raise ValueError(
-                    f"doc_id {doc.metadata['doc_id']} already exists. "
-                    "Set allow_update to True to overwrite."
+                    f"doc_id {doc.metadata['doc_id']} already exists. " "Set allow_update to True to overwrite."
                 )
 
             # calc embedding use tokens
@@ -98,9 +97,7 @@ class DatasetDocumentStore:
                 model_type_instance = embedding_model.model_type_instance
                 model_type_instance = cast(TextEmbeddingModel, model_type_instance)
                 tokens = model_type_instance.get_num_tokens(
-                    model=embedding_model.model,
-                    credentials=embedding_model.credentials,
-                    texts=[doc.page_content]
+                    model=embedding_model.model, credentials=embedding_model.credentials, texts=[doc.page_content]
                 )
             else:
                 tokens = 0
@@ -112,8 +109,8 @@ class DatasetDocumentStore:
                     tenant_id=self._dataset.tenant_id,
                     dataset_id=self._dataset.id,
                     document_id=self._document_id,
-                    index_node_id=doc.metadata['doc_id'],
-                    index_node_hash=doc.metadata['doc_hash'],
+                    index_node_id=doc.metadata["doc_id"],
+                    index_node_hash=doc.metadata["doc_hash"],
                     position=max_position,
                     content=doc.page_content,
                     word_count=len(doc.page_content),
@@ -121,15 +118,15 @@ class DatasetDocumentStore:
                     enabled=False,
                     created_by=self._user_id,
                 )
-                if doc.metadata.get('answer'):
-                    segment_document.answer = doc.metadata.pop('answer', '')
+                if doc.metadata.get("answer"):
+                    segment_document.answer = doc.metadata.pop("answer", "")
 
                 db.session.add(segment_document)
             else:
                 segment_document.content = doc.page_content
-                if doc.metadata.get('answer'):
-                    segment_document.answer = doc.metadata.pop('answer', '')
-                segment_document.index_node_hash = doc.metadata['doc_hash']
+                if doc.metadata.get("answer"):
+                    segment_document.answer = doc.metadata.pop("answer", "")
+                segment_document.index_node_hash = doc.metadata["doc_hash"]
                 segment_document.word_count = len(doc.page_content)
                 segment_document.tokens = tokens
 
@@ -140,9 +137,7 @@ class DatasetDocumentStore:
         result = self.get_document_segment(doc_id)
         return result is not None
 
-    def get_document(
-            self, doc_id: str, raise_error: bool = True
-    ) -> Optional[Document]:
+    def get_document(self, doc_id: str, raise_error: bool = True) -> Optional[Document]:
         document_segment = self.get_document_segment(doc_id)
 
         if document_segment is None:
@@ -158,7 +153,7 @@ class DatasetDocumentStore:
                 "doc_hash": document_segment.index_node_hash,
                 "document_id": document_segment.document_id,
                 "dataset_id": document_segment.dataset_id,
-            }
+            },
         )
 
     def delete_document(self, doc_id: str, raise_error: bool = True) -> None:
@@ -193,9 +188,10 @@ class DatasetDocumentStore:
         return document_segment.index_node_hash
 
     def get_document_segment(self, doc_id: str) -> DocumentSegment:
-        document_segment = db.session.query(DocumentSegment).filter(
-            DocumentSegment.dataset_id == self._dataset.id,
-            DocumentSegment.index_node_id == doc_id
-        ).first()
+        document_segment = (
+            db.session.query(DocumentSegment)
+            .filter(DocumentSegment.dataset_id == self._dataset.id, DocumentSegment.index_node_id == doc_id)
+            .first()
+        )
 
         return document_segment

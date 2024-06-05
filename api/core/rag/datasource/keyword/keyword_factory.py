@@ -15,15 +15,13 @@ class Keyword:
 
     def _init_keyword(self) -> BaseKeyword:
         config = current_app.config
-        keyword_type = config.get('KEYWORD_STORE')
+        keyword_type = config.get("KEYWORD_STORE")
 
         if not keyword_type:
             raise ValueError("Keyword store must be specified.")
 
         if keyword_type == "jieba":
-            return Jieba(
-                dataset=self._dataset
-            )
+            return Jieba(dataset=self._dataset)
         else:
             raise ValueError(f"Keyword store {keyword_type} is not supported.")
 
@@ -45,10 +43,7 @@ class Keyword:
     def delete(self) -> None:
         self._keyword_processor.delete()
 
-    def search(
-            self, query: str,
-            **kwargs: Any
-    ) -> list[Document]:
+    def search(self, query: str, **kwargs: Any) -> list[Document]:
         return self._keyword_processor.search(query, **kwargs)
 
     def __getattr__(self, name):

@@ -40,36 +40,27 @@ class QuestionClassifierNode(LLMNode):
 
         # extract variables
         query = variable_pool.get_variable_value(variable_selector=node_data.query_variable_selector)
-        variables = {
-            'query': query
-        }
+        variables = {"query": query}
         # fetch model config
         model_instance, model_config = self._fetch_model_config(node_data.model)
         # fetch memory
         memory = self._fetch_memory(node_data.memory, variable_pool, model_instance)
         # fetch prompt messages
         prompt_messages, stop = self._fetch_prompt(
-            node_data=node_data,
-            context='',
-            query=query,
-            memory=memory,
-            model_config=model_config
+            node_data=node_data, context="", query=query, memory=memory, model_config=model_config
         )
 
         # handle invoke result
         result_text, usage = self._invoke_llm(
-            node_data_model=node_data.model,
-            model_instance=model_instance,
-            prompt_messages=prompt_messages,
-            stop=stop
+            node_data_model=node_data.model, model_instance=model_instance, prompt_messages=prompt_messages, stop=stop
         )
         category_name = node_data.classes[0].name
         category_id = node_data.classes[0].id
         try:
             result_text_json = parse_and_check_json_markdown(result_text, [])
             # result_text_json = json.loads(result_text.strip('```JSON\n'))
-            if 'category_name' in result_text_json and 'category_id' in result_text_json:
-                category_id_result = result_text_json['category_id']
+            if "category_name" in result_text_json and "category_id" in result_text_json:
+                category_id_result = result_text_json["category_id"]
                 classes = node_data.classes
                 classes_map = {class_.id: class_.name for class_ in classes}
                 category_ids = [_class.id for _class in classes]
@@ -81,16 +72,13 @@ class QuestionClassifierNode(LLMNode):
             logging.error(f"Failed to parse result text: {result_text}")
         try:
             process_data = {
-                'model_mode': model_config.mode,
-                'prompts': PromptMessageUtil.prompt_messages_to_prompt_for_saving(
-                    model_mode=model_config.mode,
-                    prompt_messages=prompt_messages
+                "model_mode": model_config.mode,
+                "prompts": PromptMessageUtil.prompt_messages_to_prompt_for_saving(
+                    model_mode=model_config.mode, prompt_messages=prompt_messages
                 ),
-                'usage': jsonable_encoder(usage),
+                "usage": jsonable_encoder(usage),
             }
-            outputs = {
-                'class_name': category_name
-            }
+            outputs = {"class_name": category_name}
 
             return NodeRunResult(
                 status=WorkflowNodeExecutionStatus.SUCCEEDED,
@@ -101,8 +89,8 @@ class QuestionClassifierNode(LLMNode):
                 metadata={
                     NodeRunMetadataKey.TOTAL_TOKENS: usage.total_tokens,
                     NodeRunMetadataKey.TOTAL_PRICE: usage.total_price,
-                    NodeRunMetadataKey.CURRENCY: usage.currency
-                }
+                    NodeRunMetadataKey.CURRENCY: usage.currency,
+                },
             )
 
         except ValueError as e:
@@ -113,15 +101,15 @@ class QuestionClassifierNode(LLMNode):
                 metadata={
                     NodeRunMetadataKey.TOTAL_TOKENS: usage.total_tokens,
                     NodeRunMetadataKey.TOTAL_PRICE: usage.total_price,
-                    NodeRunMetadataKey.CURRENCY: usage.currency
-                }
+                    NodeRunMetadataKey.CURRENCY: usage.currency,
+                },
             )
 
     @classmethod
     def _extract_variable_selector_to_variable_mapping(cls, node_data: BaseNodeData) -> dict[str, list[str]]:
         node_data = node_data
         node_data = cast(cls._node_data_cls, node_data)
-        variable_mapping = {'query': node_data.query_variable_selector}
+        variable_mapping = {"query": node_data.query_variable_selector}
         return variable_mapping
 
     @classmethod
@@ -131,19 +119,16 @@ class QuestionClassifierNode(LLMNode):
         :param filters: filter by node config parameters.
         :return:
         """
-        return {
-            "type": "question-classifier",
-            "config": {
-                "instructions": ""
-            }
-        }
+        return {"type": "question-classifier", "config": {"instructions": ""}}
 
-    def _fetch_prompt(self, node_data: QuestionClassifierNodeData,
-                      query: str,
-                      context: Optional[str],
-                      memory: Optional[TokenBufferMemory],
-                      model_config: ModelConfigWithCredentialsEntity) \
-            -> tuple[list[PromptMessage], Optional[list[str]]]:
+    def _fetch_prompt(
+        self,
+        node_data: QuestionClassifierNodeData,
+        query: str,
+        context: Optional[str],
+        memory: Optional[TokenBufferMemory],
+        model_config: ModelConfigWithCredentialsEntity,
+    ) -> tuple[list[PromptMessage], Optional[list[str]]]:
         """
         Fetch prompt
         :param node_data: node data
@@ -159,31 +144,35 @@ class QuestionClassifierNode(LLMNode):
         prompt_messages = prompt_transform.get_prompt(
             prompt_template=prompt_template,
             inputs={},
-            query='',
+            query="",
             files=[],
             context=context,
             memory_config=node_data.memory,
             memory=None,
-            model_config=model_config
+            model_config=model_config,
         )
         stop = model_config.stop
 
         return prompt_messages, stop
 
-    def _calculate_rest_token(self, node_data: QuestionClassifierNodeData, query: str,
-                              model_config: ModelConfigWithCredentialsEntity,
-                              context: Optional[str]) -> int:
+    def _calculate_rest_token(
+        self,
+        node_data: QuestionClassifierNodeData,
+        query: str,
+        model_config: ModelConfigWithCredentialsEntity,
+        context: Optional[str],
+    ) -> int:
         prompt_transform = AdvancedPromptTransform(with_variable_tmpl=True)
         prompt_template = self._get_prompt_template(node_data, query, None, 2000)
         prompt_messages = prompt_transform.get_prompt(
             prompt_template=prompt_template,
             inputs={},
-            query='',
+            query="",
             files=[],
             context=context,
             memory_config=node_data.memory,
             memory=None,
-            model_config=model_config
+            model_config=model_config,
         )
         rest_tokens = 2000
 
@@ -193,83 +182,85 @@ class QuestionClassifierNode(LLMNode):
             model_type_instance = cast(LargeLanguageModel, model_type_instance)
 
             curr_message_tokens = model_type_instance.get_num_tokens(
-                model_config.model,
-                model_config.credentials,
-                prompt_messages
+                model_config.model, model_config.credentials, prompt_messages
             )
 
             max_tokens = 0
             for parameter_rule in model_config.model_schema.parameter_rules:
-                if (parameter_rule.name == 'max_tokens'
-                        or (parameter_rule.use_template and parameter_rule.use_template == 'max_tokens')):
-                    max_tokens = (model_config.parameters.get(parameter_rule.name)
-                                  or model_config.parameters.get(parameter_rule.use_template)) or 0
+                if parameter_rule.name == "max_tokens" or (
+                    parameter_rule.use_template and parameter_rule.use_template == "max_tokens"
+                ):
+                    max_tokens = (
+                        model_config.parameters.get(parameter_rule.name)
+                        or model_config.parameters.get(parameter_rule.use_template)
+                    ) or 0
 
             rest_tokens = model_context_tokens - max_tokens - curr_message_tokens
             rest_tokens = max(rest_tokens, 0)
 
         return rest_tokens
 
-    def _get_prompt_template(self, node_data: QuestionClassifierNodeData, query: str,
-                             memory: Optional[TokenBufferMemory],
-                             max_token_limit: int = 2000) \
-            -> Union[list[ChatModelMessage], CompletionModelPromptTemplate]:
+    def _get_prompt_template(
+        self,
+        node_data: QuestionClassifierNodeData,
+        query: str,
+        memory: Optional[TokenBufferMemory],
+        max_token_limit: int = 2000,
+    ) -> Union[list[ChatModelMessage], CompletionModelPromptTemplate]:
         model_mode = ModelMode.value_of(node_data.model.mode)
         classes = node_data.classes
         categories = []
         for class_ in classes:
-            category = {
-                'category_id': class_.id,
-                'category_name': class_.name
-            }
+            category = {"category_id": class_.id, "category_name": class_.name}
             categories.append(category)
-        instruction = node_data.instruction if node_data.instruction else ''
+        instruction = node_data.instruction if node_data.instruction else ""
         input_text = query
-        memory_str = ''
+        memory_str = ""
         if memory:
-            memory_str = memory.get_history_prompt_text(max_token_limit=max_token_limit,
-                                                        message_limit=node_data.memory.window.size)
+            memory_str = memory.get_history_prompt_text(
+                max_token_limit=max_token_limit, message_limit=node_data.memory.window.size
+            )
         prompt_messages = []
         if model_mode == ModelMode.CHAT:
             system_prompt_messages = ChatModelMessage(
-                role=PromptMessageRole.SYSTEM,
-                text=QUESTION_CLASSIFIER_SYSTEM_PROMPT.format(histories=memory_str)
+                role=PromptMessageRole.SYSTEM, text=QUESTION_CLASSIFIER_SYSTEM_PROMPT.format(histories=memory_str)
             )
             prompt_messages.append(system_prompt_messages)
             user_prompt_message_1 = ChatModelMessage(
-                role=PromptMessageRole.USER,
-                text=QUESTION_CLASSIFIER_USER_PROMPT_1
+                role=PromptMessageRole.USER, text=QUESTION_CLASSIFIER_USER_PROMPT_1
             )
             prompt_messages.append(user_prompt_message_1)
             assistant_prompt_message_1 = ChatModelMessage(
-                role=PromptMessageRole.ASSISTANT,
-                text=QUESTION_CLASSIFIER_ASSISTANT_PROMPT_1
+                role=PromptMessageRole.ASSISTANT, text=QUESTION_CLASSIFIER_ASSISTANT_PROMPT_1
             )
             prompt_messages.append(assistant_prompt_message_1)
             user_prompt_message_2 = ChatModelMessage(
-                role=PromptMessageRole.USER,
-                text=QUESTION_CLASSIFIER_USER_PROMPT_2
+                role=PromptMessageRole.USER, text=QUESTION_CLASSIFIER_USER_PROMPT_2
             )
             prompt_messages.append(user_prompt_message_2)
             assistant_prompt_message_2 = ChatModelMessage(
-                role=PromptMessageRole.ASSISTANT,
-                text=QUESTION_CLASSIFIER_ASSISTANT_PROMPT_2
+                role=PromptMessageRole.ASSISTANT, text=QUESTION_CLASSIFIER_ASSISTANT_PROMPT_2
             )
             prompt_messages.append(assistant_prompt_message_2)
             user_prompt_message_3 = ChatModelMessage(
                 role=PromptMessageRole.USER,
-                text=QUESTION_CLASSIFIER_USER_PROMPT_3.format(input_text=input_text,
-                                                              categories=json.dumps(categories, ensure_ascii=False),
-                                                              classification_instructions=instruction)
+                text=QUESTION_CLASSIFIER_USER_PROMPT_3.format(
+                    input_text=input_text,
+                    categories=json.dumps(categories, ensure_ascii=False),
+                    classification_instructions=instruction,
+                ),
             )
             prompt_messages.append(user_prompt_message_3)
             return prompt_messages
         elif model_mode == ModelMode.COMPLETION:
             return CompletionModelPromptTemplate(
-                text=QUESTION_CLASSIFIER_COMPLETION_PROMPT.format(histories=memory_str,
-                                                                  input_text=input_text,
-                                                                  categories=json.dumps(categories),
-                                                                  classification_instructions=instruction, ensure_ascii=False)
+                text=QUESTION_CLASSIFIER_COMPLETION_PROMPT.format(
+                    histories=memory_str,
+                    input_text=input_text,
+                    categories=json.dumps(categories),
+                    classification_instructions=instruction,
+                    ensure_ascii=False,
+                )
             )
 
         else:

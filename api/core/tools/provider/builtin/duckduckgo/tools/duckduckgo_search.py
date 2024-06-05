@@ -42,9 +42,7 @@ class DuckDuckGoSearchAPIWrapper(BaseModel):
         snippets = self.get_snippets(query)
         return " ".join(snippets)
 
-    def results(
-        self, query: str, num_results: int, backend: str = "api"
-    ) -> list[dict[str, str]]:
+    def results(self, query: str, num_results: int, backend: str = "api") -> list[dict[str, str]]:
         """Run query through DuckDuckGo and return metadata.
 
         Args:
@@ -103,9 +101,7 @@ class DuckDuckGoSearchRun(BaseModel):
         "Useful for when you need to answer questions about current events. "
         "Input should be a search query."
     )
-    api_wrapper: DuckDuckGoSearchAPIWrapper = Field(
-        default_factory=DuckDuckGoSearchAPIWrapper
-    )
+    api_wrapper: DuckDuckGoSearchAPIWrapper = Field(default_factory=DuckDuckGoSearchAPIWrapper)
 
     def _run(
         self,
@@ -125,9 +121,7 @@ class DuckDuckGoSearchResults(BaseModel):
         "Input should be a search query. Output is a JSON array of the query results"
     )
     num_results: int = 4
-    api_wrapper: DuckDuckGoSearchAPIWrapper = Field(
-        default_factory=DuckDuckGoSearchAPIWrapper
-    )
+    api_wrapper: DuckDuckGoSearchAPIWrapper = Field(default_factory=DuckDuckGoSearchAPIWrapper)
     backend: str = "api"
 
     def _run(
@@ -139,8 +133,10 @@ class DuckDuckGoSearchResults(BaseModel):
         res_strs = [", ".join([f"{k}: {v}" for k, v in d.items()]) for d in res]
         return ", ".join([f"[{rs}]" for rs in res_strs])
 
+
 class DuckDuckGoInput(BaseModel):
     query: str = Field(..., description="Search query.")
+
 
 class DuckDuckGoSearchTool(BuiltinTool):
     """
@@ -158,14 +154,13 @@ class DuckDuckGoSearchTool(BuiltinTool):
         Returns:
             ToolInvokeMessage | list[ToolInvokeMessage]: The result of the tool invocation.
         """
-        query = tool_parameters.get('query', '')
+        query = tool_parameters.get("query", "")
 
         if not query:
-            return self.create_text_message('Please input query')
+            return self.create_text_message("Please input query")
 
         tool = DuckDuckGoSearchRun(args_schema=DuckDuckGoInput)
 
         result = tool._run(query)
 
         return self.create_text_message(self.summary(user_id=user_id, content=result))
-    

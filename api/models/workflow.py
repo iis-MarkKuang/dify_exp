@@ -12,11 +12,12 @@ class CreatedByRole(Enum):
     """
     Created By Role Enum
     """
-    ACCOUNT = 'account'
-    END_USER = 'end_user'
+
+    ACCOUNT = "account"
+    END_USER = "end_user"
 
     @classmethod
-    def value_of(cls, value: str) -> 'CreatedByRole':
+    def value_of(cls, value: str) -> "CreatedByRole":
         """
         Get value of given mode.
 
@@ -26,18 +27,19 @@ class CreatedByRole(Enum):
         for mode in cls:
             if mode.value == value:
                 return mode
-        raise ValueError(f'invalid created by role value {value}')
+        raise ValueError(f"invalid created by role value {value}")
 
 
 class WorkflowType(Enum):
     """
     Workflow Type Enum
     """
-    WORKFLOW = 'workflow'
-    CHAT = 'chat'
+
+    WORKFLOW = "workflow"
+    CHAT = "chat"
 
     @classmethod
-    def value_of(cls, value: str) -> 'WorkflowType':
+    def value_of(cls, value: str) -> "WorkflowType":
         """
         Get value of given mode.
 
@@ -47,10 +49,10 @@ class WorkflowType(Enum):
         for mode in cls:
             if mode.value == value:
                 return mode
-        raise ValueError(f'invalid workflow type value {value}')
+        raise ValueError(f"invalid workflow type value {value}")
 
     @classmethod
-    def from_app_mode(cls, app_mode: Union[str, 'AppMode']) -> 'WorkflowType':
+    def from_app_mode(cls, app_mode: Union[str, "AppMode"]) -> "WorkflowType":
         """
         Get workflow type from app mode.
 
@@ -58,6 +60,7 @@ class WorkflowType(Enum):
         :return: workflow type
         """
         from models.model import AppMode
+
         app_mode = app_mode if isinstance(app_mode, AppMode) else AppMode.value_of(app_mode)
         return cls.WORKFLOW if app_mode == AppMode.WORKFLOW else cls.CHAT
 
@@ -95,13 +98,13 @@ class Workflow(db.Model):
     - updated_at (timestamp) `optional` Last update time
     """
 
-    __tablename__ = 'workflows'
+    __tablename__ = "workflows"
     __table_args__ = (
-        db.PrimaryKeyConstraint('id', name='workflow_pkey'),
-        db.Index('workflow_version_idx', 'tenant_id', 'app_id', 'version'),
+        db.PrimaryKeyConstraint("id", name="workflow_pkey"),
+        db.Index("workflow_version_idx", "tenant_id", "app_id", "version"),
     )
 
-    id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
+    id = db.Column(StringUUID, server_default=db.text("uuid_generate_v4()"))
     tenant_id = db.Column(StringUUID, nullable=False)
     app_id = db.Column(StringUUID, nullable=False)
     type = db.Column(db.String(255), nullable=False)
@@ -109,7 +112,7 @@ class Workflow(db.Model):
     graph = db.Column(db.Text)
     features = db.Column(db.Text)
     created_by = db.Column(StringUUID, nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
+    created_at = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP(0)"))
     updated_by = db.Column(StringUUID)
     updated_at = db.Column(db.DateTime)
 
@@ -135,22 +138,20 @@ class Workflow(db.Model):
             return []
 
         graph_dict = self.graph_dict
-        if 'nodes' not in graph_dict:
+        if "nodes" not in graph_dict:
             return []
 
-        start_node = next((node for node in graph_dict['nodes'] if node['data']['type'] == 'start'), None)
+        start_node = next((node for node in graph_dict["nodes"] if node["data"]["type"] == "start"), None)
         if not start_node:
             return []
 
         # get user_input_form from start node
-        variables = start_node.get('data', {}).get('variables', [])
+        variables = start_node.get("data", {}).get("variables", [])
 
         if to_old_structure:
             old_structure_variables = []
             for variable in variables:
-                old_structure_variables.append({
-                    variable['type']: variable
-                })
+                old_structure_variables.append({variable["type"]: variable})
 
             return old_structure_variables
 
@@ -163,29 +164,30 @@ class Workflow(db.Model):
 
         :return: hash
         """
-        entity = {
-            'graph': self.graph_dict,
-            'features': self.features_dict
-        }
+        entity = {"graph": self.graph_dict, "features": self.features_dict}
 
         return helper.generate_text_hash(json.dumps(entity, sort_keys=True))
 
     @property
     def tool_published(self) -> bool:
         from models.tools import WorkflowToolProvider
-        return db.session.query(WorkflowToolProvider).filter(
-            WorkflowToolProvider.app_id == self.app_id
-        ).first() is not None
+
+        return (
+            db.session.query(WorkflowToolProvider).filter(WorkflowToolProvider.app_id == self.app_id).first()
+            is not None
+        )
+
 
 class WorkflowRunTriggeredFrom(Enum):
     """
     Workflow Run Triggered From Enum
     """
-    DEBUGGING = 'debugging'
-    APP_RUN = 'app-run'
+
+    DEBUGGING = "debugging"
+    APP_RUN = "app-run"
 
     @classmethod
-    def value_of(cls, value: str) -> 'WorkflowRunTriggeredFrom':
+    def value_of(cls, value: str) -> "WorkflowRunTriggeredFrom":
         """
         Get value of given mode.
 
@@ -195,20 +197,21 @@ class WorkflowRunTriggeredFrom(Enum):
         for mode in cls:
             if mode.value == value:
                 return mode
-        raise ValueError(f'invalid workflow run triggered from value {value}')
+        raise ValueError(f"invalid workflow run triggered from value {value}")
 
 
 class WorkflowRunStatus(Enum):
     """
     Workflow Run Status Enum
     """
-    RUNNING = 'running'
-    SUCCEEDED = 'succeeded'
-    FAILED = 'failed'
-    STOPPED = 'stopped'
+
+    RUNNING = "running"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+    STOPPED = "stopped"
 
     @classmethod
-    def value_of(cls, value: str) -> 'WorkflowRunStatus':
+    def value_of(cls, value: str) -> "WorkflowRunStatus":
         """
         Get value of given mode.
 
@@ -218,7 +221,7 @@ class WorkflowRunStatus(Enum):
         for mode in cls:
             if mode.value == value:
                 return mode
-        raise ValueError(f'invalid workflow run status value {value}')
+        raise ValueError(f"invalid workflow run status value {value}")
 
 
 class WorkflowRun(db.Model):
@@ -259,14 +262,14 @@ class WorkflowRun(db.Model):
     - finished_at (timestamp) End time
     """
 
-    __tablename__ = 'workflow_runs'
+    __tablename__ = "workflow_runs"
     __table_args__ = (
-        db.PrimaryKeyConstraint('id', name='workflow_run_pkey'),
-        db.Index('workflow_run_triggerd_from_idx', 'tenant_id', 'app_id', 'triggered_from'),
-        db.Index('workflow_run_tenant_app_sequence_idx', 'tenant_id', 'app_id', 'sequence_number'),
+        db.PrimaryKeyConstraint("id", name="workflow_run_pkey"),
+        db.Index("workflow_run_triggerd_from_idx", "tenant_id", "app_id", "triggered_from"),
+        db.Index("workflow_run_tenant_app_sequence_idx", "tenant_id", "app_id", "sequence_number"),
     )
 
-    id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
+    id = db.Column(StringUUID, server_default=db.text("uuid_generate_v4()"))
     tenant_id = db.Column(StringUUID, nullable=False)
     app_id = db.Column(StringUUID, nullable=False)
     sequence_number = db.Column(db.Integer, nullable=False)
@@ -279,26 +282,25 @@ class WorkflowRun(db.Model):
     status = db.Column(db.String(255), nullable=False)
     outputs = db.Column(db.Text)
     error = db.Column(db.Text)
-    elapsed_time = db.Column(db.Float, nullable=False, server_default=db.text('0'))
-    total_tokens = db.Column(db.Integer, nullable=False, server_default=db.text('0'))
-    total_steps = db.Column(db.Integer, server_default=db.text('0'))
+    elapsed_time = db.Column(db.Float, nullable=False, server_default=db.text("0"))
+    total_tokens = db.Column(db.Integer, nullable=False, server_default=db.text("0"))
+    total_steps = db.Column(db.Integer, server_default=db.text("0"))
     created_by_role = db.Column(db.String(255), nullable=False)
     created_by = db.Column(StringUUID, nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
+    created_at = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP(0)"))
     finished_at = db.Column(db.DateTime)
 
     @property
     def created_by_account(self):
         created_by_role = CreatedByRole.value_of(self.created_by_role)
-        return Account.query.get(self.created_by) \
-            if created_by_role == CreatedByRole.ACCOUNT else None
+        return Account.query.get(self.created_by) if created_by_role == CreatedByRole.ACCOUNT else None
 
     @property
     def created_by_end_user(self):
         from models.model import EndUser
+
         created_by_role = CreatedByRole.value_of(self.created_by_role)
-        return EndUser.query.get(self.created_by) \
-            if created_by_role == CreatedByRole.END_USER else None
+        return EndUser.query.get(self.created_by) if created_by_role == CreatedByRole.END_USER else None
 
     @property
     def graph_dict(self):
@@ -313,12 +315,12 @@ class WorkflowRun(db.Model):
         return json.loads(self.outputs) if self.outputs else None
 
     @property
-    def message(self) -> Optional['Message']:
+    def message(self) -> Optional["Message"]:
         from models.model import Message
-        return db.session.query(Message).filter(
-            Message.app_id == self.app_id,
-            Message.workflow_run_id == self.id
-        ).first()
+
+        return (
+            db.session.query(Message).filter(Message.app_id == self.app_id, Message.workflow_run_id == self.id).first()
+        )
 
     @property
     def workflow(self):
@@ -329,11 +331,12 @@ class WorkflowNodeExecutionTriggeredFrom(Enum):
     """
     Workflow Node Execution Triggered From Enum
     """
-    SINGLE_STEP = 'single-step'
-    WORKFLOW_RUN = 'workflow-run'
+
+    SINGLE_STEP = "single-step"
+    WORKFLOW_RUN = "workflow-run"
 
     @classmethod
-    def value_of(cls, value: str) -> 'WorkflowNodeExecutionTriggeredFrom':
+    def value_of(cls, value: str) -> "WorkflowNodeExecutionTriggeredFrom":
         """
         Get value of given mode.
 
@@ -343,19 +346,20 @@ class WorkflowNodeExecutionTriggeredFrom(Enum):
         for mode in cls:
             if mode.value == value:
                 return mode
-        raise ValueError(f'invalid workflow node execution triggered from value {value}')
+        raise ValueError(f"invalid workflow node execution triggered from value {value}")
 
 
 class WorkflowNodeExecutionStatus(Enum):
     """
     Workflow Node Execution Status Enum
     """
-    RUNNING = 'running'
-    SUCCEEDED = 'succeeded'
-    FAILED = 'failed'
+
+    RUNNING = "running"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
 
     @classmethod
-    def value_of(cls, value: str) -> 'WorkflowNodeExecutionStatus':
+    def value_of(cls, value: str) -> "WorkflowNodeExecutionStatus":
         """
         Get value of given mode.
 
@@ -365,7 +369,7 @@ class WorkflowNodeExecutionStatus(Enum):
         for mode in cls:
             if mode.value == value:
                 return mode
-        raise ValueError(f'invalid workflow node execution status value {value}')
+        raise ValueError(f"invalid workflow node execution status value {value}")
 
 
 class WorkflowNodeExecution(db.Model):
@@ -416,16 +420,23 @@ class WorkflowNodeExecution(db.Model):
     - finished_at (timestamp) End time
     """
 
-    __tablename__ = 'workflow_node_executions'
+    __tablename__ = "workflow_node_executions"
     __table_args__ = (
-        db.PrimaryKeyConstraint('id', name='workflow_node_execution_pkey'),
-        db.Index('workflow_node_execution_workflow_run_idx', 'tenant_id', 'app_id', 'workflow_id',
-                 'triggered_from', 'workflow_run_id'),
-        db.Index('workflow_node_execution_node_run_idx', 'tenant_id', 'app_id', 'workflow_id',
-                 'triggered_from', 'node_id'),
+        db.PrimaryKeyConstraint("id", name="workflow_node_execution_pkey"),
+        db.Index(
+            "workflow_node_execution_workflow_run_idx",
+            "tenant_id",
+            "app_id",
+            "workflow_id",
+            "triggered_from",
+            "workflow_run_id",
+        ),
+        db.Index(
+            "workflow_node_execution_node_run_idx", "tenant_id", "app_id", "workflow_id", "triggered_from", "node_id"
+        ),
     )
 
-    id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
+    id = db.Column(StringUUID, server_default=db.text("uuid_generate_v4()"))
     tenant_id = db.Column(StringUUID, nullable=False)
     app_id = db.Column(StringUUID, nullable=False)
     workflow_id = db.Column(StringUUID, nullable=False)
@@ -441,9 +452,9 @@ class WorkflowNodeExecution(db.Model):
     outputs = db.Column(db.Text)
     status = db.Column(db.String(255), nullable=False)
     error = db.Column(db.Text)
-    elapsed_time = db.Column(db.Float, nullable=False, server_default=db.text('0'))
+    elapsed_time = db.Column(db.Float, nullable=False, server_default=db.text("0"))
     execution_metadata = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
+    created_at = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP(0)"))
     created_by_role = db.Column(db.String(255), nullable=False)
     created_by = db.Column(StringUUID, nullable=False)
     finished_at = db.Column(db.DateTime)
@@ -451,15 +462,14 @@ class WorkflowNodeExecution(db.Model):
     @property
     def created_by_account(self):
         created_by_role = CreatedByRole.value_of(self.created_by_role)
-        return Account.query.get(self.created_by) \
-            if created_by_role == CreatedByRole.ACCOUNT else None
+        return Account.query.get(self.created_by) if created_by_role == CreatedByRole.ACCOUNT else None
 
     @property
     def created_by_end_user(self):
         from models.model import EndUser
+
         created_by_role = CreatedByRole.value_of(self.created_by_role)
-        return EndUser.query.get(self.created_by) \
-            if created_by_role == CreatedByRole.END_USER else None
+        return EndUser.query.get(self.created_by) if created_by_role == CreatedByRole.END_USER else None
 
     @property
     def inputs_dict(self):
@@ -480,15 +490,17 @@ class WorkflowNodeExecution(db.Model):
     @property
     def extras(self):
         from core.tools.tool_manager import ToolManager
+
         extras = {}
         if self.execution_metadata_dict:
             from core.workflow.entities.node_entities import NodeType
-            if self.node_type == NodeType.TOOL.value and 'tool_info' in self.execution_metadata_dict:
-                tool_info = self.execution_metadata_dict['tool_info']
-                extras['icon'] = ToolManager.get_tool_icon(
+
+            if self.node_type == NodeType.TOOL.value and "tool_info" in self.execution_metadata_dict:
+                tool_info = self.execution_metadata_dict["tool_info"]
+                extras["icon"] = ToolManager.get_tool_icon(
                     tenant_id=self.tenant_id,
-                    provider_type=tool_info['provider_type'],
-                    provider_id=tool_info['provider_id']
+                    provider_type=tool_info["provider_type"],
+                    provider_id=tool_info["provider_id"],
                 )
 
         return extras
@@ -498,12 +510,13 @@ class WorkflowAppLogCreatedFrom(Enum):
     """
     Workflow App Log Created From Enum
     """
-    SERVICE_API = 'service-api'
-    WEB_APP = 'web-app'
-    INSTALLED_APP = 'installed-app'
+
+    SERVICE_API = "service-api"
+    WEB_APP = "web-app"
+    INSTALLED_APP = "installed-app"
 
     @classmethod
-    def value_of(cls, value: str) -> 'WorkflowAppLogCreatedFrom':
+    def value_of(cls, value: str) -> "WorkflowAppLogCreatedFrom":
         """
         Get value of given mode.
 
@@ -513,7 +526,7 @@ class WorkflowAppLogCreatedFrom(Enum):
         for mode in cls:
             if mode.value == value:
                 return mode
-        raise ValueError(f'invalid workflow app log created from value {value}')
+        raise ValueError(f"invalid workflow app log created from value {value}")
 
 
 class WorkflowAppLog(db.Model):
@@ -545,13 +558,13 @@ class WorkflowAppLog(db.Model):
     - created_at (timestamp) Creation time
     """
 
-    __tablename__ = 'workflow_app_logs'
+    __tablename__ = "workflow_app_logs"
     __table_args__ = (
-        db.PrimaryKeyConstraint('id', name='workflow_app_log_pkey'),
-        db.Index('workflow_app_log_app_idx', 'tenant_id', 'app_id'),
+        db.PrimaryKeyConstraint("id", name="workflow_app_log_pkey"),
+        db.Index("workflow_app_log_app_idx", "tenant_id", "app_id"),
     )
 
-    id = db.Column(StringUUID, server_default=db.text('uuid_generate_v4()'))
+    id = db.Column(StringUUID, server_default=db.text("uuid_generate_v4()"))
     tenant_id = db.Column(StringUUID, nullable=False)
     app_id = db.Column(StringUUID, nullable=False)
     workflow_id = db.Column(StringUUID, nullable=False)
@@ -559,7 +572,7 @@ class WorkflowAppLog(db.Model):
     created_from = db.Column(db.String(255), nullable=False)
     created_by_role = db.Column(db.String(255), nullable=False)
     created_by = db.Column(StringUUID, nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, server_default=db.text('CURRENT_TIMESTAMP(0)'))
+    created_at = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP(0)"))
 
     @property
     def workflow_run(self):
@@ -568,12 +581,11 @@ class WorkflowAppLog(db.Model):
     @property
     def created_by_account(self):
         created_by_role = CreatedByRole.value_of(self.created_by_role)
-        return Account.query.get(self.created_by) \
-            if created_by_role == CreatedByRole.ACCOUNT else None
+        return Account.query.get(self.created_by) if created_by_role == CreatedByRole.ACCOUNT else None
 
     @property
     def created_by_end_user(self):
         from models.model import EndUser
+
         created_by_role = CreatedByRole.value_of(self.created_by_role)
-        return EndUser.query.get(self.created_by) \
-            if created_by_role == CreatedByRole.END_USER else None
+        return EndUser.query.get(self.created_by) if created_by_role == CreatedByRole.END_USER else None
