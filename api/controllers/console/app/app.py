@@ -1,13 +1,11 @@
-import json
-import uuid
 import random
+import uuid
 
 from flask_login import current_user
 from flask_restful import Resource, inputs, marshal, marshal_with, reqparse
 from werkzeug.exceptions import BadRequest, Forbidden, abort
 
-from controllers.console import metrics
-from controllers.console import api
+from controllers.console import api, metrics
 from controllers.console.app.wraps import get_app_model
 from controllers.console.setup import setup_required
 from controllers.console.wraps import account_initialization_required, cloud_edition_billing_resource_check
