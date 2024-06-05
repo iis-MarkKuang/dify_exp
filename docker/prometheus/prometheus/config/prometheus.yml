@@ -7,7 +7,7 @@ alerting:
   alertmanagers:
   - static_configs:
     # note change this to actual server ip and port when deploying
-    - targets: ['20.255.63.62:9093']
+    - targets: ['127.0.0.1:9093']
 
 
 rule_files:
@@ -19,7 +19,7 @@ scrape_configs:
   - job_name: microcraft
     static_configs:
       # Note change this to actual microcraft backend ip:port when deploying
-      - targets: ['20.234.55.107:5001']
+      - targets: ['127.0.0.1:5001']
         labels:
           instance: microcraft
 

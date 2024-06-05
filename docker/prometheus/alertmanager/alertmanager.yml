@@ -10,5 +10,5 @@ receivers:
 - name: 'web.hook.prometheusalert'
   webhook_configs:
   # note, change this to actual server ip and port and feishu webhook
-  - url: 'http://20.255.63.62:9094/prometheusalert?type=fs&tpl=prometheus-fs&fsurl=https://open.feishu.cn/open-apis/bot/v2/hook/bed74669-f2c7-4c20-bd1b-cbbad7d02446'
+  - url: 'http://127.0.0.1:9094/prometheusalert?type=fs&tpl=prometheus-fs&fsurl=https://open.feishu.cn/open-apis/bot/v2/hook/bed74669-f2c7-4c20-bd1b-cbbad7d02446'
 

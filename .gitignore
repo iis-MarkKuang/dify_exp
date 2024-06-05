@@ -149,6 +149,9 @@ docker/volumes/qdrant/*
 docker/volumes/etcd/*
 docker/volumes/minio/*
 docker/volumes/milvus/*
+docker/prometheus/grafana/data/*
+docker/prometheus/prometheus/data/*
+docker/prometheus/prometheus-alert/db
 
 sdks/python-client/build
 sdks/python-client/dist
