@@ -4,7 +4,7 @@ metadata:
   labels:
     app: microcraft-api
   name: microcraft-api
-  namespace: default
+  namespace: microcraft
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
