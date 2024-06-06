@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+  namespace: default
+data:
+  CELERY_BROKER_URL: redis://:difyai123456@redis:6379/1
