@@ -24,6 +24,7 @@ spec:
     spec:
       containers:
       - image: kuangyuan1991/microcraft_api:1.0.0
+        name: microcraft-api
         imagePullPolicy: IfNotPresent
         resources: {}
         terminationMessagePath: /dev/termination-log

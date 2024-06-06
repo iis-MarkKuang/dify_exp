@@ -43,13 +43,14 @@ data:
   # The configurations of postgres database connection.
   # It is consistent with the configuration in the "db" service below.
   DB_USERNAME: postgres
-  DB_PASSWORD: difyai123456
-  DB_HOST: db
+  DB_PASSWORD: "WbrTpN3g7q"
+  DB_HOST: postgres-headless-svc.microcraft.svc.cluster.local
+  # DB_HOST: "10.96.0.10"
   DB_PORT: "5432"
-  DB_DATABASE: dify
+  DB_DATABASE: postgres
   # The configurations of redis connection.
   # It is consistent with the configuration in the "redis" service below.
-  REDIS_HOST: redis
+  REDIS_HOST: redis-0.redis.microcraft.svc.cluster.local
   REDIS_PORT: "6379"
   REDIS_USERNAME: ""
   REDIS_PASSWORD: difyai123456
@@ -132,7 +133,7 @@ data:
   PGVECTOR_HOST: pgvector
   PGVECTOR_PORT: "5432"
   PGVECTOR_USER: postgres
-  PGVECTOR_PASSWORD: difyai123456
+  PGVECTOR_PASSWORD: V2JyVHBOM2c3cQ==
   PGVECTOR_DATABASE: dify
   # Mail configuration, support: resend, smtp
   MAIL_TYPE: ""
