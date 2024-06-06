@@ -25,7 +25,6 @@ spec:
       containers:
       - image: kuangyuan1991/microcraft_api:1.0.0
         imagePullPolicy: IfNotPresent
-        name: microcraft-api-j7gp6
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
