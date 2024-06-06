@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: "2024-06-06T03:34:08Z"
+  generation: 1
+  labels:
+    app: microcraft-api
+  name: microcraft-api
+  namespace: default
+  resourceVersion: "2397"
+  uid: b81e9a9e-158c-4d1a-be2c-ec6e49be728b
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: microcraft-api
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: microcraft-api
+    spec:
+      containers:
+      - image: kuangyuan1991/microcraft_api:1.0.0
+        imagePullPolicy: IfNotPresent
+        name: microcraft-api-j7gp6
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      imagePullSecrets:
+      - name: kyhub
+status:
+  conditions:
+  - lastTransitionTime: "2024-06-06T03:34:08Z"
+    lastUpdateTime: "2024-06-06T03:34:09Z"
+    message: ReplicaSet "microcraft-api-74f9cc997f" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: "2024-06-06T03:36:14Z"
+    lastUpdateTime: "2024-06-06T03:36:14Z"
+    message: Deployment does not have minimum availability.
+    reason: MinimumReplicasUnavailable
+    status: "False"
+    type: Available
+  observedGeneration: 1
+  replicas: 1
+  unavailableReplicas: 1
+  updatedReplicas: 1
