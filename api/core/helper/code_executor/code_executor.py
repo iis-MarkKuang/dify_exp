@@ -79,20 +79,27 @@ class CodeExecutor:
         # url = URL(CODE_EXECUTION_ENDPOINT) / "v1" / "sandbox" / "run"
         url = URL(CODE_EXECUTION_ENDPOINT) / "code"
 
-        headers = {"X-Api-Key": CODE_EXECUTION_API_KEY}
+        headers = {"X-Api-Key": CODE_EXECUTION_API_KEY, "Content-Type": "application/json"}
+        # sandbox body
+        # data = {
+        #     "language": cls.code_language_to_running_language.get(language),
+        #     "code": code,
+        #     "preload": preload,
+        #     "enable_network": True,
+        # }
 
         data = {
-            "language": cls.code_language_to_running_language.get(language),
+            "language": 'py' if cls.code_language_to_running_language.get(language) == CodeLanguage.PYTHON3 else 'js',
             "code": code,
-            "preload": preload,
-            "enable_network": True,
+            "input": "",
+            "key": "a1234567",
         }
 
         if dependencies:
             data["dependencies"] = [dependency.dict() for dependency in dependencies]
-
         try:
             response = post(str(url), json=data, headers=headers, timeout=CODE_EXECUTION_TIMEOUT)
+            print(response.text)
             if response.status_code == 503:
                 raise CodeExecutionException("Code execution service is unavailable")
             elif response.status_code != 200:
@@ -145,7 +152,10 @@ class CodeExecutor:
         runner, preload, dependencies = template_transformer.transform_caller(code, inputs, dependencies)
 
         try:
-            response = cls.execute_code(language, preload, runner, dependencies)
+            # TODO codebox test
+            # response = cls.execute_code(language, preload, runner, dependencies)
+            response = cls.execute_code(language, preload, code, dependencies)
+
         except CodeExecutionException as e:
             raise e
 
@@ -205,3 +215,4 @@ class CodeExecutor:
         except Exception as e:
             logger.exception(f"Failed to list dependencies: {e}")
             return []
+        
