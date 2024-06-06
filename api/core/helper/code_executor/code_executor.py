@@ -76,7 +76,8 @@ class CodeExecutor:
         :param code: code
         :return:
         """
-        url = URL(CODE_EXECUTION_ENDPOINT) / "v1" / "sandbox" / "run"
+        # url = URL(CODE_EXECUTION_ENDPOINT) / "v1" / "sandbox" / "run"
+        url = URL(CODE_EXECUTION_ENDPOINT) / "code"
 
         headers = {"X-Api-Key": CODE_EXECUTION_API_KEY}
 
@@ -176,6 +177,7 @@ class CodeExecutor:
         List dependencies
         """
         url = URL(CODE_EXECUTION_ENDPOINT) / "v1" / "sandbox" / "dependencies"
+        # url = URL(CODE_EXECUTION_ENDPOINT) / "code" / "sandbox" / "dependencies"
 
         headers = {"X-Api-Key": CODE_EXECUTION_API_KEY}
 
