@@ -1,0 +1,12 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: microware-ingress
+  labels:
+    name: microware-ingress
+spec:
+  defaultBackend: 
+    service:
+      name: microcraft-api-service
+      port:
+        number: 80
