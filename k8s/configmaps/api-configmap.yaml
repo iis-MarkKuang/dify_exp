@@ -98,7 +98,7 @@ data:
   # The type of vector store to use. Supported values are `weaviate`, `qdrant`, `milvus`, `relyt`.
   VECTOR_STORE: weaviate
   # The Weaviate endpoint URL. Only available when VECTOR_STORE is `weaviate`.
-  WEAVIATE_ENDPOINT: http://weaviate:8080
+  WEAVIATE_ENDPOINT: http://weaviate.microcraft.svc.cluster.local:8080
   # The Weaviate API key.
   WEAVIATE_API_KEY: WVF5YThaHlkYwhGUSmCRgsX3tD5ngdN8pkih
   # The Qdrant endpoint URL. Only available when VECTOR_STORE is `qdrant`.
