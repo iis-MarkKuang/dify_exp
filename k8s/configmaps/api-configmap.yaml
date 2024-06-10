@@ -53,13 +53,13 @@ data:
   REDIS_HOST: redis.microcraft.svc.cluster.local
   REDIS_PORT: "6379"
   REDIS_USERNAME: ""
-  REDIS_PASSWORD: difyai123456
+  REDIS_PASSWORD: ""
   REDIS_USE_SSL: "false"
   # use redis db 0 for redis cache
   REDIS_DB: "0"
   # The configurations of celery broker.
   # Use redis as the broker, and redis db 1 for celery broker.
-  CELERY_BROKER_URL: redis://:difyai123456@redis:6379/1
+  CELERY_BROKER_URL: redis://redis:6379/1
   # Specifies the allowed origins for cross-origin requests to the Web API, e.g. https://dify.app or * for all origins.
   WEB_API_CORS_ALLOW_ORIGINS: "*"
   # Specifies the allowed origins for cross-origin requests to the console API, e.g. https://cloud.dify.ai or * for all origins.
@@ -133,7 +133,7 @@ data:
   PGVECTOR_HOST: pgvector
   PGVECTOR_PORT: "5432"
   PGVECTOR_USER: postgres
-  PGVECTOR_PASSWORD: V2JyVHBOM2c3cQ==
+  PGVECTOR_PASSWORD: WbrTpN3g7q
   PGVECTOR_DATABASE: dify
   # Mail configuration, support: resend, smtp
   MAIL_TYPE: ""

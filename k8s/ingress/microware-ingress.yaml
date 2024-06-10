@@ -4,6 +4,8 @@ metadata:
   name: microware-ingress
   labels:
     name: microware-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "15m"
 spec:
   ingressClassName: nginx
   defaultBackend:
