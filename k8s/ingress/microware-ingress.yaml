@@ -12,8 +12,7 @@ spec:
       port:
         number: 80
   rules:
-  - host: localhost
-    http:
+  - http:
       paths:
         - path: /
           pathType: Prefix
@@ -22,3 +21,32 @@ spec:
               name: microcraft-api-service
               port:
                 number: 80
+        - path: /console/api
+          pathType: Prefix
+          backend: 
+            service:
+              name: microcraft-api-service
+              port:
+                number: 80
+        - path: /api
+          pathType: Prefix
+          backend: 
+            service:
+              name: microcraft-api-service
+              port:
+                number: 80
+        - path: /v1
+          pathType: Prefix
+          backend: 
+            service:
+              name: microcraft-api-service
+              port:
+                number: 80
+        - path: /files
+          pathType: Prefix
+          backend: 
+            service:
+              name: microcraft-api-service
+              port:
+                number: 80
+
